@@ -18,6 +18,6 @@ public class LegalAccountEntity {
     @Id
     @Column(name = "id")
     private Long id;
-    @Column(name = "balance")
+    @Column(name = "balance", nullable = false)
     private Long balance;
 }

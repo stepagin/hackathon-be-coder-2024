@@ -5,24 +5,26 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
+import ru.stepagin.becoder.service.LegalAccountService;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "balance_change")
+@Table(name = "history")
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class BalanceChangeEntity {
+public class HistoryEntity {
     @Id
     @Column(name = "id")
     private Long id;
-    @Column(name = "amount")
+    @Column(name = "amount", nullable = false)
     private Long amount;
     @ManyToOne
-    private PersonEntity account;
+    private LegalAccountEntity account;
     @CreatedDate
-    @Column(name = "date")
+    @Column(name = "date", nullable = false)
     private LocalDateTime date;
+    @Column(name = "success", nullable = false)
+    private boolean success;
 }
