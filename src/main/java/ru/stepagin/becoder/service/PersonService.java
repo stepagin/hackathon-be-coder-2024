@@ -1,10 +1,12 @@
 package ru.stepagin.becoder.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.stepagin.becoder.DTO.PersonDTO;
 import ru.stepagin.becoder.entity.PersonEntity;
 import ru.stepagin.becoder.repository.PersonRepository;
 
+@Slf4j
 @Service
 public class PersonService {
     private final PersonRepository personRepository;

@@ -2,11 +2,13 @@ package ru.stepagin.becoder.service;
 
 import jakarta.annotation.Nonnull;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.stepagin.becoder.DTO.BalanceChangeDTO;
 import ru.stepagin.becoder.entity.LegalAccountEntity;
 import ru.stepagin.becoder.repository.LegalAccountRepository;
 
+@Slf4j
 @Service
 public class LegalAccountService {
     private final LegalAccountRepository legalAccountRepository;

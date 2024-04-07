@@ -1,9 +1,11 @@
 package ru.stepagin.becoder.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.stepagin.becoder.entity.AccessEntity;
 import ru.stepagin.becoder.repository.AccessRepository;
 
+@Slf4j
 @Service
 public class AccessService {
     private final AccessRepository accessRepository;
