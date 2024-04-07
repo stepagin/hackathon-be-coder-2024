@@ -1,12 +1,18 @@
 package ru.stepagin.becoder.repository;
 
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ru.stepagin.becoder.entity.LegalAccountEntity;
 
 @Repository
 public interface LegalAccountRepository extends JpaRepository<LegalAccountEntity, Long> {
+    @Modifying
+    @Transactional
     @Query("update LegalAccountEntity a set a.balance = ?2 where a.id = ?1")
-    void updateBalance(Long accountId, Long balance);
+    void updateBalanceByAccountId(Long accountId, Long balance);
+
+
 }

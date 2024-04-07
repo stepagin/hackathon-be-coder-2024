@@ -7,6 +7,8 @@ import ru.stepagin.becoder.entity.HistoryEntity;
 import ru.stepagin.becoder.entity.LegalAccountEntity;
 import ru.stepagin.becoder.repository.HistoryRepository;
 
+import java.time.LocalDateTime;
+
 @Slf4j
 @Service
 public class HistoryService {
@@ -21,6 +23,7 @@ public class HistoryService {
         historyEntity.setAccount(legalAccountEntity);
         historyEntity.setAmount(amount);
         historyEntity.setSuccess(success);
+        historyEntity.setDate(LocalDateTime.now());
         try {
             historyRepository.save(historyEntity);
         } catch (Exception e) {
