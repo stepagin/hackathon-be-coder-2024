@@ -68,7 +68,6 @@ public class LegalAccountService {
     public void increaseBalance(@Nonnull BalanceChangeDTO balanceChange) {
         LegalAccountEntity account = this.getAccountEntityById(balanceChange.getAccount().getId());
 
-        Long balance = account.getBalance();
         // update balance
         this.updateBalance(
                 account.getId(),
@@ -85,14 +84,6 @@ public class LegalAccountService {
                 balance
         );
 
-    }
-
-    public Long getBalanceById(Long id) {
-        LegalAccountEntity account;
-        account = this.getAccountEntityById(id);
-        if (account == null)
-            throw new IllegalArgumentException("Не существует аккаунта с заданным id");
-        return account.getBalance();
     }
 
     public LegalAccountEntity getAccountEntityById(@Nonnull Long accountId) {
