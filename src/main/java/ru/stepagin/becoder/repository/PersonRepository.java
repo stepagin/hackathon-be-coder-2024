@@ -6,5 +6,5 @@ import ru.stepagin.becoder.entity.PersonEntity;
 
 @Repository
 public interface PersonRepository extends JpaRepository<PersonEntity, Long> {
-    public PersonEntity findByLogin(String login);
+    PersonEntity findByLogin(String login);
 }

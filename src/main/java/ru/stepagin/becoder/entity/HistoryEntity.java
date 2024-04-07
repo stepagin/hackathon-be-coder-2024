@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
-import ru.stepagin.becoder.service.LegalAccountService;
 
 import java.time.LocalDateTime;
 

@@ -7,6 +7,6 @@ import ru.stepagin.becoder.entity.LegalAccountEntity;
 
 @Repository
 public interface LegalAccountRepository extends JpaRepository<LegalAccountEntity, Long> {
-    @Query("update legal_account a set a.balance = ?2 where a.id = ?1")
-    public void updateBalance(Long accountId, Long balance);
+    @Query("update LegalAccountEntity a set a.balance = ?2 where a.id = ?1")
+    void updateBalance(Long accountId, Long balance);
 }

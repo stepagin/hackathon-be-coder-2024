@@ -2,23 +2,22 @@ package ru.stepagin.becoder.service;
 
 import jakarta.annotation.Nonnull;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.stepagin.becoder.DTO.BalanceChangeDTO;
-import ru.stepagin.becoder.entity.HistoryEntity;
 import ru.stepagin.becoder.entity.LegalAccountEntity;
 import ru.stepagin.becoder.repository.LegalAccountRepository;
 
 @Service
-@AllArgsConstructor
 public class LegalAccountService {
-    @Autowired
-    private LegalAccountRepository legalAccountRepository;
-    @Autowired
-    private HistoryService historyService;
-    @Autowired
-    private AccessService accessService;
+    private final LegalAccountRepository legalAccountRepository;
+    private final HistoryService historyService;
+    private final AccessService accessService;
+
+    public LegalAccountService(LegalAccountRepository legalAccountRepository, HistoryService historyService, AccessService accessService) {
+        this.legalAccountRepository = legalAccountRepository;
+        this.historyService = historyService;
+        this.accessService = accessService;
+    }
 
 
     @Transactional
@@ -31,10 +30,11 @@ public class LegalAccountService {
         if (balanceChange.getAmount() <= 0L)
             throw new IllegalArgumentException("Amount должно быть больше нуля");
 
-        Long balance = this.getBalanceById(balanceChange.getAccount().getId());
+        LegalAccountEntity account = this.getAccountEntityById(balanceChange.getAccount().getId());
+        Long balance = account.getBalance();
         // check balance will not become negative
         if (balance - balanceChange.getAmount() < 0) {
-            historyService.addRecord(balanceChange.getAmount(), balanceChange.getAccount().getId(), false);
+            historyService.addRecord(balanceChange.getAmount(), account, false);
             // at other way save in history with success=false
             throw new IllegalArgumentException("На счету недостаточно средств");
         }
@@ -44,7 +44,7 @@ public class LegalAccountService {
                 balance - balanceChange.getAmount() // decreasing
         );
         // save in history with success=true
-        historyService.addRecord(balanceChange.getAmount(), balanceChange.getAccount().getId(), true);
+        historyService.addRecord(balanceChange.getAmount(), account, true);
     }
 
     @Transactional
@@ -53,6 +53,8 @@ public class LegalAccountService {
         if (balanceChange.getAmount() <= 0L)
             throw new IllegalArgumentException("Amount должно быть больше нуля");
 
+        LegalAccountEntity account = this.getAccountEntityById(balanceChange.getAccount().getId());
+
         Long balance = this.getBalanceById(balanceChange.getAccount().getId());
         // update balance
         legalAccountRepository.updateBalance(
@@ -60,26 +62,19 @@ public class LegalAccountService {
                 balance + balanceChange.getAmount() // increasing
         );
         // save in history with success=true
-        historyService.addRecord(balanceChange.getAmount(), balanceChange.getAccount().getId(), true);
+        historyService.addRecord(balanceChange.getAmount(), account, true);
     }
 
     public Long getBalanceById(Long id) {
-        LegalAccountEntity account = null;
-        try {
-            account = legalAccountRepository.findById(id).orElse(null);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Не удалось запросить данные счёта");
-        }
-
+        LegalAccountEntity account;
+        account = this.getAccountEntityById(id);
         if (account == null)
             throw new IllegalArgumentException("Не существует аккаунта с заданным id");
-
         return account.getBalance();
     }
 
-    @Transactional
-    public HistoryEntity setLegalAccountById(@Nonnull HistoryEntity historyEntity, @Nonnull Long accountId) {
-        LegalAccountEntity legalAccountEntity = null;
+    public LegalAccountEntity getAccountEntityById(@Nonnull Long accountId) {
+        LegalAccountEntity legalAccountEntity;
         try {
             legalAccountEntity = legalAccountRepository.findById(accountId).orElse(null);
         } catch (Exception e) {
@@ -88,7 +83,6 @@ public class LegalAccountService {
         if (legalAccountEntity == null) {
             throw new IllegalArgumentException("Не найден счёт с данным id");
         }
-        historyEntity.setAccount(legalAccountEntity);
-        return historyEntity;
+        return legalAccountEntity;
     }
 }
