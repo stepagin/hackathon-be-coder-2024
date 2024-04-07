@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class HistoryEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
     @Column(name = "amount", nullable = false)
@@ -22,7 +23,7 @@ public class HistoryEntity {
     @ManyToOne
     private LegalAccountEntity account;
     @CreatedDate
-    @Column(name = "date", nullable = false)
+    @Column(name = "date", nullable = false, columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
     private LocalDateTime date;
     @Column(name = "success", nullable = false)
     private boolean success;

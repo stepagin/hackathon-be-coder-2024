@@ -12,6 +12,7 @@ import lombok.Setter;
 @RequiredArgsConstructor
 public class AccessEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
     @ManyToOne
