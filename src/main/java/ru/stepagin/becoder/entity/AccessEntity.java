@@ -18,5 +18,5 @@ public class AccessEntity {
     @ManyToOne
     private PersonEntity person;
     @ManyToOne
-    private PersonEntity account;
+    private LegalAccountEntity account;
 }

@@ -11,12 +11,12 @@ import ru.stepagin.becoder.entity.LegalAccountEntity;
 @NoArgsConstructor
 public class LegalAccountDTO {
     @Nonnull
-    private Long id;
+    private String id;
     @Nonnull
     private Long balance;
 
     public LegalAccountDTO(@Nonnull LegalAccountEntity entity) {
-        this.id = entity.getId();
+        this.id = String.valueOf(entity.getId());
         this.balance = entity.getBalance();
     }
 }

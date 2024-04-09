@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import ru.stepagin.becoder.entity.AccessEntity;
 import ru.stepagin.becoder.repository.AccessRepository;
 
+import java.util.UUID;
+
 @Slf4j
 @Service
 public class AccessService {
@@ -14,7 +16,7 @@ public class AccessService {
         this.accessRepository = accessRepository;
     }
 
-    public boolean checkHasAccess(Long personId, Long accoutId) {
+    public boolean checkHasAccess(Long personId, UUID accoutId) {
         AccessEntity access;
         try {
             access = accessRepository.findByAccount_IdAndPersonId(accoutId, personId);

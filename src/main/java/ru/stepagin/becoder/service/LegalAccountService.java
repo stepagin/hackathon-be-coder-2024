@@ -9,6 +9,8 @@ import ru.stepagin.becoder.DTO.LegalAccountDTO;
 import ru.stepagin.becoder.entity.LegalAccountEntity;
 import ru.stepagin.becoder.repository.LegalAccountRepository;
 
+import java.util.UUID;
+
 @Slf4j
 @Service
 public class LegalAccountService {
@@ -23,16 +25,10 @@ public class LegalAccountService {
     }
 
     @Transactional
-    public LegalAccountDTO createAccount(@Nonnull Long id) {
-        LegalAccountEntity legalAccountEntity;
-        legalAccountEntity = legalAccountRepository.findById(id).orElse(null);
-        if (legalAccountEntity != null) {
-            throw new IllegalArgumentException("Legal account already exists");
-        }
-        legalAccountEntity = new LegalAccountEntity();
-        legalAccountEntity.setId(id);
+    public LegalAccountDTO createAccount() {
+        LegalAccountEntity legalAccountEntity = new LegalAccountEntity();
         legalAccountEntity.setBalance(0L);
-        legalAccountRepository.save(legalAccountEntity);
+        legalAccountEntity = legalAccountRepository.save(legalAccountEntity);
         return new LegalAccountDTO(legalAccountEntity);
     }
 
@@ -40,11 +36,12 @@ public class LegalAccountService {
     @Transactional
     public void decreaseBalance(@Nonnull BalanceChangeDTO balanceChange) {
         // check user has access
-        if (!accessService.checkHasAccess(balanceChange.getAccount().getId(), balanceChange.getAccount().getId()))
+        if (!accessService.checkHasAccess(balanceChange.getPerson().getId(),
+                UUID.fromString(balanceChange.getAccount().getId())))
             throw new IllegalArgumentException("У данного пользователя нет доступа к этому счёту");
 
         // getting account from DB and its balance
-        LegalAccountEntity account = this.getAccountEntityById(balanceChange.getAccount().getId());
+        LegalAccountEntity account = this.getAccountEntityById((balanceChange.getAccount().getId()));
         Long balance = account.getBalance();
 
         // check balance will not become negative
@@ -66,7 +63,7 @@ public class LegalAccountService {
 
     @Transactional
     public void increaseBalance(@Nonnull BalanceChangeDTO balanceChange) {
-        LegalAccountEntity account = this.getAccountEntityById(balanceChange.getAccount().getId());
+        LegalAccountEntity account = this.getAccountEntityById((balanceChange.getAccount().getId()));
 
         // update balance
         this.updateBalance(
@@ -78,7 +75,7 @@ public class LegalAccountService {
     }
 
     @Transactional
-    public void updateBalance(Long accountId, Long balance) {
+    public void updateBalance(UUID accountId, Long balance) {
         legalAccountRepository.updateBalanceByAccountId(
                 accountId,
                 balance
@@ -86,10 +83,17 @@ public class LegalAccountService {
 
     }
 
-    public LegalAccountEntity getAccountEntityById(@Nonnull Long accountId) {
+    public LegalAccountEntity getAccountEntityById(@Nonnull String id) {
         LegalAccountEntity legalAccountEntity;
+        UUID uuid;
         try {
-            legalAccountEntity = legalAccountRepository.findById(accountId).orElse(null);
+            uuid = UUID.fromString(id);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Не удалось распарсить uuid");
+        }
+
+        try {
+            legalAccountEntity = legalAccountRepository.findById(uuid).orElse(null);
         } catch (Exception e) {
             throw new IllegalArgumentException("Ошибка в процессе поиска данных счёта");
         }
@@ -99,16 +103,7 @@ public class LegalAccountService {
         return legalAccountEntity;
     }
 
-    public LegalAccountDTO getAccountById(@Nonnull Long accountId) {
-        LegalAccountEntity legalAccountEntity;
-        try {
-            legalAccountEntity = legalAccountRepository.findById(accountId).orElse(null);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Ошибка в процессе поиска данных счёта");
-        }
-        if (legalAccountEntity == null) {
-            throw new IllegalArgumentException("Не найден счёт с данным id");
-        }
-        return new LegalAccountDTO(legalAccountEntity);
+    public LegalAccountDTO getAccountById(@Nonnull String id) {
+        return new LegalAccountDTO(this.getAccountEntityById(id));
     }
 }
