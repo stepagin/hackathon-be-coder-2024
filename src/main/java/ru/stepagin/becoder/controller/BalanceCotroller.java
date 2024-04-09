@@ -18,6 +18,7 @@ public class BalanceCotroller {
     }
 
     @GetMapping("/{id}")
+    //@PreAuthorize("@securityService.isAuthorized(#id, authentication)") TODO изменить логику метода под UUID
     public ResponseEntity<?> getAccountDetails(@PathVariable String id) {
         try {
             LegalAccountDTO account = accountService.getAccountById(id);
@@ -27,10 +28,10 @@ public class BalanceCotroller {
         }
     }
 
-    @PostMapping
-    public ResponseEntity<?> createAccount() {
+    @PostMapping("/{id}")
+    public ResponseEntity<?> createAccount(@PathVariable Long id) {
         try {
-            LegalAccountDTO account = accountService.createAccount();
+            LegalAccountDTO account = accountService.createAccount(id);
             return ResponseEntity.ok(account);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
