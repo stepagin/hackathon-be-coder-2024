@@ -28,10 +28,10 @@ public class BalanceCotroller {
         }
     }
 
-    @PostMapping("/{id}")
-    public ResponseEntity<?> createAccount(@PathVariable Long id) {
+    @PostMapping
+    public ResponseEntity<?> createAccount() {
         try {
-            LegalAccountDTO account = accountService.createAccount(id);
+            LegalAccountDTO account = accountService.createAccount();
             return ResponseEntity.ok(account);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());

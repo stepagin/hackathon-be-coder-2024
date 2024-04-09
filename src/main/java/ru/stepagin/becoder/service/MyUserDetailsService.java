@@ -1,6 +1,5 @@
 package ru.stepagin.becoder.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,7 +19,7 @@ public class MyUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         PersonEntity user = personRepository.findByLogin(username); //username = email
-        if(user == null) throw new UsernameNotFoundException("нет такого пользователя");
+        if (user == null) throw new UsernameNotFoundException("нет такого пользователя");
         return User.builder()
                 .username(user.getLogin())
                 .password(user.getPassword())
