@@ -1,9 +1,7 @@
 package ru.stepagin.becoder.controller;
 
 import lombok.NonNull;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.stepagin.becoder.DTO.BalanceChangeDTO;
 import ru.stepagin.becoder.DTO.LegalAccountDTO;
@@ -20,7 +18,7 @@ public class BalanceCotroller {
     }
 
     @GetMapping("/{id}")
-    //@PreAuthorize("@securityService.isAuthorized(#id, authentication)")
+    //@PreAuthorize("@securityService.isAuthorized(#id, authentication)") TODO изменить логику метода под UUID
     public ResponseEntity<?> getAccountDetails(@PathVariable Long id) {
         try {
             LegalAccountDTO account = accountService.getAccountById(id);
@@ -31,7 +29,6 @@ public class BalanceCotroller {
     }
 
     @PostMapping("/{id}")
-    //@PreAuthorize("@securityService.isAuthorized(#id, authentication)")
     public ResponseEntity<?> createAccount(@PathVariable Long id) {
         try {
             LegalAccountDTO account = accountService.createAccount(id);
