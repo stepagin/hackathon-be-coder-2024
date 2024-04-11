@@ -16,12 +16,10 @@ import java.util.UUID;
 public class LegalAccountService {
     private final LegalAccountRepository legalAccountRepository;
     private final HistoryService historyService;
-    private final AccessService accessService;
 
-    public LegalAccountService(LegalAccountRepository legalAccountRepository, HistoryService historyService, AccessService accessService) {
+    public LegalAccountService(LegalAccountRepository legalAccountRepository, HistoryService historyService) {
         this.legalAccountRepository = legalAccountRepository;
         this.historyService = historyService;
-        this.accessService = accessService;
     }
 
     @Transactional
@@ -35,11 +33,6 @@ public class LegalAccountService {
 
     @Transactional
     public void decreaseBalance(@Nonnull BalanceChangeDTO balanceChange) {
-        // check user has access
-        if (!accessService.checkHasAccess(balanceChange.getPerson().getId(),
-                UUID.fromString(balanceChange.getAccount().getId())))
-            throw new IllegalArgumentException("У данного пользователя нет доступа к этому счёту");
-
         // getting account from DB and its balance
         LegalAccountEntity account = this.getAccountEntityById((balanceChange.getAccount().getId()));
         Long balance = account.getBalance();

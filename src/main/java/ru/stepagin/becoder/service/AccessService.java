@@ -16,6 +16,10 @@ public class AccessService {
         this.accessRepository = accessRepository;
     }
 
+    public void save(AccessEntity access){
+        accessRepository.save(access);
+    }
+
     public boolean checkHasAccess(Long personId, UUID accoutId) {
         AccessEntity access;
         try {

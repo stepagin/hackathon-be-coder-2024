@@ -2,6 +2,7 @@ package ru.stepagin.becoder.controller;
 
 import lombok.NonNull;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.stepagin.becoder.DTO.BalanceChangeDTO;
 import ru.stepagin.becoder.DTO.LegalAccountDTO;
@@ -10,15 +11,15 @@ import ru.stepagin.becoder.service.LegalAccountService;
 @RestController
 @CrossOrigin
 @RequestMapping("/account")
-public class BalanceCotroller {
+public class BalanceController {
     private final LegalAccountService accountService;
 
-    public BalanceCotroller(LegalAccountService accountService) {
+    public BalanceController(LegalAccountService accountService) {
         this.accountService = accountService;
     }
 
     @GetMapping("/{id}")
-    //@PreAuthorize("@securityService.isAuthorized(#id, authentication)") TODO изменить логику метода под UUID
+    @PreAuthorize("@securityService.hasAccessToAccount(#id, authentication)")
     public ResponseEntity<?> getAccountDetails(@PathVariable String id) {
         try {
             LegalAccountDTO account = accountService.getAccountById(id);
@@ -38,7 +39,7 @@ public class BalanceCotroller {
         }
     }
 
-
+    @PreAuthorize("@securityService.hasAccessToAccount(#balanceChange, authentication)")
     @PostMapping("/increase")
     public ResponseEntity<String> increaseAccountBalance(@RequestBody @NonNull BalanceChangeDTO balanceChange) {
         try {
@@ -53,6 +54,7 @@ public class BalanceCotroller {
         }
     }
 
+    @PreAuthorize("@securityService.hasAccessToAccount(#balanceChange, authentication)")
     @PostMapping("/decrease")
     public ResponseEntity<String> decreaseAccountBalance(@RequestBody @NonNull BalanceChangeDTO balanceChange) {
         try {
