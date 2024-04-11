@@ -3,33 +3,40 @@ package ru.stepagin.becoder.service;
 import jakarta.annotation.Nonnull;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jms.annotation.JmsListener;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import ru.stepagin.becoder.DTO.BalanceChangeDTO;
 import ru.stepagin.becoder.DTO.LegalAccountDTO;
 import ru.stepagin.becoder.entity.LegalAccountEntity;
-import ru.stepagin.becoder.repository.LegalAccountRepository;
+import ru.stepagin.becoder.microservicesConnection.Message;
 
 import java.util.UUID;
 
 @Slf4j
 @Service
 public class LegalAccountService {
-    private final LegalAccountRepository legalAccountRepository;
+    private final JmsTemplate jmsTemplate;
+
     private final HistoryService historyService;
     private final AccessService accessService;
+    private final String queueName = "LegalAccount";
 
-    public LegalAccountService(LegalAccountRepository legalAccountRepository, HistoryService historyService, AccessService accessService) {
-        this.legalAccountRepository = legalAccountRepository;
+    public LegalAccountService(JmsTemplate jmsTemplate, HistoryService historyService, AccessService accessService) {
+        this.jmsTemplate = jmsTemplate;
         this.historyService = historyService;
         this.accessService = accessService;
     }
 
     @Transactional
+    @JmsListener(destination = queueName+"Save")
     public LegalAccountDTO createAccount() {
-        LegalAccountEntity legalAccountEntity = new LegalAccountEntity();
-        legalAccountEntity.setBalance(0L);
-        legalAccountEntity = legalAccountRepository.save(legalAccountEntity);
-        return new LegalAccountDTO(legalAccountEntity);
+        LegalAccountEntity legalAccountEntity = new LegalAccountEntity(0L);
+        Message message = new Message(legalAccountEntity);
+        Message response = (Message) jmsTemplate.sendAndReceive(queueName, session -> session.createObjectMessage(message));
+//        legalAccountEntity = legalAccountRepository.save(legalAccountEntity);
+        assert response != null;
+        return new LegalAccountDTO(response.getLegalAccount());
     }
 
 
@@ -76,13 +83,17 @@ public class LegalAccountService {
 
     @Transactional
     public void updateBalance(UUID accountId, Long balance) {
-        legalAccountRepository.updateBalanceByAccountId(
-                accountId,
-                balance
-        );
+        Message message = new Message(new LegalAccountEntity(accountId, balance));
+        jmsTemplate.convertAndSend(queueName+"Update", message);
+//        legalAccountRepository.updateBalanceByAccountId(
+//                accountId,
+//                balance
+//        );
 
     }
 
+
+    @JmsListener(destination = queueName+"GetById")
     public LegalAccountEntity getAccountEntityById(@Nonnull String id) {
         LegalAccountEntity legalAccountEntity;
         UUID uuid;
@@ -93,10 +104,15 @@ public class LegalAccountService {
         }
 
         try {
-            legalAccountEntity = legalAccountRepository.findById(uuid).orElse(null);
+//            legalAccountEntity = legalAccountRepository.findById(uuid).orElse(null);
+            Message message = new Message(new LegalAccountEntity(uuid));
+            Message response = (Message) jmsTemplate.sendAndReceive(queueName, session -> session.createObjectMessage(message));
+            assert response != null;
+            legalAccountEntity = response.getLegalAccount();
         } catch (Exception e) {
             throw new IllegalArgumentException("Ошибка в процессе поиска данных счёта");
         }
+
         if (legalAccountEntity == null) {
             throw new IllegalArgumentException("Не найден счёт с данным id");
         }

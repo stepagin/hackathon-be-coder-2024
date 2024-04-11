@@ -27,4 +27,12 @@ public class HistoryEntity {
     private LocalDateTime date;
     @Column(name = "success", nullable = false)
     private boolean success;
+
+
+    public HistoryEntity(Long amount, LegalAccountEntity legalAccountEntity, Boolean success){
+        this.amount = amount;
+        this.account = legalAccountEntity;
+        this.date = LocalDateTime.now();
+        this.success = success;
+    }
 }

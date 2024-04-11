@@ -19,4 +19,17 @@ public class LegalAccountEntity {
     private UUID id;
     @Column(name = "balance", nullable = false)
     private Long balance;
+
+
+    public LegalAccountEntity(UUID accountId){
+        this.id = accountId;
+    }
+    public LegalAccountEntity(Long balance){
+        this.balance = balance;
+    }
+
+    public LegalAccountEntity(UUID accountId, Long balance){
+        this.id = accountId;
+        this.balance = balance;
+    }
 }

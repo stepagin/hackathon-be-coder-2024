@@ -19,4 +19,13 @@ public class PersonEntity {
     private String login;
     @Column(name = "password", nullable = false)
     private String password;
+
+
+    public PersonEntity(Long id){
+        this.id = id;
+    }
+
+    public PersonEntity(String username){
+        this.login = username;
+    }
 }

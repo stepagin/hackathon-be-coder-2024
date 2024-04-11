@@ -1,28 +1,41 @@
 package ru.stepagin.becoder.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jms.annotation.EnableJms;
+import org.springframework.jms.annotation.JmsListener;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import ru.stepagin.becoder.entity.AccessEntity;
-import ru.stepagin.becoder.repository.AccessRepository;
+import ru.stepagin.becoder.microservicesConnection.Message;
 
 import java.util.UUID;
 
 @Slf4j
 @Service
+@Component
+@EnableJms
 public class AccessService {
-    private final AccessRepository accessRepository;
 
-    public AccessService(AccessRepository accessRepository) {
-        this.accessRepository = accessRepository;
+    private final JmsTemplate jmsTemplate;
+
+    private final String queueName = "Access";
+
+    public AccessService(JmsTemplate jmsTemplate) {
+        this.jmsTemplate = jmsTemplate;
     }
 
-    public boolean checkHasAccess(Long personId, UUID accoutId) {
-        AccessEntity access;
-        try {
-            access = accessRepository.findByAccount_IdAndPersonId(accoutId, personId);
-        } catch (Exception e) {
+    @JmsListener(destination = queueName+"CheckAccess")
+    public boolean checkHasAccess(Long personId, UUID accountId) {
+        Message message = new Message(new AccessEntity(personId, accountId));
+        Message response = (Message) jmsTemplate.sendAndReceive(queueName, session -> session.createObjectMessage(message));
+//        access = accessRepository.findByAccount_IdAndPersonId(accountId, personId);
+
+        if (response != null) {
+            return true;
+        } else {
             throw new IllegalArgumentException("Ошибка в процессе проверки доступа к счёту");
         }
-        return access != null;
     }
+
 }

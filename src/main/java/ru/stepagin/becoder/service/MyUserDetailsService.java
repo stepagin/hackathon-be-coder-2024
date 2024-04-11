@@ -1,24 +1,35 @@
 package ru.stepagin.becoder.service;
 
+import org.springframework.jms.annotation.JmsListener;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.stepagin.becoder.entity.PersonEntity;
-import ru.stepagin.becoder.repository.PersonRepository;
+import ru.stepagin.becoder.microservicesConnection.Message;
 
 @Service
 public class MyUserDetailsService implements UserDetailsService {
-    private final PersonRepository personRepository;
+    private final JmsTemplate jmsTemplate;
+    private final String queueName = "Person";
 
-    public MyUserDetailsService(PersonRepository personRepository) {
-        this.personRepository = personRepository;
+    public MyUserDetailsService(JmsTemplate jmsTemplate) {
+        this.jmsTemplate = jmsTemplate;
     }
 
+
+
+    //TODO: возможно будут проблемы с методом из PersonService, надо проверить
     @Override
+    @JmsListener(destination = queueName+"GetByLogin")
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        PersonEntity user = personRepository.findByLogin(username); //username = email
+//        PersonEntity user = personRepository.findByLogin(username); //username = email
+        Message message = new Message(new PersonEntity(username));
+        Message response = (Message) jmsTemplate.sendAndReceive(queueName, session -> session.createObjectMessage(message));
+        assert response != null;
+        PersonEntity user = response.getPerson();
         if (user == null) throw new UsernameNotFoundException("нет такого пользователя");
         return User.builder()
                 .username(user.getLogin())
