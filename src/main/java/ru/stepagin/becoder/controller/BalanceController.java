@@ -2,32 +2,37 @@ package ru.stepagin.becoder.controller;
 
 import lombok.NonNull;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import ru.stepagin.becoder.DTO.AccessDTO;
 import ru.stepagin.becoder.DTO.BalanceChangeDTO;
 import ru.stepagin.becoder.DTO.LegalAccountDTO;
+import ru.stepagin.becoder.entity.PersonEntity;
+import ru.stepagin.becoder.service.AccessService;
 import ru.stepagin.becoder.service.LegalAccountService;
+import ru.stepagin.becoder.service.SecurityService;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin
 @RequestMapping("/account")
-public class BalanceCotroller {
+public class BalanceController {
     private final LegalAccountService accountService;
+    private final AccessService accessService;
+    private final SecurityService securityService;
 
-    public BalanceCotroller(LegalAccountService accountService) {
+    public BalanceController(LegalAccountService accountService, AccessService accessService, SecurityService securityService) {
         this.accountService = accountService;
+        this.accessService = accessService;
+        this.securityService = securityService;
     }
 
 
-    @GetMapping("/qwe")
-    public ResponseEntity<?> test() {
-        try {
-            return ResponseEntity.ok("qwe qwe");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
+
     @GetMapping("/{id}")
-    //@PreAuthorize("@securityService.isAuthorized(#id, authentication)") TODO изменить логику метода под UUID
+    @PreAuthorize("@securityService.hasAccessToAccount(#id, authentication)")
     public ResponseEntity<?> getAccountDetails(@PathVariable String id) {
         try {
             LegalAccountDTO account = accountService.getAccountById(id);
@@ -38,16 +43,18 @@ public class BalanceCotroller {
     }
 
     @PostMapping
-    public ResponseEntity<?> createAccount() {
+    public ResponseEntity<?> createAccount(Authentication authentication) {
         try {
-            LegalAccountDTO account = accountService.createAccount();
+            PersonEntity person = securityService.getPerson(authentication);
+            if(person == null) ResponseEntity.badRequest().body("пользователь, создающий аккаунт, не найден");
+            LegalAccountDTO account = accountService.createAccount(person);
             return ResponseEntity.ok(account);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-
+    @PreAuthorize("@securityService.hasAccessToAccount(#balanceChange, authentication)")
     @PostMapping("/increase")
     public ResponseEntity<String> increaseAccountBalance(@RequestBody @NonNull BalanceChangeDTO balanceChange) {
         try {
@@ -62,6 +69,7 @@ public class BalanceCotroller {
         }
     }
 
+    @PreAuthorize("@securityService.hasAccessToAccount(#balanceChange, authentication)")
     @PostMapping("/decrease")
     public ResponseEntity<String> decreaseAccountBalance(@RequestBody @NonNull BalanceChangeDTO balanceChange) {
         try {
@@ -74,5 +82,12 @@ public class BalanceCotroller {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+
+    @GetMapping("/all/{id}")
+    @PreAuthorize("@securityService.checkIdIsSame(#id, authentication)")
+    public ResponseEntity<List<AccessDTO>> getAllAccounts(@PathVariable Long id) {
+        return ResponseEntity.ok(accessService.getAllByUserId(id));
     }
 }

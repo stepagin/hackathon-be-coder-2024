@@ -10,8 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class BalanceChangeDTO {
     @Nonnull
-    private PersonDTO person;
-    @Nonnull
     private Long amount;
     @Nonnull
     private LegalAccountDTO account;

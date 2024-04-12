@@ -9,7 +9,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import ru.stepagin.becoder.DTO.BalanceChangeDTO;
 import ru.stepagin.becoder.DTO.LegalAccountDTO;
+import ru.stepagin.becoder.entity.AccessEntity;
 import ru.stepagin.becoder.entity.LegalAccountEntity;
+import ru.stepagin.becoder.entity.PersonEntity;
 import ru.stepagin.becoder.microservicesConnection.Message;
 
 import java.util.UUID;
@@ -32,12 +34,12 @@ public class LegalAccountService {
     }
 
     @Transactional
-    public LegalAccountDTO createAccount() {
+    public LegalAccountDTO createAccount(PersonEntity person) {
         LegalAccountEntity legalAccountEntity = new LegalAccountEntity(0L);
         Message request = new Message(legalAccountEntity);
-//        Message response = (Message) jmsTemplate.sendAndReceive(queueName + "Save", session -> session.createObjectMessage(message));
         jmsTemplate.convertAndSend(queueName + "SaveRequest", request);
         Message response = (Message) jmsTemplate.receiveAndConvert(queueName + "SaveResponse");
+        accessService.save(new AccessEntity(person, legalAccountEntity));
         assert response != null;
         return new LegalAccountDTO(response.getLegalAccount());
     }
@@ -45,11 +47,6 @@ public class LegalAccountService {
 
     @Transactional
     public void decreaseBalance(@Nonnull BalanceChangeDTO balanceChange) {
-        // check user has access
-        if (!accessService.checkHasAccess(balanceChange.getPerson().getId(),
-                UUID.fromString(balanceChange.getAccount().getId())))
-            throw new IllegalArgumentException("У данного пользователя нет доступа к этому счёту");
-
         // getting account from DB and its balance
         LegalAccountEntity account = this.getAccountEntityById((balanceChange.getAccount().getId()));
         Long balance = account.getBalance();
@@ -92,7 +89,6 @@ public class LegalAccountService {
     }
 
 
-//    @JmsListener(destination = queueName + "GetByIdGetter")
     public LegalAccountEntity getAccountEntityById(@Nonnull String id) {
         LegalAccountEntity legalAccountEntity;
         UUID uuid;
@@ -104,7 +100,6 @@ public class LegalAccountService {
 
         try {
             Message request = new Message(new LegalAccountEntity(uuid));
-//            Message response = (Message) jmsTemplate.sendAndReceive(queueName + "GetByIdGetter", session -> session.createObjectMessage(message));
             jmsTemplate.convertAndSend(queueName + "GetByIdRequest", request);
             Message response = (Message) jmsTemplate.receiveAndConvert(queueName + "GetByIdResponse");
             legalAccountEntity = response.getLegalAccount();
