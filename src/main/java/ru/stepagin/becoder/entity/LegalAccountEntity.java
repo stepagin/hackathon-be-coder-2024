@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 @Entity
@@ -12,11 +13,23 @@ import java.util.UUID;
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class LegalAccountEntity {
+public class LegalAccountEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", columnDefinition = "UUID")
     private UUID id;
     @Column(name = "balance", nullable = false)
     private Long balance;
+
+    public LegalAccountEntity(UUID accountId){
+        this.id = accountId;
+    }
+    public LegalAccountEntity(Long balance){
+        this.balance = balance;
+    }
+
+    public LegalAccountEntity(UUID accountId, Long balance){
+        this.id = accountId;
+        this.balance = balance;
+    }
 }

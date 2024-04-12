@@ -5,12 +5,14 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Entity
 @Table(name = "person")
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class PersonEntity {
+public class PersonEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -19,4 +21,13 @@ public class PersonEntity {
     private String login;
     @Column(name = "password", nullable = false)
     private String password;
+
+    public PersonEntity(Long id){
+        this.id = id;
+    }
+
+    public PersonEntity(String username){
+        this.login = username;
+    }
+
 }

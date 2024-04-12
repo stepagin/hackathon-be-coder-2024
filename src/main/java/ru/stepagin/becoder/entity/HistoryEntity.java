@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class HistoryEntity {
+public class HistoryEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -27,4 +28,12 @@ public class HistoryEntity {
     private LocalDateTime date;
     @Column(name = "success", nullable = false)
     private boolean success;
+
+
+    public HistoryEntity(Long amount, LegalAccountEntity legalAccountEntity, Boolean success){
+        this.amount = amount;
+        this.account = legalAccountEntity;
+        this.date = LocalDateTime.now();
+        this.success = success;
+    }
 }

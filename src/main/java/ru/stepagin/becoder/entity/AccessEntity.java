@@ -5,12 +5,15 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+import java.util.UUID;
+
 @Entity
 @Table(name = "access")
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class AccessEntity {
+public class AccessEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -19,4 +22,9 @@ public class AccessEntity {
     private PersonEntity person;
     @ManyToOne
     private LegalAccountEntity account;
+
+    public AccessEntity(Long personId, UUID accountId){
+        this.person = new PersonEntity(personId);
+        this.account = new LegalAccountEntity(accountId);
+    }
 }
