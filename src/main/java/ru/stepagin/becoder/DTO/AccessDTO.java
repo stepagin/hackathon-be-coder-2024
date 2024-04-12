@@ -12,11 +12,7 @@ public class AccessDTO {
     @NonNull
     private String accountId;
 
-    @NonNull
-    private Long id;
-
-    public AccessDTO(@NonNull Long id, @NonNull String accountId){
-        this.id = id;
+    public AccessDTO(@NonNull String accountId){
         this.accountId = accountId;
     }
 }

@@ -45,13 +45,14 @@ public class SecurityConfiguration {
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .authorizeHttpRequests(registry -> {
                     registry.requestMatchers("/h2-console/").permitAll();
+                    registry.requestMatchers("/auth/register").permitAll();
                     registry.anyRequest().authenticated();
                 })
                 .httpBasic(Customizer.withDefaults())
                 .build();
     }
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public static PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }

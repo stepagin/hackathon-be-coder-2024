@@ -37,7 +37,7 @@ public class AccessService {
         return accessRepository.findAll()
                 .stream()
                 .filter(x -> x.getPerson().getId().equals(id))
-                .map(x -> new AccessDTO(x.getId(), x.getAccount().getId().toString()))
+                .map(x -> new AccessDTO(x.getAccount().getId().toString()))
                 .collect(Collectors.toList());
     }
 }

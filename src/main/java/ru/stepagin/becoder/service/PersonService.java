@@ -3,6 +3,7 @@ package ru.stepagin.becoder.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.stepagin.becoder.DTO.PersonDTO;
+import ru.stepagin.becoder.config.SecurityConfiguration;
 import ru.stepagin.becoder.entity.PersonEntity;
 import ru.stepagin.becoder.repository.PersonRepository;
 
@@ -60,7 +61,7 @@ public class PersonService {
         }
         PersonEntity personEntity = new PersonEntity();
         personEntity.setLogin(login);
-        personEntity.setPassword(password);
+        personEntity.setPassword(SecurityConfiguration.passwordEncoder().encode(password));
         personRepository.save(personEntity);
         return new PersonDTO(personEntity);
     }
