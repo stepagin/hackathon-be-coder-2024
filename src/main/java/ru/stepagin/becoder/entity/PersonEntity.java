@@ -5,19 +5,15 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-@Entity
-@Table(name = "person")
+import java.io.Serializable;
+
+
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class PersonEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+public class PersonEntity implements Serializable {
     private Long id;
-    @Column(name = "login", nullable = false)
     private String login;
-    @Column(name = "password", nullable = false)
     private String password;
 
 

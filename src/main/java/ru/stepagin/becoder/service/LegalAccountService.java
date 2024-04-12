@@ -3,8 +3,10 @@ package ru.stepagin.becoder.service;
 import jakarta.annotation.Nonnull;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import ru.stepagin.becoder.DTO.BalanceChangeDTO;
 import ru.stepagin.becoder.DTO.LegalAccountDTO;
@@ -15,6 +17,8 @@ import java.util.UUID;
 
 @Slf4j
 @Service
+@Component
+@EnableJms
 public class LegalAccountService {
     private final JmsTemplate jmsTemplate;
 
@@ -29,7 +33,7 @@ public class LegalAccountService {
     }
 
     @Transactional
-    @JmsListener(destination = queueName+"Save")
+    @JmsListener(destination = queueName + "Save")
     public LegalAccountDTO createAccount() {
         LegalAccountEntity legalAccountEntity = new LegalAccountEntity(0L);
         Message message = new Message(legalAccountEntity);
@@ -84,7 +88,7 @@ public class LegalAccountService {
     @Transactional
     public void updateBalance(UUID accountId, Long balance) {
         Message message = new Message(new LegalAccountEntity(accountId, balance));
-        jmsTemplate.convertAndSend(queueName+"Update", message);
+        jmsTemplate.convertAndSend(queueName + "Update", message);
 //        legalAccountRepository.updateBalanceByAccountId(
 //                accountId,
 //                balance
@@ -93,7 +97,7 @@ public class LegalAccountService {
     }
 
 
-    @JmsListener(destination = queueName+"GetById")
+    @JmsListener(destination = queueName + "GetByIdGetter")
     public LegalAccountEntity getAccountEntityById(@Nonnull String id) {
         LegalAccountEntity legalAccountEntity;
         UUID uuid;

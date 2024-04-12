@@ -1,8 +1,10 @@
 package ru.stepagin.becoder.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import ru.stepagin.becoder.DTO.PersonDTO;
 import ru.stepagin.becoder.entity.PersonEntity;
@@ -10,6 +12,8 @@ import ru.stepagin.becoder.microservicesConnection.Message;
 
 @Slf4j
 @Service
+@Component
+@EnableJms
 public class PersonService {
     private final JmsTemplate jmsTemplate;
     private final String queueName = "Person";
@@ -24,7 +28,6 @@ public class PersonService {
 //            personEntity = personRepository.findById(id).orElse(null);
             Message message = new Message(new PersonEntity(id));
             Message response = (Message) jmsTemplate.sendAndReceive(queueName, session -> session.createObjectMessage(message));
-            assert response != null;
             personEntity = response.getPerson();
         } catch (Exception e) {
             throw new IllegalArgumentException("Не удалось запросить пользователя");
@@ -49,7 +52,6 @@ public class PersonService {
         } catch (Exception e) {
             throw new IllegalArgumentException("Не удалось запросить пользователя");
         }
-
         if (personEntity == null)
             throw new IllegalArgumentException("Не существует пользователя с указаным login");
 

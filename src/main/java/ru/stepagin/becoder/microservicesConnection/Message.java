@@ -7,7 +7,6 @@ import ru.stepagin.becoder.entity.LegalAccountEntity;
 import ru.stepagin.becoder.entity.PersonEntity;
 
 import java.io.Serializable;
-import java.util.UUID;
 
 
 @Data

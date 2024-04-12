@@ -5,19 +5,15 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.UUID;
 
-@Entity
-@Table(name = "legal_account")
+
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class LegalAccountEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", columnDefinition = "UUID")
+public class LegalAccountEntity implements Serializable {
     private UUID id;
-    @Column(name = "balance", nullable = false)
     private Long balance;
 
 
