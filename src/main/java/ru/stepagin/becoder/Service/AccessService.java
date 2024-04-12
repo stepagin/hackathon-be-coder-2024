@@ -6,8 +6,12 @@ import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
 import ru.stepagin.becoder.entity.AccessEntity;
+import ru.stepagin.becoder.entity.PersonEntity;
 import ru.stepagin.becoder.microservicesConnection.Message;
 import ru.stepagin.becoder.repository.AccessRepository;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @EnableJms
@@ -31,5 +35,25 @@ public class AccessService {
         jmsTemplate.convertAndSend(queueName + "CheckAccessResponse", to_ret);
     }
 
+    @JmsListener(destination = queueName + "SaveRequest")
+    public void save(Message message){
+        AccessEntity access = message.getAccess();
+        accessRepository.save(access);
+    }
+
+
+    @JmsListener(destination = queueName + "GetListByUserIdRequest")
+    public void getAllByUserId(Message message){
+        Long id = message.getPerson().getId();
+
+        List<Object> to_ret = accessRepository
+                .findAll()
+                .stream()
+                .filter(x -> x.getPerson().getId().equals(id))
+                .collect(Collectors.toList());
+
+        Message request = new Message(to_ret);
+        jmsTemplate.convertAndSend(queueName + "GetListByUserIdResponse", request);
+    }
 
 }

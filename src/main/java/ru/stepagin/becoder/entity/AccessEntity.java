@@ -2,6 +2,7 @@ package ru.stepagin.becoder.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
@@ -23,8 +24,12 @@ public class AccessEntity implements Serializable {
     @ManyToOne
     private LegalAccountEntity account;
 
-    public AccessEntity(Long personId, UUID accountId){
-        this.person = new PersonEntity(personId);
-        this.account = new LegalAccountEntity(accountId);
+    public AccessEntity(@NonNull PersonEntity person, @NonNull LegalAccountEntity account){
+        this.person = person;
+        this.account = account;
+    }
+
+    public AccessEntity(@NonNull PersonEntity person){
+        this.person = person;
     }
 }

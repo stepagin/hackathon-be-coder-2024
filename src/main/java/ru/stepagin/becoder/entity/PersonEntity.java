@@ -30,4 +30,8 @@ public class PersonEntity implements Serializable {
         this.login = username;
     }
 
+    public PersonEntity(String username, String password){
+        this.login = username;
+        this.password = password;
+    }
 }

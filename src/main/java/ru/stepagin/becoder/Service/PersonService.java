@@ -11,6 +11,10 @@ import ru.stepagin.becoder.microservicesConnection.Message;
 import ru.stepagin.becoder.repository.LegalAccountRepository;
 import ru.stepagin.becoder.repository.PersonRepository;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Component
 @EnableJms
 public class PersonService {
@@ -43,11 +47,20 @@ public class PersonService {
 
     @JmsListener(destination = queueName + "GetByLoginRequest")
     public void getPersonByLogin(Message message) {
-        PersonEntity person = message.getPerson();
-        String s = person.getLogin();
-        person = personRepository.findByLogin(s);
-        Long id = person.getId();
+        PersonEntity person = personRepository.findByLogin(message.getPerson().getLogin());
         jmsTemplate.convertAndSend(queueName + "GetByLoginResponse", new Message(person));
     }
 
+    @JmsListener(destination = queueName + "GetByLoginRegisterRequest")
+    public void getPersonByLoginRegister(Message message) {
+        PersonEntity person = personRepository.findByLogin(message.getPerson().getLogin());
+        jmsTemplate.convertAndSend(queueName + "GetByLoginRegisterResponse", new Message(person));
+    }
+
+    @JmsListener(destination = queueName + "GetListRequest")
+    public void getAllUsers() {
+        List<Object> to_ret = new ArrayList<>(personRepository.findAll());
+        Message response = new Message(to_ret);
+        jmsTemplate.convertAndSend(queueName + "GetListResponse", response);
+    }
 }
