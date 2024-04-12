@@ -4,8 +4,10 @@ import lombok.NonNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import ru.stepagin.becoder.DTO.AccessDTO;
 import ru.stepagin.becoder.DTO.BalanceChangeDTO;
 import ru.stepagin.becoder.DTO.LegalAccountDTO;
+import ru.stepagin.becoder.service.AccessService;
 import ru.stepagin.becoder.service.LegalAccountService;
 
 import java.util.List;
@@ -15,9 +17,11 @@ import java.util.List;
 @RequestMapping("/account")
 public class BalanceController {
     private final LegalAccountService accountService;
+    private final AccessService accessService;
 
-    public BalanceController(LegalAccountService accountService) {
+    public BalanceController(LegalAccountService accountService, AccessService accessService) {
         this.accountService = accountService;
+        this.accessService = accessService;
     }
 
     @GetMapping("/{id}")
@@ -71,8 +75,10 @@ public class BalanceController {
         }
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<LegalAccountDTO>> getAllAccounts() {
-        return ResponseEntity.ok(accountService.getAllAccounts());
+
+    @GetMapping("/all/{id}")
+    @PreAuthorize("@securityService.checkIdIsSame(#id, authentication)")
+    public ResponseEntity<List<AccessDTO>> getAllAccounts(@PathVariable Long id) {
+        return ResponseEntity.ok(accessService.getAllByUserId(id));
     }
 }

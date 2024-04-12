@@ -7,6 +7,7 @@ import ru.stepagin.becoder.DTO.BalanceChangeDTO;
 import ru.stepagin.becoder.entity.PersonEntity;
 import ru.stepagin.becoder.repository.PersonRepository;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -17,6 +18,13 @@ public class SecurityService {
     public SecurityService(PersonRepository personRepository, AccessService accessService) {
         this.personRepository = personRepository;
         this.accessService = accessService;
+    }
+
+    public boolean checkIdIsSame(Long id, Authentication authentication){
+        UserDetails user = (UserDetails) authentication.getPrincipal();
+        PersonEntity person = personRepository.findByLogin(user.getUsername());
+        if (person == null) return false;
+        return Objects.equals(person.getId(), id);
     }
 
     public boolean hasAccessToAccount(String accountId, Authentication authentication) {
