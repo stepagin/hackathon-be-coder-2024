@@ -24,7 +24,7 @@ public class HistoryService {
     }
 
 
-    @JmsListener(destination = queueName + "Save")
+    @JmsListener(destination = queueName + "SaveRequest")
     public void addRecord(Message message) {
         HistoryEntity history = message.getHistory();
         historyRepository.save(history);

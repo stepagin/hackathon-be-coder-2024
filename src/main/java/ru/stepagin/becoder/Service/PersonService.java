@@ -28,24 +28,26 @@ public class PersonService {
     }
 
 
-    @JmsListener(destination = queueName+"Save")
+    @JmsListener(destination = queueName + "SaveRequest")
     public void createPerson(Message message) {
         PersonEntity person = message.getPerson();
         personRepository.save(person);
     }
 
-    @JmsListener(destination = queueName+"GetById")
+    @JmsListener(destination = queueName + "GetByIdRequest")
     public void getPersonById(Message message) {
         PersonEntity person = message.getPerson();
         person = personRepository.findById(person.getId()).orElse(null);
-        jmsTemplate.convertAndSend(queueName+"GetById", new Message(person));
+        jmsTemplate.convertAndSend(queueName + "GetByIdResponse", new Message(person));
     }
 
-    @JmsListener(destination = queueName+"GetByLogin")
+    @JmsListener(destination = queueName + "GetByLoginRequest")
     public void getPersonByLogin(Message message) {
         PersonEntity person = message.getPerson();
-        person = personRepository.findByLogin(person.getLogin());
-        jmsTemplate.convertAndSend(queueName+"GetByLogin", new Message(person));
+        String s = person.getLogin();
+        person = personRepository.findByLogin(s);
+        Long id = person.getId();
+        jmsTemplate.convertAndSend(queueName + "GetByLoginResponse", new Message(person));
     }
 
 }

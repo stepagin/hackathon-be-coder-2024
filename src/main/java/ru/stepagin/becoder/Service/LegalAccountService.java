@@ -32,14 +32,14 @@ public class LegalAccountService {
     }
 
 
-    @JmsListener(destination = queueName + "Save")
+    @JmsListener(destination = queueName + "SaveRequest")
     public void createAccount(Message message) {
         LegalAccountEntity legalAccount = message.getLegalAccount();
         legalAccount = legalAccountRepository.save(legalAccount);
-        jmsTemplate.convertAndSend(queueName + "Save", new Message(legalAccount));
+        jmsTemplate.convertAndSend(queueName + "SaveResponse", new Message(legalAccount));
     }
 
-    @JmsListener(destination = queueName + "Update")
+    @JmsListener(destination = queueName + "UpdateRequest")
     public void updateBalance(Message message) {
         LegalAccountEntity legalAccount = message.getLegalAccount();
         legalAccountRepository.updateBalanceByAccountId(
@@ -49,11 +49,11 @@ public class LegalAccountService {
 
     }
 
-    @JmsListener(destination = queueName + "GetById")
+    @JmsListener(destination = queueName + "GetByIdRequest")
     public void getAccountEntityById(Message message) {
         LegalAccountEntity legalAccount = message.getLegalAccount();
         legalAccount = legalAccountRepository.findById(legalAccount.getId()).orElse(null);
-        jmsTemplate.convertAndSend(queueName + "GetByIdGetter", new Message(legalAccount));
+        jmsTemplate.convertAndSend(queueName + "GetByIdResponse", new Message(legalAccount));
     }
 
 }

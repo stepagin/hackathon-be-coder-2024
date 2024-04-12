@@ -24,11 +24,11 @@ public class AccessService {
     }
 
 
-    @JmsListener(destination = queueName + "CheckAccess")
+    @JmsListener(destination = queueName + "CheckAccessRequest")
     public void checkHasAccess(Message message) {
         AccessEntity access = accessRepository.findByAccount_IdAndPersonId(message.getAccess().getAccount().getId(), message.getAccess().getPerson().getId());
         Message to_ret = new Message(access);
-        jmsTemplate.convertAndSend(queueName + "CheckAccess", to_ret);
+        jmsTemplate.convertAndSend(queueName + "CheckAccessResponse", to_ret);
     }
 
 
