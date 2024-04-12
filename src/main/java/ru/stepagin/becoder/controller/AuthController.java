@@ -22,15 +22,6 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody PersonEntity person) {
-        try {
-            return ResponseEntity.ok(personService.login(person.getLogin(), person.getPassword()));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
     @GetMapping("/all")
     public ResponseEntity<?> getAll() {
         return ResponseEntity.ok(personService.getAllUsers());
