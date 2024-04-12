@@ -6,6 +6,8 @@ import ru.stepagin.becoder.DTO.PersonDTO;
 import ru.stepagin.becoder.entity.PersonEntity;
 import ru.stepagin.becoder.repository.PersonRepository;
 
+import java.util.List;
+
 @Slf4j
 @Service
 public class PersonService {
@@ -41,5 +43,43 @@ public class PersonService {
             throw new IllegalArgumentException("Не существует пользователя с указаным login");
 
         return new PersonDTO(personEntity);
+    }
+
+    public PersonDTO registerPerson(String login, String password) {
+        if (login == null || password == null) {
+            throw new IllegalArgumentException("Login and password cannot be null");
+        }
+        if (login.isEmpty() || password.isEmpty()) {
+            throw new IllegalArgumentException("Login and password cannot be empty");
+        }
+        if (login.length() < 6 || password.length() < 6) {
+            throw new IllegalArgumentException("Login and password must contain at least 6 characters");
+        }
+        if (personRepository.findByLogin(login) != null) {
+            throw new IllegalArgumentException("Login already exists");
+        }
+        PersonEntity personEntity = new PersonEntity();
+        personEntity.setLogin(login);
+        personEntity.setPassword(password);
+        personRepository.save(personEntity);
+        return new PersonDTO(personEntity);
+    }
+
+    public PersonDTO login(String login, String password) {
+        if (login == null || password == null) {
+            throw new IllegalArgumentException("Login and password cannot be null");
+        }
+        if (login.isEmpty() || password.isEmpty()) {
+            throw new IllegalArgumentException("Login and password cannot be empty");
+        }
+        PersonEntity personEntity = personRepository.findByLogin(login);
+        if (personEntity == null || !personEntity.getPassword().equals(password)) {
+            throw new IllegalArgumentException("Login and/or password are incorrect");
+        }
+        return new PersonDTO(personEntity);
+    }
+
+    public List<PersonDTO> getAllUsers() {
+        return personRepository.findAll().stream().map(PersonDTO::new).toList();
     }
 }
