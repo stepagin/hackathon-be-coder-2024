@@ -9,6 +9,7 @@ import ru.stepagin.becoder.DTO.LegalAccountDTO;
 import ru.stepagin.becoder.entity.LegalAccountEntity;
 import ru.stepagin.becoder.repository.LegalAccountRepository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -98,5 +99,9 @@ public class LegalAccountService {
 
     public LegalAccountDTO getAccountById(@Nonnull String id) {
         return new LegalAccountDTO(this.getAccountEntityById(id));
+    }
+
+    public List<LegalAccountDTO> getAllAccounts() {
+        return legalAccountRepository.findAll().stream().map(LegalAccountDTO::new).toList();
     }
 }

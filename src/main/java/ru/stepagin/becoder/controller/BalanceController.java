@@ -8,6 +8,8 @@ import ru.stepagin.becoder.DTO.BalanceChangeDTO;
 import ru.stepagin.becoder.DTO.LegalAccountDTO;
 import ru.stepagin.becoder.service.LegalAccountService;
 
+import java.util.List;
+
 @RestController
 @CrossOrigin
 @RequestMapping("/account")
@@ -67,5 +69,10 @@ public class BalanceController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<LegalAccountDTO>> getAllAccounts() {
+        return ResponseEntity.ok(accountService.getAllAccounts());
     }
 }

@@ -3,8 +3,6 @@ package ru.stepagin.becoder.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.stepagin.becoder.DTO.LegalAccountDTO;
-import ru.stepagin.becoder.DTO.PersonDTO;
 import ru.stepagin.becoder.entity.PersonEntity;
 import ru.stepagin.becoder.service.PersonService;
 
