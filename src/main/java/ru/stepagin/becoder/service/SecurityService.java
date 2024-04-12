@@ -22,13 +22,12 @@ public class SecurityService {
         this.jmsTemplate = jmsTemplate;
     }
 
-    @JmsListener(destination = queueName+"GetByLogin")
     public boolean isAuthorized(Long id, Authentication authentication) {
         UserDetails user = (UserDetails) authentication.getPrincipal();
-        Message message = new Message(new PersonEntity(user.getUsername()));
-        Message response = (Message) jmsTemplate.sendAndReceive(queueName, session -> session.createObjectMessage(message));
+        Message request = new Message(new PersonEntity(user.getUsername()));
+        jmsTemplate.convertAndSend(queueName + "GetByLoginRequest", request);
+        Message response = (Message) jmsTemplate.receiveAndConvert(queueName + "GetByLoginResponse");
         PersonEntity person = response.getPerson();
-//        PersonEntity person = personRepository.findByLogin(user.getUsername());
         if (person == null) return false;
         return person.getId() != null && person.getId().equals(id);
     }

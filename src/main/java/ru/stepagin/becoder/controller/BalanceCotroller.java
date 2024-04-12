@@ -17,6 +17,15 @@ public class BalanceCotroller {
         this.accountService = accountService;
     }
 
+
+    @GetMapping("/qwe")
+    public ResponseEntity<?> test() {
+        try {
+            return ResponseEntity.ok("qwe qwe");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
     @GetMapping("/{id}")
     //@PreAuthorize("@securityService.isAuthorized(#id, authentication)") TODO изменить логику метода под UUID
     public ResponseEntity<?> getAccountDetails(@PathVariable String id) {

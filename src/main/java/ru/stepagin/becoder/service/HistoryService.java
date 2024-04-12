@@ -26,7 +26,7 @@ public class HistoryService {
     public void addRecord(@Nonnull Long amount, @Nonnull LegalAccountEntity legalAccountEntity, @Nonnull Boolean success) {
         Message message = new Message(new HistoryEntity(amount, legalAccountEntity, success));
         try {
-            jmsTemplate.convertAndSend(queueName + "Save", message);
+            jmsTemplate.convertAndSend(queueName + "SaveRequest", message);
 //            historyRepository.save(historyEntity);
         } catch (Exception e) {
             throw new IllegalArgumentException("Произошла ошибка во время сохранения в историю запросов");

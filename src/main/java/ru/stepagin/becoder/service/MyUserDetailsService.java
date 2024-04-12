@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import ru.stepagin.becoder.entity.PersonEntity;
 import ru.stepagin.becoder.microservicesConnection.Message;
 
+import static java.lang.Thread.sleep;
+
 @Service
 @Component
 @EnableJms
@@ -24,15 +26,11 @@ public class MyUserDetailsService implements UserDetailsService {
     }
 
 
-
-    //TODO: возможно будут проблемы с методом из PersonService, надо проверить
     @Override
-    @JmsListener(destination = queueName+"GetByLogin")
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//        PersonEntity user = personRepository.findByLogin(username); //username = email
-        Message message = new Message(new PersonEntity(username));
-        Message response = (Message) jmsTemplate.sendAndReceive(queueName, session -> session.createObjectMessage(message));
-        assert response != null;
+        Message request = new Message(new PersonEntity(username));
+        jmsTemplate.convertAndSend(queueName + "GetByLoginRequest", request);
+        Message response = (Message) jmsTemplate.receiveAndConvert(queueName + "GetByLoginResponse");
         PersonEntity user = response.getPerson();
         if (user == null) throw new UsernameNotFoundException("нет такого пользователя");
         return User.builder()
