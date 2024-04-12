@@ -3,12 +3,15 @@ package ru.stepagin.becoder.controller;
 import lombok.NonNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ru.stepagin.becoder.DTO.AccessDTO;
 import ru.stepagin.becoder.DTO.BalanceChangeDTO;
 import ru.stepagin.becoder.DTO.LegalAccountDTO;
+import ru.stepagin.becoder.entity.PersonEntity;
 import ru.stepagin.becoder.service.AccessService;
 import ru.stepagin.becoder.service.LegalAccountService;
+import ru.stepagin.becoder.service.SecurityService;
 
 import java.util.List;
 
@@ -18,10 +21,12 @@ import java.util.List;
 public class BalanceController {
     private final LegalAccountService accountService;
     private final AccessService accessService;
+    private final SecurityService securityService;
 
-    public BalanceController(LegalAccountService accountService, AccessService accessService) {
+    public BalanceController(LegalAccountService accountService, AccessService accessService, SecurityService securityService) {
         this.accountService = accountService;
         this.accessService = accessService;
+        this.securityService = securityService;
     }
 
     @GetMapping("/{id}")
@@ -36,9 +41,11 @@ public class BalanceController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createAccount() {
+    public ResponseEntity<?> createAccount(Authentication authentication) {
         try {
-            LegalAccountDTO account = accountService.createAccount();
+            PersonEntity person = securityService.getPerson(authentication);
+            if(person == null) ResponseEntity.badRequest().body("пользователь, создающий аккаунт, не найден");
+            LegalAccountDTO account = accountService.createAccount(person);
             return ResponseEntity.ok(account);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());

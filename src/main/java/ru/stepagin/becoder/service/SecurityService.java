@@ -20,16 +20,19 @@ public class SecurityService {
         this.accessService = accessService;
     }
 
-    public boolean checkIdIsSame(Long id, Authentication authentication){
+    public PersonEntity getPerson(Authentication authentication){
         UserDetails user = (UserDetails) authentication.getPrincipal();
-        PersonEntity person = personRepository.findByLogin(user.getUsername());
+        return personRepository.findByLogin(user.getUsername());
+    }
+
+    public boolean checkIdIsSame(Long id, Authentication authentication){
+        PersonEntity person = getPerson(authentication);
         if (person == null) return false;
         return Objects.equals(person.getId(), id);
     }
 
     public boolean hasAccessToAccount(String accountId, Authentication authentication) {
-        UserDetails user = (UserDetails) authentication.getPrincipal();
-        PersonEntity person = personRepository.findByLogin(user.getUsername());
+        PersonEntity person = getPerson(authentication);
         if (person == null) return false;
         return accessService.checkHasAccess(person.getId(), UUID.fromString(accountId));
     }

@@ -6,7 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.stepagin.becoder.DTO.BalanceChangeDTO;
 import ru.stepagin.becoder.DTO.LegalAccountDTO;
+import ru.stepagin.becoder.entity.AccessEntity;
 import ru.stepagin.becoder.entity.LegalAccountEntity;
+import ru.stepagin.becoder.entity.PersonEntity;
 import ru.stepagin.becoder.repository.LegalAccountRepository;
 import java.util.UUID;
 
@@ -15,19 +17,21 @@ import java.util.UUID;
 public class LegalAccountService {
     private final LegalAccountRepository legalAccountRepository;
     private final HistoryService historyService;
+    private final AccessService accessService;
 
 
-
-    public LegalAccountService(LegalAccountRepository legalAccountRepository, HistoryService historyService) {
+    public LegalAccountService(LegalAccountRepository legalAccountRepository, HistoryService historyService, AccessService accessService) {
         this.legalAccountRepository = legalAccountRepository;
         this.historyService = historyService;
+        this.accessService = accessService;
     }
 
     @Transactional
-    public LegalAccountDTO createAccount() {
+    public LegalAccountDTO createAccount(PersonEntity person) {
         LegalAccountEntity legalAccountEntity = new LegalAccountEntity();
         legalAccountEntity.setBalance(0L);
         legalAccountEntity = legalAccountRepository.save(legalAccountEntity);
+        accessService.save(new AccessEntity(person, legalAccountEntity));
         return new LegalAccountDTO(legalAccountEntity);
     }
 
