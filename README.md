@@ -8,7 +8,27 @@
 ```shell
 git clone https://github.com/stepagin/hackathon-be-coder-2024
 ```
-TODO?
+Перейдите в директорию проекта
+
+```shell
+cd hackathon-be-coder-2024
+```
+
+Соберите jar файл 
+
+```shell
+mvn clean package
+```
+
+Файл появится в папке target и его можно будет запустить:
+
+```shell
+cd target
+java -jar be-coder-test-0.0.1-SNAPSHOT.jar 
+```
+
+Приложение запустится на порту 18002, его можно изменить в application.properties
+
 
 ## Запросы для работы с приложением
 
@@ -140,3 +160,5 @@ JDBC URL: ``jdbc:h2:mem:becoder``
 Пароль: ``root``
 
 В открывшемся окне можно выполнять sql запросы.
+
+Данные для подключения к бд можно изменить в файле application.properties
