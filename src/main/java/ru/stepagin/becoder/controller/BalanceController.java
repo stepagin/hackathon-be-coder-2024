@@ -95,7 +95,7 @@ public class BalanceController {
     @PreAuthorize("@securityService.isActiveOwner(#id, authentication)")
     public ResponseEntity<String> grantAccessToAccount(@PathVariable String id, @RequestBody PersonDTO person){
         LegalAccountEntity account = accountService.getAccountEntityById(id);
-        if(accessService.grantAccess(account, person.getLogin())) return ResponseEntity.ok("Пользователю " + person.getLogin() + "выдан доступ к аккаунту " + id);
+        if(accessService.grantAccess(account, person.getLogin())) return ResponseEntity.ok("Пользователю " + person.getLogin() + " выдан доступ к аккаунту " + id);
         else return ResponseEntity.badRequest().body("некорректный запрос на выдачу прав");
     }
 
@@ -103,7 +103,7 @@ public class BalanceController {
     @PreAuthorize("@securityService.isActiveOwner(#id, authentication)")
     public ResponseEntity<String> revokeAccessFromAccount(@PathVariable String id, @RequestBody PersonDTO person){
         LegalAccountEntity account = accountService.getAccountEntityById(id);
-        if(accessService.revokeAccess(account, person.getLogin())) return ResponseEntity.ok("У пользователя " + person.getLogin() + "отозван доступ к аккаунту " + id);
+        if(accessService.revokeAccess(account, person.getLogin())) return ResponseEntity.ok("У пользователя " + person.getLogin() + " отозван доступ к аккаунту " + id);
         else return ResponseEntity.badRequest().body("некорректный запрос на отзыв прав");
     }
 }
