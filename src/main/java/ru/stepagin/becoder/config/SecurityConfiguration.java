@@ -51,6 +51,7 @@ public class SecurityConfiguration {
                 .httpBasic(Customizer.withDefaults())
                 .build();
     }
+
     @Bean
     public static PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

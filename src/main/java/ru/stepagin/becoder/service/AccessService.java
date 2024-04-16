@@ -25,10 +25,9 @@ public class AccessService {
         this.personRepository = personRepository;
     }
 
-    public void save(AccessEntity access){
+    public void save(AccessEntity access) {
         accessRepository.save(access);
     }
-
 
 
     public boolean checkHasAccess(Long personId, UUID accoutId) {
@@ -41,25 +40,26 @@ public class AccessService {
         return access != null;
     }
 
-    public List<AccessDTO> getAllByUserId(Long id){
+    public List<AccessDTO> getAllByUserId(Long id) {
         return accessRepository.findAll()
                 .stream()
                 .filter(x -> x.getPerson().getId().equals(id))
                 .map(x -> new AccessDTO(x.getAccount().getId().toString()))
                 .collect(Collectors.toList());
     }
+
     @Transactional
-    public boolean grantAccess(LegalAccountEntity account, String login){
+    public boolean grantAccess(LegalAccountEntity account, String login) {
         PersonEntity person = personRepository.findByLogin(login);
-        if(person == null || account == null) return false;
+        if (person == null || account == null) return false;
         accessRepository.save(new AccessEntity(person, account));
         return true;
     }
 
     @Transactional
-    public boolean revokeAccess(LegalAccountEntity account, String login){
+    public boolean revokeAccess(LegalAccountEntity account, String login) {
         PersonEntity person = personRepository.findByLogin(login);
-        if(person == null || account == null) return false;
+        if (person == null || account == null) return false;
         accessRepository.delete(accessRepository.findByAccount_IdAndPersonId(account.getId(), person.getId()));
         return true;
     }

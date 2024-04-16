@@ -12,7 +12,7 @@ public class AccessDTO {
     @NonNull
     private String accountId;
 
-    public AccessDTO(@NonNull String accountId){
+    public AccessDTO(@NonNull String accountId) {
         this.accountId = accountId;
     }
 }

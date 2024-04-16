@@ -28,7 +28,7 @@ public class LegalAccountService {
         this.accessService = accessService;
     }
 
-    public boolean isActiveOwner(Long personId, UUID accoutId){
+    public boolean isActiveOwner(Long personId, UUID accoutId) {
         LegalAccountEntity account = getAccountEntityById(accoutId.toString());
         return accessService.checkHasAccess(personId, accoutId) && (Objects.equals(account.getCreatorId(), personId));
     }

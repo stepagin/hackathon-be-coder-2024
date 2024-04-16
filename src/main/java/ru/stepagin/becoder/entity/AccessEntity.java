@@ -21,7 +21,7 @@ public class AccessEntity {
     @ManyToOne
     private LegalAccountEntity account;
 
-    public AccessEntity(@NonNull PersonEntity person, @NonNull LegalAccountEntity account){
+    public AccessEntity(@NonNull PersonEntity person, @NonNull LegalAccountEntity account) {
         this.person = person;
         this.account = account;
     }

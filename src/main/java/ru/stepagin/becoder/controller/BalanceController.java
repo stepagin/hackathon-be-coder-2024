@@ -46,7 +46,7 @@ public class BalanceController {
     public ResponseEntity<?> createAccount(Authentication authentication) {
         try {
             PersonEntity person = securityService.getPerson(authentication);
-            if(person == null) ResponseEntity.badRequest().body("пользователь, создающий аккаунт, не найден");
+            if (person == null) ResponseEntity.badRequest().body("пользователь, создающий аккаунт, не найден");
             LegalAccountDTO account = accountService.createAccount(person);
             return ResponseEntity.ok(account);
         } catch (Exception e) {
@@ -93,17 +93,19 @@ public class BalanceController {
 
     @PostMapping("grant/{id}")
     @PreAuthorize("@securityService.isActiveOwner(#id, authentication)")
-    public ResponseEntity<String> grantAccessToAccount(@PathVariable String id, @RequestBody PersonDTO person){
+    public ResponseEntity<String> grantAccessToAccount(@PathVariable String id, @RequestBody PersonDTO person) {
         LegalAccountEntity account = accountService.getAccountEntityById(id);
-        if(accessService.grantAccess(account, person.getLogin())) return ResponseEntity.ok("Пользователю " + person.getLogin() + " выдан доступ к аккаунту " + id);
+        if (accessService.grantAccess(account, person.getLogin()))
+            return ResponseEntity.ok("Пользователю " + person.getLogin() + " выдан доступ к аккаунту " + id);
         else return ResponseEntity.badRequest().body("некорректный запрос на выдачу прав");
     }
 
     @PostMapping("revoke/{id}")
     @PreAuthorize("@securityService.isActiveOwner(#id, authentication)")
-    public ResponseEntity<String> revokeAccessFromAccount(@PathVariable String id, @RequestBody PersonDTO person){
+    public ResponseEntity<String> revokeAccessFromAccount(@PathVariable String id, @RequestBody PersonDTO person) {
         LegalAccountEntity account = accountService.getAccountEntityById(id);
-        if(accessService.revokeAccess(account, person.getLogin())) return ResponseEntity.ok("У пользователя " + person.getLogin() + " отозван доступ к аккаунту " + id);
+        if (accessService.revokeAccess(account, person.getLogin()))
+            return ResponseEntity.ok("У пользователя " + person.getLogin() + " отозван доступ к аккаунту " + id);
         else return ResponseEntity.badRequest().body("некорректный запрос на отзыв прав");
     }
 }

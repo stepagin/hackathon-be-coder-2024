@@ -22,18 +22,18 @@ public class SecurityService {
         this.legalAccountService = legalAccountService;
     }
 
-    public PersonEntity getPerson(Authentication authentication){
+    public PersonEntity getPerson(Authentication authentication) {
         UserDetails user = (UserDetails) authentication.getPrincipal();
         return personRepository.findByLogin(user.getUsername());
     }
 
-    public boolean checkIdIsSame(Long id, Authentication authentication){
+    public boolean checkIdIsSame(Long id, Authentication authentication) {
         PersonEntity person = getPerson(authentication);
         if (person == null) return false;
         return Objects.equals(person.getId(), id);
     }
 
-    public boolean isActiveOwner(String accountId, Authentication authentication){
+    public boolean isActiveOwner(String accountId, Authentication authentication) {
         PersonEntity person = getPerson(authentication);
         if (person == null) return false;
         return legalAccountService.isActiveOwner(person.getId(), UUID.fromString(accountId));
@@ -45,7 +45,7 @@ public class SecurityService {
         return accessService.checkHasAccess(person.getId(), UUID.fromString(accountId));
     }
 
-    public boolean hasAccessToAccount(BalanceChangeDTO balanceChangeDTO, Authentication authentication){
+    public boolean hasAccessToAccount(BalanceChangeDTO balanceChangeDTO, Authentication authentication) {
         return hasAccessToAccount(balanceChangeDTO.getAccount().getId(), authentication);
     }
 
