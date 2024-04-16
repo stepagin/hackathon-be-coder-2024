@@ -6,10 +6,10 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.2.4</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
     <groupId>ru.stepagin</groupId>
-    <artifactId>be-coder-test</artifactId>
+    <artifactId>be-coder</artifactId>
     <version>1.0</version>
     <name>hackathon-be-coder-2024</name>
     <description>hackathon-be-coder-2024</description>
