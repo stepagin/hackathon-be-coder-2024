@@ -14,10 +14,17 @@ git clone https://github.com/stepagin/hackathon-be-coder-2024
 cd hackathon-be-coder-2024
 ```
 
-Соберите jar файл 
+Соберите jar файл:
+
+На Linux:
 
 ```shell
 mvn clean package
+```
+
+На Windows:
+```shell
+.\mvnw clean package --% -Dmaven.test.skip=true
 ```
 
 Файл появится в папке target и его можно будет запустить:
