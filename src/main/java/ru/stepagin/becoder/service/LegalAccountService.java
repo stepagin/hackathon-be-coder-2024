@@ -10,6 +10,8 @@ import ru.stepagin.becoder.entity.AccessEntity;
 import ru.stepagin.becoder.entity.LegalAccountEntity;
 import ru.stepagin.becoder.entity.PersonEntity;
 import ru.stepagin.becoder.repository.LegalAccountRepository;
+
+import java.util.Objects;
 import java.util.UUID;
 
 @Slf4j
@@ -26,10 +28,16 @@ public class LegalAccountService {
         this.accessService = accessService;
     }
 
+    public boolean isActiveOwner(Long personId, UUID accoutId){
+        LegalAccountEntity account = getAccountEntityById(accoutId.toString());
+        return accessService.checkHasAccess(personId, accoutId) && (Objects.equals(account.getCreatorId(), personId));
+    }
+
     @Transactional
     public LegalAccountDTO createAccount(PersonEntity person) {
         LegalAccountEntity legalAccountEntity = new LegalAccountEntity();
         legalAccountEntity.setBalance(0L);
+        legalAccountEntity.setCreatorId(person.getId());
         legalAccountEntity = legalAccountRepository.save(legalAccountEntity);
         accessService.save(new AccessEntity(person, legalAccountEntity));
         return new LegalAccountDTO(legalAccountEntity);

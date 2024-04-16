@@ -20,25 +20,18 @@ import java.util.stream.Collectors;
 @Service
 public class AccessService {
     private final AccessRepository accessRepository;
-    private final PersonService personService;
     private final PersonRepository personRepository;
-    private final LegalAccountService legalAccountService;
 
-    public AccessService(AccessRepository accessRepository, PersonService personService, PersonRepository personRepository, LegalAccountService legalAccountService) {
+    public AccessService(AccessRepository accessRepository, PersonRepository personRepository) {
         this.accessRepository = accessRepository;
-        this.personService = personService;
         this.personRepository = personRepository;
-        this.legalAccountService = legalAccountService;
     }
 
     public void save(AccessEntity access){
         accessRepository.save(access);
     }
 
-    public boolean isActiveOwner(Long personId, UUID accoutId){
-        LegalAccountEntity account = legalAccountService.getAccountEntityById(accoutId.toString());
-        return checkHasAccess(personId, accoutId) && (Objects.equals(account.getCreatorId(), personId));
-    }
+
 
     public boolean checkHasAccess(Long personId, UUID accoutId) {
         AccessEntity access;
@@ -58,21 +51,17 @@ public class AccessService {
                 .collect(Collectors.toList());
     }
     @Transactional
-    public boolean grantAccess(String accountId, String login){
+    public boolean grantAccess(LegalAccountEntity account, String login){
         PersonEntity person = personRepository.findByLogin(login);
-        if(person == null) return false;
-        LegalAccountEntity account = legalAccountService.getAccountEntityById(accountId);
-        if(account == null) return false;
+        if(person == null || account == null) return false;
         accessRepository.save(new AccessEntity(person, account));
         return true;
     }
 
     @Transactional
-    public boolean revokeAccess(String accountId, String login){
+    public boolean revokeAccess(LegalAccountEntity account, String login){
         PersonEntity person = personRepository.findByLogin(login);
-        if(person == null) return false;
-        LegalAccountEntity account = legalAccountService.getAccountEntityById(accountId);
-        if(account == null) return false;
+        if(person == null || account == null) return false;
         accessRepository.delete(new AccessEntity(person, account));
         return true;
     }

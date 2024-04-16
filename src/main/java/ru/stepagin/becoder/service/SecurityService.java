@@ -14,10 +14,12 @@ import java.util.UUID;
 public class SecurityService {
     final PersonRepository personRepository;
     final AccessService accessService;
+    private final LegalAccountService legalAccountService;
 
-    public SecurityService(PersonRepository personRepository, AccessService accessService) {
+    public SecurityService(PersonRepository personRepository, AccessService accessService, LegalAccountService legalAccountService) {
         this.personRepository = personRepository;
         this.accessService = accessService;
+        this.legalAccountService = legalAccountService;
     }
 
     public PersonEntity getPerson(Authentication authentication){
@@ -34,7 +36,7 @@ public class SecurityService {
     public boolean isActiveOwner(String accountId, Authentication authentication){
         PersonEntity person = getPerson(authentication);
         if (person == null) return false;
-        return accessService.isActiveOwner(person.getId(), UUID.fromString(accountId));
+        return legalAccountService.isActiveOwner(person.getId(), UUID.fromString(accountId));
     }
 
     public boolean hasAccessToAccount(String accountId, Authentication authentication) {
