@@ -31,6 +31,12 @@ public class SecurityService {
         return Objects.equals(person.getId(), id);
     }
 
+    public boolean isActiveOwner(String accountId, Authentication authentication){
+        PersonEntity person = getPerson(authentication);
+        if (person == null) return false;
+        return accessService.isActiveOwner(person.getId(), UUID.fromString(accountId));
+    }
+
     public boolean hasAccessToAccount(String accountId, Authentication authentication) {
         PersonEntity person = getPerson(authentication);
         if (person == null) return false;

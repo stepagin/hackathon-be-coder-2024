@@ -91,12 +91,14 @@ public class BalanceController {
     }
 
     @PostMapping("grant/{id}")
+    @PreAuthorize("@securityService.isActiveOwner(#id, authentication)")
     public ResponseEntity<String> grantAccessToAccount(@PathVariable String id, @RequestBody PersonDTO person){
         if(accessService.grantAccess(id, person.getLogin())) return ResponseEntity.ok("Пользователю " + person.getLogin() + "выдан доступ к аккаунту " + id);
         else return ResponseEntity.badRequest().body("некорректный запрос на выдачу прав");
     }
 
     @PostMapping("revoke/{id}")
+    @PreAuthorize("@securityService.isActiveOwner(#id, authentication)")
     public ResponseEntity<String> revokeAccessFromAccount(@PathVariable String id, @RequestBody PersonDTO person){
         if(accessService.revokeAccess(id, person.getLogin())) return ResponseEntity.ok("У пользователя " + person.getLogin() + "отозван доступ к аккаунту " + id);
         else return ResponseEntity.badRequest().body("некорректный запрос на отзыв прав");

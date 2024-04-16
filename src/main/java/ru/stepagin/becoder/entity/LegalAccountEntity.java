@@ -19,4 +19,6 @@ public class LegalAccountEntity {
     private UUID id;
     @Column(name = "balance", nullable = false)
     private Long balance;
+    @Column(name = "creator_id", nullable = false)
+    private Long creatorId;
 }

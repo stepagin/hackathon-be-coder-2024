@@ -12,6 +12,7 @@ import ru.stepagin.becoder.repository.AccessRepository;
 import ru.stepagin.becoder.repository.PersonRepository;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -32,6 +33,11 @@ public class AccessService {
 
     public void save(AccessEntity access){
         accessRepository.save(access);
+    }
+
+    public boolean isActiveOwner(Long personId, UUID accoutId){
+        LegalAccountEntity account = legalAccountService.getAccountEntityById(accoutId.toString());
+        return checkHasAccess(personId, accoutId) && (Objects.equals(account.getCreatorId(), personId));
     }
 
     public boolean checkHasAccess(Long personId, UUID accoutId) {
