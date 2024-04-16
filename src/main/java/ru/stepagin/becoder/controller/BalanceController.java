@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.stepagin.becoder.DTO.AccessDTO;
 import ru.stepagin.becoder.DTO.BalanceChangeDTO;
 import ru.stepagin.becoder.DTO.LegalAccountDTO;
+import ru.stepagin.becoder.DTO.PersonDTO;
 import ru.stepagin.becoder.entity.PersonEntity;
 import ru.stepagin.becoder.service.AccessService;
 import ru.stepagin.becoder.service.LegalAccountService;
@@ -87,5 +88,17 @@ public class BalanceController {
     @PreAuthorize("@securityService.checkIdIsSame(#id, authentication)")
     public ResponseEntity<List<AccessDTO>> getAllAccounts(@PathVariable Long id) {
         return ResponseEntity.ok(accessService.getAllByUserId(id));
+    }
+
+    @PostMapping("grant/{id}")
+    public ResponseEntity<String> grantAccessToAccount(@PathVariable String id, @RequestBody PersonDTO person){
+        if(accessService.grantAccess(id, person.getLogin())) return ResponseEntity.ok("Пользователю " + person.getLogin() + "выдан доступ к аккаунту " + id);
+        else return ResponseEntity.badRequest().body("некорректный запрос на выдачу прав");
+    }
+
+    @PostMapping("revoke/{id}")
+    public ResponseEntity<String> revokeAccessFromAccount(@PathVariable String id, @RequestBody PersonDTO person){
+        if(accessService.revokeAccess(id, person.getLogin())) return ResponseEntity.ok("У пользователя " + person.getLogin() + "отозван доступ к аккаунту " + id);
+        else return ResponseEntity.badRequest().body("некорректный запрос на отзыв прав");
     }
 }
