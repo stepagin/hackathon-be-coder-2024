@@ -29,9 +29,10 @@ public class LegalAccountService {
         this.accessService = accessService;
     }
 
-    public boolean isActiveOwner(Long personId, UUID accountId) {
+    @Transactional
+    public boolean isActiveOwner(PersonEntity person, UUID accountId) {
         LegalAccountEntity account = getAccountEntityById(accountId.toString());
-        return accessService.checkHasAccess(personId, accountId) && (Objects.equals(account.getCreator(), personId));
+        return accessService.checkHasAccess(person.getId(), accountId) && (Objects.equals(account.getCreator(), person));
     }
 
     @Transactional
@@ -97,6 +98,7 @@ public class LegalAccountService {
         return legalAccountEntity;
     }
 
+    @Transactional
     public LegalAccountDTO getAccountById(@Nonnull String id) {
         return new LegalAccountDTO(this.getAccountEntityById(id));
     }

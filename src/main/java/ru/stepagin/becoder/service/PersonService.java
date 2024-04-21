@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.stepagin.becoder.DTO.PersonDTO;
 import ru.stepagin.becoder.entity.PersonEntity;
-import ru.stepagin.becoder.exception.InvalidIdSuppliedException;
 import ru.stepagin.becoder.repository.PersonRepository;
 
 import java.util.List;
@@ -16,24 +15,6 @@ public class PersonService {
 
     public PersonService(PersonRepository personRepository) {
         this.personRepository = personRepository;
-    }
-
-    public PersonDTO getPersonById(Long id) {
-        PersonEntity personEntity = personRepository.findById(id).orElse(null);
-
-        if (personEntity == null)
-            throw new InvalidIdSuppliedException("Не существует пользователя с заданным id");
-
-        return new PersonDTO(personEntity);
-    }
-
-    public PersonDTO getPersonByLogin(String login) {
-        PersonEntity personEntity = personRepository.findByLogin(login);
-
-        if (personEntity == null)
-            throw new InvalidIdSuppliedException("Не существует пользователя с указанным login");
-
-        return new PersonDTO(personEntity);
     }
 
     public PersonDTO registerPerson(String login, String password) {

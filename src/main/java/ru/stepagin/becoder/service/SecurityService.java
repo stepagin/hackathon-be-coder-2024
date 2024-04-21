@@ -7,7 +7,6 @@ import ru.stepagin.becoder.DTO.BalanceChangeDTO;
 import ru.stepagin.becoder.entity.PersonEntity;
 import ru.stepagin.becoder.repository.PersonRepository;
 
-import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -27,16 +26,10 @@ public class SecurityService {
         return personRepository.findByLogin(user.getUsername());
     }
 
-    public boolean checkIdIsSame(Long id, Authentication authentication) {
-        PersonEntity person = getPerson(authentication);
-        if (person == null) return false;
-        return Objects.equals(person.getId(), id);
-    }
-
     public boolean isActiveOwner(String accountId, Authentication authentication) {
         PersonEntity person = getPerson(authentication);
         if (person == null) return false;
-        return legalAccountService.isActiveOwner(person.getId(), UUID.fromString(accountId));
+        return legalAccountService.isActiveOwner(person, UUID.fromString(accountId));
     }
 
     public boolean hasAccessToAccount(String accountId, Authentication authentication) {
