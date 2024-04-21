@@ -50,7 +50,7 @@ public class ServiceErrorHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<String> handleException(final AccessDeniedException e) {
         log.error("AccessDeniedException: {}", e.getMessage());
-        return ResponseEntity.internalServerError().body("Доступ запрещен");
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Доступ запрещен");
     }
 
     @ExceptionHandler(RuntimeException.class)
