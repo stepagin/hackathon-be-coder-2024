@@ -3,7 +3,7 @@ package ru.stepagin.becoder.service;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.stepagin.becoder.DTO.AccessDTO;
+import ru.stepagin.becoder.DTO.LegalAccountDTO;
 import ru.stepagin.becoder.entity.AccessEntity;
 import ru.stepagin.becoder.entity.LegalAccountEntity;
 import ru.stepagin.becoder.entity.PersonEntity;
@@ -34,8 +34,8 @@ public class AccessService {
         return access != null;
     }
 
-    public List<AccessDTO> getAllByPerson(PersonEntity person) {
-        return accessRepository.findByPerson(person).stream().map(AccessDTO::new).toList();
+    public List<LegalAccountDTO> getAllByPerson(PersonEntity person) {
+        return accessRepository.findByPerson(person).stream().map(LegalAccountDTO::new).toList();
     }
 
     @Transactional

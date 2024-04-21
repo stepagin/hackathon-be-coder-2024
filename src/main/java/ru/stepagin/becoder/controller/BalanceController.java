@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import ru.stepagin.becoder.DTO.AccessDTO;
 import ru.stepagin.becoder.DTO.BalanceChangeDTO;
 import ru.stepagin.becoder.DTO.LegalAccountDTO;
 import ru.stepagin.becoder.DTO.PersonDTO;
@@ -66,7 +65,7 @@ public class BalanceController {
 
 
     @GetMapping("/all")
-    public ResponseEntity<List<AccessDTO>> getAllAccounts(Authentication auth) {
+    public ResponseEntity<List<LegalAccountDTO>> getAllAccounts(Authentication auth) {
         PersonEntity person = securityService.getPerson(auth);
         return ResponseEntity.ok(accessService.getAllByPerson(person));
     }
