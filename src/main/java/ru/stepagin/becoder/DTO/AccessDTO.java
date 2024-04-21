@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import ru.stepagin.becoder.entity.AccessEntity;
 
 @Getter
 @Setter
@@ -14,5 +15,9 @@ public class AccessDTO {
 
     public AccessDTO(@NonNull String accountId) {
         this.accountId = accountId;
+    }
+
+    public AccessDTO(@NonNull AccessEntity accessEntity) {
+        this.accountId = String.valueOf(accessEntity.getAccount().getId());
     }
 }

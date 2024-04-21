@@ -1,29 +1,30 @@
 package ru.stepagin.becoder.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.stepagin.becoder.DTO.PersonDTO;
 import ru.stepagin.becoder.entity.PersonEntity;
 import ru.stepagin.becoder.service.PersonService;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin
 @RequestMapping("/auth")
 public class AuthController {
-    @Autowired
-    PersonService personService;
+    private final PersonService personService;
+
+    public AuthController(PersonService personService) {
+        this.personService = personService;
+    }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody PersonEntity person) {
-        try {
-            return ResponseEntity.ok(personService.registerPerson(person.getLogin(), person.getPassword()));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<PersonDTO> register(@RequestBody PersonEntity person) {
+        return ResponseEntity.ok(personService.registerPerson(person.getLogin(), person.getPassword()));
     }
 
     @GetMapping("/all")
-    public ResponseEntity<?> getAll() {
+    public ResponseEntity<List<PersonDTO>> getAll() {
         return ResponseEntity.ok(personService.getAllUsers());
     }
 }

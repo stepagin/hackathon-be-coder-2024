@@ -12,8 +12,8 @@ import java.util.UUID;
 
 @Service
 public class SecurityService {
-    final PersonRepository personRepository;
-    final AccessService accessService;
+    private final PersonRepository personRepository;
+    private final AccessService accessService;
     private final LegalAccountService legalAccountService;
 
     public SecurityService(PersonRepository personRepository, AccessService accessService, LegalAccountService legalAccountService) {

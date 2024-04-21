@@ -44,7 +44,7 @@ public class SecurityConfiguration {
         return httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .authorizeHttpRequests(registry -> {
-                    registry.requestMatchers("/h2-console/").permitAll();
+                    registry.requestMatchers("/h2-console/**").permitAll();
                     registry.requestMatchers("/auth/register").permitAll();
                     registry.anyRequest().authenticated();
                 })

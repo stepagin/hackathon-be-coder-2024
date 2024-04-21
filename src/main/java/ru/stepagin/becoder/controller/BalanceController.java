@@ -33,62 +33,42 @@ public class BalanceController {
 
     @GetMapping("/{id}")
     @PreAuthorize("@securityService.hasAccessToAccount(#id, authentication)")
-    public ResponseEntity<?> getAccountDetails(@PathVariable String id) {
-        try {
-            LegalAccountDTO account = accountService.getAccountById(id);
-            return ResponseEntity.ok(account);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<LegalAccountDTO> getAccountDetails(@PathVariable String id) {
+        LegalAccountDTO account = accountService.getAccountById(id);
+        return ResponseEntity.ok(account);
     }
 
     @PostMapping
-    public ResponseEntity<?> createAccount(Authentication authentication) {
-        try {
-            PersonEntity person = securityService.getPerson(authentication);
-            if (person == null) ResponseEntity.badRequest().body("пользователь, создающий аккаунт, не найден");
-            LegalAccountDTO account = accountService.createAccount(person);
-            return ResponseEntity.ok(account);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<LegalAccountDTO> createAccount(Authentication authentication) {
+        PersonEntity person = securityService.getPerson(authentication);
+        if (person == null) ResponseEntity.badRequest().body("пользователь, создающий аккаунт, не найден");
+        LegalAccountDTO account = accountService.createAccount(person);
+        return ResponseEntity.ok(account);
     }
 
     @PreAuthorize("@securityService.hasAccessToAccount(#balanceChange, authentication)")
     @PostMapping("/increase")
     public ResponseEntity<String> increaseAccountBalance(@RequestBody @NonNull BalanceChangeDTO balanceChange) {
-        try {
-            // check increasing amount > 0
-            if (balanceChange.getAmount() <= 0L)
-                throw new IllegalArgumentException("Amount должно быть больше нуля");
+        // check increasing amount > 0
+        if (balanceChange.getAmount() <= 0L)
+            throw new IllegalArgumentException("Amount должно быть больше нуля");
 
-            accountService.increaseBalance(balanceChange);
-            return ResponseEntity.ok("Счёт успешно пополнен");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        accountService.increaseBalance(balanceChange);
+        return ResponseEntity.ok("Счёт успешно пополнен");
     }
 
     @PreAuthorize("@securityService.hasAccessToAccount(#balanceChange, authentication)")
     @PostMapping("/decrease")
     public ResponseEntity<String> decreaseAccountBalance(@RequestBody @NonNull BalanceChangeDTO balanceChange) {
-        try {
-            // check decreasing amount > 0
-            if (balanceChange.getAmount() <= 0L)
-                throw new IllegalArgumentException("Amount должно быть больше нуля");
-
-            accountService.decreaseBalance(balanceChange);
-            return ResponseEntity.ok("Оплата прошла успешно");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        accountService.decreaseBalance(balanceChange);
+        return ResponseEntity.ok("Оплата прошла успешно");
     }
 
 
-    @GetMapping("/all/{id}")
-    @PreAuthorize("@securityService.checkIdIsSame(#id, authentication)")
-    public ResponseEntity<List<AccessDTO>> getAllAccounts(@PathVariable Long id) {
-        return ResponseEntity.ok(accessService.getAllByUserId(id));
+    @GetMapping("/all")
+    public ResponseEntity<List<AccessDTO>> getAllAccounts(Authentication auth) {
+        PersonEntity person = securityService.getPerson(auth);
+        return ResponseEntity.ok(accessService.getAllByPerson(person));
     }
 
     @PostMapping("grant/{id}")

@@ -18,7 +18,11 @@ public class LegalAccountEntity {
     @Column(name = "id", columnDefinition = "UUID")
     private UUID id;
     @Column(name = "balance", nullable = false)
-    private Long balance;
-    @Column(name = "creator_id", nullable = false)
-    private Long creatorId;
+    private Long balance = 0L;
+    @ManyToOne(optional = false)
+    private PersonEntity creator;
+
+    public LegalAccountEntity(PersonEntity creator) {
+        this.creator = creator;
+    }
 }

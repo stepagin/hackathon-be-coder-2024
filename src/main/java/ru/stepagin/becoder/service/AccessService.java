@@ -12,7 +12,6 @@ import ru.stepagin.becoder.repository.PersonRepository;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -30,22 +29,13 @@ public class AccessService {
     }
 
 
-    public boolean checkHasAccess(Long personId, UUID accoutId) {
-        AccessEntity access;
-        try {
-            access = accessRepository.findByAccount_IdAndPersonId(accoutId, personId);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Ошибка в процессе проверки доступа к счёту");
-        }
+    public boolean checkHasAccess(Long personId, UUID accountId) {
+        AccessEntity access = accessRepository.findByAccount_IdAndPersonId(accountId, personId);
         return access != null;
     }
 
-    public List<AccessDTO> getAllByUserId(Long id) {
-        return accessRepository.findAll()
-                .stream()
-                .filter(x -> x.getPerson().getId().equals(id))
-                .map(x -> new AccessDTO(x.getAccount().getId().toString()))
-                .collect(Collectors.toList());
+    public List<AccessDTO> getAllByPerson(PersonEntity person) {
+        return accessRepository.findByPerson(person).stream().map(AccessDTO::new).toList();
     }
 
     @Transactional

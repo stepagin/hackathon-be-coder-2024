@@ -7,8 +7,6 @@ import ru.stepagin.becoder.entity.HistoryEntity;
 import ru.stepagin.becoder.entity.LegalAccountEntity;
 import ru.stepagin.becoder.repository.HistoryRepository;
 
-import java.time.LocalDateTime;
-
 @Slf4j
 @Service
 public class HistoryService {
@@ -19,15 +17,7 @@ public class HistoryService {
     }
 
     public void addRecord(@Nonnull Long amount, @Nonnull LegalAccountEntity legalAccountEntity, @Nonnull Boolean success) {
-        HistoryEntity historyEntity = new HistoryEntity();
-        historyEntity.setAccount(legalAccountEntity);
-        historyEntity.setAmount(amount);
-        historyEntity.setSuccess(success);
-        historyEntity.setDate(LocalDateTime.now());
-        try {
-            historyRepository.save(historyEntity);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Произошла ошибка во время сохранения в историю запросов");
-        }
+        HistoryEntity historyEntity = new HistoryEntity(amount, legalAccountEntity, success);
+        historyRepository.save(historyEntity);
     }
 }

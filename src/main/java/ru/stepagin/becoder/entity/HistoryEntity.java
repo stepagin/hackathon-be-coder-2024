@@ -20,11 +20,17 @@ public class HistoryEntity {
     private Long id;
     @Column(name = "amount", nullable = false)
     private Long amount;
-    @ManyToOne
+    @ManyToOne(optional = false)
     private LegalAccountEntity account;
     @CreatedDate
     @Column(name = "date", nullable = false, columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
-    private LocalDateTime date;
+    private LocalDateTime date = LocalDateTime.now();
     @Column(name = "success", nullable = false)
     private boolean success;
+
+    public HistoryEntity(Long amount, LegalAccountEntity account, boolean success) {
+        this.amount = amount;
+        this.account = account;
+        this.success = success;
+    }
 }

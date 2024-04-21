@@ -9,6 +9,7 @@ import ru.stepagin.becoder.DTO.LegalAccountDTO;
 import ru.stepagin.becoder.entity.AccessEntity;
 import ru.stepagin.becoder.entity.LegalAccountEntity;
 import ru.stepagin.becoder.entity.PersonEntity;
+import ru.stepagin.becoder.exception.InvalidIdSuppliedException;
 import ru.stepagin.becoder.repository.LegalAccountRepository;
 
 import java.util.Objects;
@@ -28,16 +29,14 @@ public class LegalAccountService {
         this.accessService = accessService;
     }
 
-    public boolean isActiveOwner(Long personId, UUID accoutId) {
-        LegalAccountEntity account = getAccountEntityById(accoutId.toString());
-        return accessService.checkHasAccess(personId, accoutId) && (Objects.equals(account.getCreatorId(), personId));
+    public boolean isActiveOwner(Long personId, UUID accountId) {
+        LegalAccountEntity account = getAccountEntityById(accountId.toString());
+        return accessService.checkHasAccess(personId, accountId) && (Objects.equals(account.getCreator(), personId));
     }
 
     @Transactional
     public LegalAccountDTO createAccount(PersonEntity person) {
-        LegalAccountEntity legalAccountEntity = new LegalAccountEntity();
-        legalAccountEntity.setBalance(0L);
-        legalAccountEntity.setCreatorId(person.getId());
+        LegalAccountEntity legalAccountEntity = new LegalAccountEntity(person);
         legalAccountEntity = legalAccountRepository.save(legalAccountEntity);
         accessService.save(new AccessEntity(person, legalAccountEntity));
         return new LegalAccountDTO(legalAccountEntity);
@@ -46,6 +45,10 @@ public class LegalAccountService {
 
     @Transactional
     public void decreaseBalance(@Nonnull BalanceChangeDTO balanceChange) {
+        // check decreasing amount > 0
+        if (balanceChange.getAmount() <= 0L)
+            throw new IllegalArgumentException("Amount должно быть больше нуля");
+
         // getting account from DB and its balance
         LegalAccountEntity account = this.getAccountEntityById((balanceChange.getAccount().getId()));
         Long balance = account.getBalance();
@@ -82,29 +85,14 @@ public class LegalAccountService {
 
     @Transactional
     public void updateBalance(UUID accountId, Long balance) {
-        legalAccountRepository.updateBalanceByAccountId(
-                accountId,
-                balance
-        );
-
+        legalAccountRepository.updateBalanceByAccountId(accountId, balance);
     }
 
+    @Transactional
     public LegalAccountEntity getAccountEntityById(@Nonnull String id) {
-        LegalAccountEntity legalAccountEntity;
-        UUID uuid;
-        try {
-            uuid = UUID.fromString(id);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Не удалось распарсить uuid");
-        }
-
-        try {
-            legalAccountEntity = legalAccountRepository.findById(uuid).orElse(null);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Ошибка в процессе поиска данных счёта");
-        }
+        LegalAccountEntity legalAccountEntity = legalAccountRepository.findById(UUID.fromString(id)).orElse(null);
         if (legalAccountEntity == null) {
-            throw new IllegalArgumentException("Не найден счёт с данным id");
+            throw new InvalidIdSuppliedException("Не найден счёт с данным id");
         }
         return legalAccountEntity;
     }

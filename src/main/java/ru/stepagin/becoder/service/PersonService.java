@@ -3,8 +3,8 @@ package ru.stepagin.becoder.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.stepagin.becoder.DTO.PersonDTO;
-import ru.stepagin.becoder.config.SecurityConfiguration;
 import ru.stepagin.becoder.entity.PersonEntity;
+import ru.stepagin.becoder.exception.InvalidIdSuppliedException;
 import ru.stepagin.becoder.repository.PersonRepository;
 
 import java.util.List;
@@ -19,29 +19,19 @@ public class PersonService {
     }
 
     public PersonDTO getPersonById(Long id) {
-        PersonEntity personEntity;
-        try {
-            personEntity = personRepository.findById(id).orElse(null);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Не удалось запросить пользователя");
-        }
+        PersonEntity personEntity = personRepository.findById(id).orElse(null);
 
         if (personEntity == null)
-            throw new IllegalArgumentException("Не существует пользователя с заданным id");
+            throw new InvalidIdSuppliedException("Не существует пользователя с заданным id");
 
         return new PersonDTO(personEntity);
     }
 
     public PersonDTO getPersonByLogin(String login) {
-        PersonEntity personEntity;
-        try {
-            personEntity = personRepository.findByLogin(login);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Не удалось запросить пользователя");
-        }
+        PersonEntity personEntity = personRepository.findByLogin(login);
 
         if (personEntity == null)
-            throw new IllegalArgumentException("Не существует пользователя с указаным login");
+            throw new InvalidIdSuppliedException("Не существует пользователя с указанным login");
 
         return new PersonDTO(personEntity);
     }
@@ -59,9 +49,7 @@ public class PersonService {
         if (personRepository.findByLogin(login) != null) {
             throw new IllegalArgumentException("Login already exists");
         }
-        PersonEntity personEntity = new PersonEntity();
-        personEntity.setLogin(login);
-        personEntity.setPassword(SecurityConfiguration.passwordEncoder().encode(password));
+        PersonEntity personEntity = new PersonEntity(login, password);
         personRepository.save(personEntity);
         return new PersonDTO(personEntity);
     }
