@@ -3,6 +3,7 @@ package ru.stepagin.becoder.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -51,6 +52,12 @@ public class ServiceErrorHandler {
     public ResponseEntity<String> handleException(final AccessDeniedException e) {
         log.error("AccessDeniedException: {}", e.getMessage());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Доступ запрещен");
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<String> handleException(final HttpMessageNotReadableException e) {
+        log.error("HttpMessageNotReadableException: {}", e.getMessage());
+        return ResponseEntity.internalServerError().body("Переданы некорректные данные: " + e.getMessage());
     }
 
     @ExceptionHandler(RuntimeException.class)

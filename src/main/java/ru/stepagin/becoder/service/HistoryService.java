@@ -1,6 +1,5 @@
 package ru.stepagin.becoder.service;
 
-import jakarta.annotation.Nonnull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.stepagin.becoder.entity.HistoryEntity;
@@ -16,7 +15,7 @@ public class HistoryService {
         this.historyRepository = historyRepository;
     }
 
-    public void addRecord(@Nonnull Long amount, @Nonnull LegalAccountEntity legalAccountEntity, @Nonnull Boolean success) {
+    public void addRecord(Long amount, LegalAccountEntity legalAccountEntity, Boolean success) {
         HistoryEntity historyEntity = new HistoryEntity(amount, legalAccountEntity, success);
         historyRepository.save(historyEntity);
     }

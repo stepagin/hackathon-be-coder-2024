@@ -1,6 +1,5 @@
 package ru.stepagin.becoder.DTO;
 
-import jakarta.annotation.Nonnull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,32 +8,30 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class BalanceChangeDTO {
-    @Nonnull
     private Long amount;
-    @Nonnull
     private LegalAccountDTO account;
 
     /**
-     * Конструктор для корректной обработки копеек. Используются минорные единицы - копейки.
+     * Сеттер для автоматического создания BalanceChangeDTO в контроллерах.
+     * Автоматически выбрасывает ошибку, если будет передано отрицательное число.
      *
-     * @param amount  double значение изменения баланса. Конвертируется в long значение копеек.
-     * @param account данные юридического счёта.
+     * @param amount сумма изменения дробным числом в рублях.
+     *               Цифры после второго знака после запятой будут отброшены.
      */
-    public BalanceChangeDTO(double amount, @Nonnull LegalAccountDTO account) {
+    public void setAmount(double amount) {
         long rubles = (long) amount;
-        long kopecks = (long) ((amount - rubles) * 100);
+        long kopecks = Math.round((amount - rubles) * 1000) / 10 ;
+        checkAmount(rubles * 100 + kopecks);
         this.amount = rubles * 100 + kopecks;
-        this.account = account;
     }
 
-    /**
-     * Конструктор с обработкой целых рублей.
-     *
-     * @param rubles  число рублей.
-     * @param account данные юридического счёта.
-     */
-    public BalanceChangeDTO(long rubles, @Nonnull LegalAccountDTO account) {
-        this.amount = rubles * 100;
-        this.account = account;
+    private void checkAmount(long kopecks) throws IllegalArgumentException {
+        // check increasing amount > 0
+        if (kopecks <= 0L)
+            throw new IllegalArgumentException("amount должно быть больше нуля");
+    }
+
+    public boolean checkDontHaveNulls() {
+        return (getAccount() != null && getAmount() != null && getAccount().getId() != null);
     }
 }

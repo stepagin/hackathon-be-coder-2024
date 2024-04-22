@@ -1,6 +1,5 @@
 package ru.stepagin.becoder.service;
 
-import jakarta.annotation.Nonnull;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -45,11 +44,9 @@ public class LegalAccountService {
 
 
     @Transactional
-    public void decreaseBalance(@Nonnull BalanceChangeDTO balanceChange) {
-        // check decreasing amount > 0
-        if (balanceChange.getAmount() <= 0L)
-            throw new IllegalArgumentException("Amount должно быть больше нуля");
-
+    public LegalAccountDTO decreaseBalance(BalanceChangeDTO balanceChange) {
+        if (!balanceChange.checkDontHaveNulls())
+            throw new IllegalArgumentException("Не представлены необходимые данные счёта.");
         // getting account from DB and its balance
         LegalAccountEntity account = this.getAccountEntityById((balanceChange.getAccount().getId()));
         Long balance = account.getBalance();
@@ -69,10 +66,15 @@ public class LegalAccountService {
 
         // save in history with success=true
         historyService.addRecord(balanceChange.getAmount(), account, true);
+        account.setBalance(account.getBalance() - balanceChange.getAmount());
+        return new LegalAccountDTO(account);
     }
 
     @Transactional
-    public void increaseBalance(@Nonnull BalanceChangeDTO balanceChange) {
+    public LegalAccountDTO increaseBalance(BalanceChangeDTO balanceChange) {
+        if (!balanceChange.checkDontHaveNulls())
+            throw new IllegalArgumentException("Не представлены необходимые данные счёта.");
+        // getting account from DB and its balance
         LegalAccountEntity account = this.getAccountEntityById((balanceChange.getAccount().getId()));
 
         // update balance
@@ -82,6 +84,8 @@ public class LegalAccountService {
         );
         // save in history with success=true
         historyService.addRecord(balanceChange.getAmount(), account, true);
+        account.setBalance(account.getBalance() + balanceChange.getAmount());
+        return new LegalAccountDTO(account);
     }
 
     @Transactional
@@ -90,7 +94,7 @@ public class LegalAccountService {
     }
 
     @Transactional
-    public LegalAccountEntity getAccountEntityById(@Nonnull String id) {
+    public LegalAccountEntity getAccountEntityById(String id) {
         LegalAccountEntity legalAccountEntity = legalAccountRepository.findById(UUID.fromString(id)).orElse(null);
         if (legalAccountEntity == null) {
             throw new InvalidIdSuppliedException("Не найден счёт с данным id");
@@ -99,7 +103,7 @@ public class LegalAccountService {
     }
 
     @Transactional
-    public LegalAccountDTO getAccountById(@Nonnull String id) {
+    public LegalAccountDTO getAccountById(String id) {
         return new LegalAccountDTO(this.getAccountEntityById(id));
     }
 }

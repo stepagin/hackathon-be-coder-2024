@@ -39,7 +39,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         LegalAccountDTO dto = accountService.createAccount(admin);
         LegalAccountEntity account = new LegalAccountEntity();
         account.setId(UUID.fromString(dto.getId()));
-        account.setBalance(dto.getBalance());
+        account.setBalance((long) dto.getBalance());
 
 
     }

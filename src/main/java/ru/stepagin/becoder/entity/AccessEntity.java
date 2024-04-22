@@ -2,7 +2,6 @@ package ru.stepagin.becoder.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
@@ -21,7 +20,7 @@ public class AccessEntity {
     @ManyToOne(optional = false)
     private LegalAccountEntity account;
 
-    public AccessEntity(@NonNull PersonEntity person, @NonNull LegalAccountEntity account) {
+    public AccessEntity(PersonEntity person, LegalAccountEntity account) {
         this.person = person;
         this.account = account;
     }

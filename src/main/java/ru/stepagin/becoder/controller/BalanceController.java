@@ -1,6 +1,5 @@
 package ru.stepagin.becoder.controller;
 
-import lombok.NonNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -10,6 +9,7 @@ import ru.stepagin.becoder.DTO.LegalAccountDTO;
 import ru.stepagin.becoder.DTO.PersonDTO;
 import ru.stepagin.becoder.entity.LegalAccountEntity;
 import ru.stepagin.becoder.entity.PersonEntity;
+import ru.stepagin.becoder.exception.InvalidIdSuppliedException;
 import ru.stepagin.becoder.service.AccessService;
 import ru.stepagin.becoder.service.LegalAccountService;
 import ru.stepagin.becoder.service.SecurityService;
@@ -40,27 +40,23 @@ public class BalanceController {
     @PostMapping
     public ResponseEntity<LegalAccountDTO> createAccount(Authentication authentication) {
         PersonEntity person = securityService.getPerson(authentication);
-        if (person == null) ResponseEntity.badRequest().body("пользователь, создающий аккаунт, не найден");
+        if (person == null) {
+            throw new InvalidIdSuppliedException("Не найден пользователь, создающий счёт");
+        }
         LegalAccountDTO account = accountService.createAccount(person);
         return ResponseEntity.ok(account);
     }
 
     @PreAuthorize("@securityService.hasAccessToAccount(#balanceChange, authentication)")
     @PostMapping("/increase")
-    public ResponseEntity<String> increaseAccountBalance(@RequestBody @NonNull BalanceChangeDTO balanceChange) {
-        // check increasing amount > 0
-        if (balanceChange.getAmount() <= 0L)
-            throw new IllegalArgumentException("Amount должно быть больше нуля");
-
-        accountService.increaseBalance(balanceChange);
-        return ResponseEntity.ok("Счёт успешно пополнен");
+    public ResponseEntity<LegalAccountDTO> increaseAccountBalance(@RequestBody BalanceChangeDTO balanceChange) {
+        return ResponseEntity.ok(accountService.increaseBalance(balanceChange));
     }
 
     @PreAuthorize("@securityService.hasAccessToAccount(#balanceChange, authentication)")
     @PostMapping("/decrease")
-    public ResponseEntity<String> decreaseAccountBalance(@RequestBody @NonNull BalanceChangeDTO balanceChange) {
-        accountService.decreaseBalance(balanceChange);
-        return ResponseEntity.ok("Оплата прошла успешно");
+    public ResponseEntity<LegalAccountDTO> decreaseAccountBalance(@RequestBody BalanceChangeDTO balanceChange) {
+        return ResponseEntity.ok(accountService.decreaseBalance(balanceChange));
     }
 
 

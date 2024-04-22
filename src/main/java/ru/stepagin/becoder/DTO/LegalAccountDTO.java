@@ -1,6 +1,5 @@
 package ru.stepagin.becoder.DTO;
 
-import jakarta.annotation.Nonnull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,18 +10,25 @@ import ru.stepagin.becoder.entity.LegalAccountEntity;
 @Setter
 @NoArgsConstructor
 public class LegalAccountDTO {
-    @Nonnull
     private String id;
-    @Nonnull
-    private Long balance;
+    private double balance;
 
-    public LegalAccountDTO(@Nonnull LegalAccountEntity entity) {
-        this.id = String.valueOf(entity.getId());
-        this.balance = entity.getBalance();
+    public LegalAccountDTO(String id, double kopecks) {
+        this.id = id;
+        this.balance = kopecks / 100;
     }
 
-    public LegalAccountDTO(@Nonnull AccessEntity accessEntity) {
-        this.id = String.valueOf(accessEntity.getAccount().getId());
-        this.balance = accessEntity.getAccount().getBalance();
+    public LegalAccountDTO(LegalAccountEntity entity) {
+        this (
+                String.valueOf(entity.getId()),
+                (double) entity.getBalance()
+        );
+    }
+
+    public LegalAccountDTO(AccessEntity accessEntity) {
+        this (
+                String.valueOf(accessEntity.getAccount().getId()),
+                accessEntity.getAccount().getBalance()
+        );
     }
 }
