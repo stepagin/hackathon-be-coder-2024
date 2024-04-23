@@ -97,7 +97,7 @@ class LegalAccountServiceTest {
     @Test
     void decreaseBalance() {
         LegalAccountEntity legalAccount = new LegalAccountEntity();
-        legalAccount.setBalance(123L);
+        legalAccount.setBalance(12300L);
         legalAccount.setId(UUID.randomUUID());
 
         BalanceChangeDTO balanceChange = new BalanceChangeDTO();
