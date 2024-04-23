@@ -18,6 +18,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -69,6 +71,17 @@ class LegalAccountServiceTest {
         verify(legalAccountRepository, times(1)).findById(any(UUID.class));
     }
 
+
+    @Test
+    void getAccountById() {
+        LegalAccountEntity legalAccountEntity = new LegalAccountEntity();
+        when(legalAccountRepository.findById(any(UUID.class))).thenReturn(Optional.of(legalAccountEntity));
+
+        String uuid = UUID.randomUUID().toString();
+        legalAccountService.getAccountById(uuid);
+        verify(legalAccountRepository, times(1)).findById(any(UUID.class));
+    }
+
     @Test
     void isActiveOwner() {
         PersonEntity person = new PersonEntity("user", "user");
@@ -101,7 +114,7 @@ class LegalAccountServiceTest {
         legalAccount.setId(UUID.randomUUID());
 
         BalanceChangeDTO balanceChange = new BalanceChangeDTO();
-        balanceChange.setAmount(123L);
+        balanceChange.setAmount(123);
         balanceChange.setAccount(new LegalAccountDTO(legalAccount));
 
         when(legalAccountRepository.findById(any(UUID.class))).thenReturn(Optional.of(legalAccount));
@@ -112,7 +125,39 @@ class LegalAccountServiceTest {
         verify(historyService, times(1)).addRecord(any(Long.class), any(LegalAccountEntity.class), any());
 
 
-        Assertions.assertEquals(0L, accountDTO.getBalance());
+        Assertions.assertEquals(0, accountDTO.getBalance());
+    }
+
+    @Test
+    void decreaseNullBalance() {
+        LegalAccountEntity legalAccount = new LegalAccountEntity();
+        legalAccount.setBalance(10000L);
+        legalAccount.setId(UUID.randomUUID());
+
+        BalanceChangeDTO balanceChange = new BalanceChangeDTO();
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> legalAccountService.decreaseBalance(balanceChange));
+
+        assertEquals("Не представлены необходимые данные счёта.", exception.getMessage());
+    }
+
+    @Test
+    void decreaseBalanceWhenNotEnough() {
+        LegalAccountEntity legalAccount = new LegalAccountEntity();
+        legalAccount.setBalance(10000L);
+        legalAccount.setId(UUID.randomUUID());
+
+        BalanceChangeDTO balanceChange = new BalanceChangeDTO();
+        balanceChange.setAmount(200);
+        balanceChange.setAccount(new LegalAccountDTO(legalAccount));
+
+        when(legalAccountRepository.findById(any(UUID.class))).thenReturn(Optional.of(legalAccount));
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> legalAccountService.decreaseBalance(balanceChange));
+
+        verify(historyService, times(1)).addRecord(any(Long.class), any(LegalAccountEntity.class), any());
+
+        assertEquals("На счету недостаточно средств", exception.getMessage());
     }
 
     @Test
@@ -122,7 +167,7 @@ class LegalAccountServiceTest {
         legalAccount.setId(UUID.randomUUID());
 
         BalanceChangeDTO balanceChange = new BalanceChangeDTO();
-        balanceChange.setAmount(123L);
+        balanceChange.setAmount(123);
         balanceChange.setAccount(new LegalAccountDTO(legalAccount));
 
         when(legalAccountRepository.findById(any(UUID.class))).thenReturn(Optional.of(legalAccount));
@@ -133,8 +178,60 @@ class LegalAccountServiceTest {
         verify(historyService, times(1)).addRecord(any(Long.class), any(LegalAccountEntity.class), any());
 
 
-        Assertions.assertEquals(12300L, accountDTO.getBalance());
+        Assertions.assertEquals(123, accountDTO.getBalance());
+    }
+    @Test
+    void increaseNullBalance() {
+        LegalAccountEntity legalAccount = new LegalAccountEntity();
+        legalAccount.setBalance(10000L);
+        legalAccount.setId(UUID.randomUUID());
+
+        BalanceChangeDTO balanceChange = new BalanceChangeDTO();
+
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> legalAccountService.increaseBalance(balanceChange));
+
+        assertEquals("Не представлены необходимые данные счёта.", exception.getMessage());
+    }
+    @Test
+    void increaseRealBalance() {
+        LegalAccountEntity legalAccount = new LegalAccountEntity();
+        legalAccount.setBalance(10L);
+        legalAccount.setId(UUID.randomUUID());
+
+        BalanceChangeDTO balanceChange = new BalanceChangeDTO();
+        balanceChange.setAmount(0.3);
+        balanceChange.setAccount(new LegalAccountDTO(legalAccount));
+
+        when(legalAccountRepository.findById(any(UUID.class))).thenReturn(Optional.of(legalAccount));
+
+        LegalAccountDTO accountDTO = legalAccountService.increaseBalance(balanceChange);
+
+        verify(legalAccountRepository, times(1)).updateBalanceByAccountId(any(UUID.class), any(Long.class));
+        verify(historyService, times(1)).addRecord(any(Long.class), any(LegalAccountEntity.class), any());
+
+
+        Assertions.assertEquals(0.4, accountDTO.getBalance());
     }
 
+    @Test
+    void decreaseRealBalance() {
+        LegalAccountEntity legalAccount = new LegalAccountEntity();
+        legalAccount.setBalance(100L);
+        legalAccount.setId(UUID.randomUUID());
 
+        BalanceChangeDTO balanceChange = new BalanceChangeDTO();
+        balanceChange.setAmount(0.5);
+        balanceChange.setAccount(new LegalAccountDTO(legalAccount));
+
+        when(legalAccountRepository.findById(any(UUID.class))).thenReturn(Optional.of(legalAccount));
+
+        LegalAccountDTO accountDTO = legalAccountService.decreaseBalance(balanceChange);
+
+        verify(legalAccountRepository, times(1)).updateBalanceByAccountId(any(UUID.class), any(Long.class));
+        verify(historyService, times(1)).addRecord(any(Long.class), any(LegalAccountEntity.class), any());
+
+
+        Assertions.assertEquals(0.5, accountDTO.getBalance());
+    }
 }

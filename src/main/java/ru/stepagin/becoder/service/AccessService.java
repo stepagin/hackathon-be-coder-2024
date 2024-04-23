@@ -50,7 +50,8 @@ public class AccessService {
     public boolean revokeAccess(LegalAccountEntity account, String login) {
         PersonEntity person = personRepository.findByLogin(login);
         if (person == null || account == null) return false;
-        accessRepository.delete(accessRepository.findByAccount_IdAndPersonId(account.getId(), person.getId()));
+        AccessEntity access = accessRepository.findByAccount_IdAndPersonId(account.getId(), person.getId());
+        accessRepository.delete(access);
         return true;
     }
 }

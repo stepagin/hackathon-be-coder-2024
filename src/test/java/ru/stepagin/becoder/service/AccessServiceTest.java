@@ -9,15 +9,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.stepagin.becoder.DTO.LegalAccountDTO;
 import ru.stepagin.becoder.entity.AccessEntity;
 import ru.stepagin.becoder.entity.LegalAccountEntity;
 import ru.stepagin.becoder.entity.PersonEntity;
 import ru.stepagin.becoder.repository.AccessRepository;
 import ru.stepagin.becoder.repository.PersonRepository;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,7 +23,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AccessServiceTest {
-
     @Mock
     private AccessRepository accessRepository;
     @Mock
@@ -91,14 +87,20 @@ class AccessServiceTest {
 
     @Test
     void revokeAccess() {
-        PersonEntity personEntity = new PersonEntity("user", "user");
-        LegalAccountEntity account = new LegalAccountEntity(personEntity);
+        PersonEntity person = new PersonEntity("user", "user");
+        Long personId = 1L;
+        person.setId(personId);
 
-        when(personRepository.findByLogin(personEntity.getLogin())).thenReturn(personEntity);
-        when(accessRepository.findByAccount_IdAndPersonId(any(UUID.class), any(Long.class))).thenReturn(new AccessEntity());
+        LegalAccountEntity account = new LegalAccountEntity(person);
+        UUID uuid = UUID.randomUUID();
+        account.setId(uuid);
 
+        AccessEntity access = new AccessEntity(person, account);
 
-        accessService.revokeAccess(account, personEntity.getLogin());
+        when(personRepository.findByLogin(person.getLogin())).thenReturn(person);
+        when(accessRepository.findByAccount_IdAndPersonId(uuid, personId)).thenReturn(access);
+
+        accessService.revokeAccess(account, person.getLogin());
 
         verify(personRepository, times(1)).findByLogin(any(String.class));
         verify(accessRepository, times(1)).findByAccount_IdAndPersonId(any(UUID.class), any(Long.class));
