@@ -44,6 +44,8 @@ public class SecurityConfiguration {
         return httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .authorizeHttpRequests(registry -> {
+                    registry.requestMatchers("/api-docs").permitAll();
+                    registry.requestMatchers("/swagger-ui/**").permitAll();
                     registry.requestMatchers("/h2-console/**").permitAll();
                     registry.requestMatchers("/auth/register").permitAll();
                     registry.anyRequest().authenticated();
