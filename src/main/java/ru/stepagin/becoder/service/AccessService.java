@@ -5,13 +5,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.stepagin.becoder.DTO.LegalAccountDTO;
+import ru.stepagin.becoder.DTO.PersonDTO;
 import ru.stepagin.becoder.entity.AccessEntity;
 import ru.stepagin.becoder.entity.LegalAccountEntity;
 import ru.stepagin.becoder.entity.PersonEntity;
+import ru.stepagin.becoder.exception.InvalidIdSuppliedException;
 import ru.stepagin.becoder.repository.AccessRepository;
-import ru.stepagin.becoder.repository.PersonRepository;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Slf4j
@@ -19,7 +21,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AccessService {
     private final AccessRepository accessRepository;
-    private final PersonRepository personRepository;
+    private final LegalAccountService legalAccountService;
+    private final PersonService personService;
 
     public void save(AccessEntity access) {
         accessRepository.save(access);
@@ -35,24 +38,35 @@ public class AccessService {
     }
 
     @Transactional
-    public void grantAccess(LegalAccountEntity account, String login) {
-        // TODO
-        PersonEntity person = personRepository.findByLogin(login);
-        if (person == null || account == null)
-            throw new IllegalArgumentException("Некорректный запрос на выдачу прав: отсутствуют необходимые данные.");
-        AccessEntity access = accessRepository.findByAccount_IdAndPersonId(account.getId(), person.getId());
-        if(access == null) accessRepository.save(new AccessEntity(person, account));
-        else throw new IllegalArgumentException("Некорректный запрос на выдачу прав: у пользователя уже есть доступ к аккаунту.");
+    public void grantAccess(String accountId, String personLogin) {
+        AccessEntity accessEntity = accessRepository.findByAccount_IdAndPerson_LoginIgnoreCase(UUID.fromString(accountId), personLogin);
+        if (accessEntity != null)
+            throw new IllegalArgumentException("У пользователя уже есть доступ к счёту");
+
+        LegalAccountEntity account = legalAccountService.getAccountEntityById(accountId);
+        if (account == null)
+            throw new InvalidIdSuppliedException("Не существует счёта с данным id");
+
+        PersonEntity person = personService.getPersonEntity(personLogin);
+        if (person == null)
+            throw new InvalidIdSuppliedException("Не существует пользователя с данным login");
+
+        accessRepository.save(new AccessEntity(person, account));
     }
 
     @Transactional
-    public void revokeAccess(LegalAccountEntity account, String login) {
-        // TODO
-        PersonEntity person = personRepository.findByLogin(login);
-        if (person == null || account == null)
-            throw new IllegalArgumentException("Некорректный запрос на отзыв прав: отсутствуют необходимые данные.");
-        AccessEntity access = accessRepository.findByAccount_IdAndPersonId(account.getId(), person.getId());
-        if(access != null) accessRepository.delete(access);
-        else throw new IllegalArgumentException("Некорректный запрос на отзыв прав: у пользователя отсутствуют права на данный аккаунт.");
+    public void revokeAccess(String accountId, String personLogin) {
+        AccessEntity accessEntity = accessRepository.findByAccount_IdAndPerson_LoginIgnoreCase(UUID.fromString(accountId), personLogin);
+        if (accessEntity == null)
+            throw new IllegalArgumentException("У пользователя нет доступа к счёту");
+        if (Objects.equals(accessEntity.getPerson().getLogin(), accessEntity.getAccount().getCreator().getLogin()))
+            throw new InvalidIdSuppliedException("Невозможно отозвать права у владельца счёта");
+
+        accessRepository.delete(accessEntity);
+    }
+
+    public List<PersonDTO> getPartnersByAccountId(String accountId) {
+        return accessRepository.findByAccount_Id(UUID.fromString(accountId)).stream()
+                .map((accessEntity) -> new PersonDTO(accessEntity.getPerson())).toList();
     }
 }

@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.*;
 import ru.stepagin.becoder.DTO.BalanceChangeDTO;
 import ru.stepagin.becoder.DTO.LegalAccountDTO;
 import ru.stepagin.becoder.DTO.PersonDTO;
-import ru.stepagin.becoder.entity.LegalAccountEntity;
 import ru.stepagin.becoder.entity.PersonEntity;
 import ru.stepagin.becoder.exception.InvalidIdSuppliedException;
 import ru.stepagin.becoder.service.AccessService;
 import ru.stepagin.becoder.service.LegalAccountService;
+import ru.stepagin.becoder.service.PersonService;
 import ru.stepagin.becoder.service.SecurityService;
 
 import java.util.List;
@@ -36,10 +36,12 @@ public class BalanceController {
     private final LegalAccountService accountService;
     private final AccessService accessService;
     private final SecurityService securityService;
+    private final PersonService personService;
 
     @Operation(summary = "Создать юридический счёт")
     @PostMapping
     public ResponseEntity<LegalAccountDTO> createAccount(Authentication authentication) {
+        // TODO перенести выброс ошибки в сервис
         PersonEntity person = securityService.getPerson(authentication);
         if (person == null) {
             throw new InvalidIdSuppliedException("Не найден пользователь, создающий счёт");
@@ -79,21 +81,30 @@ public class BalanceController {
         return ResponseEntity.ok(accountService.decreaseBalance(id, balanceChange.getAmount()));
     }
 
+    @Operation(summary = "Получить список пользователей, имеющих доступ к счёту")
+    @GetMapping("/{accountId}/partners")
+    @PreAuthorize("@securityService.isActiveOwner(#accountId, authentication)")
+    public ResponseEntity<List<PersonDTO>> getAllPartners(@PathVariable String accountId) {
+        return ResponseEntity.ok(accessService.getPartnersByAccountId(accountId));
+    }
+
     @Operation(summary = "Выдать пользователю доступ к счёту")
-    @PutMapping("/{accountId}/grantment")
-    @PreAuthorize("@securityService.isActiveOwner(#id, authentication)")
-    public ResponseEntity<String> grantAccessToAccount(@PathVariable(name = "accountId") String id, @RequestBody PersonDTO person) {
-        LegalAccountEntity account = accountService.getAccountEntityById(id);
-        accessService.grantAccess(account, person.getLogin());
-        return ResponseEntity.ok("Пользователю " + person.getLogin() + " выдан доступ к аккаунту " + id);
+    @PutMapping("/{accountId}/partners")
+    @PreAuthorize("@securityService.isActiveOwner(#accountId, authentication)")
+    public ResponseEntity<String> grantAccessToAccount(@PathVariable(name = "accountId") String accountId,
+                                                       @RequestBody PersonDTO partner) {
+        accessService.grantAccess(accountId, partner.getLogin());
+        return ResponseEntity.ok("Пользователю " + partner.getLogin()
+                + " выдан доступ к аккаунту " + accountId);
     }
 
     @Operation(summary = "Отозвать доступ к счёту у пользователя")
-    @PutMapping("/{accountId}/revocation")
-    @PreAuthorize("@securityService.isActiveOwner(#id, authentication)")
-    public ResponseEntity<String> revokeAccessFromAccount(@PathVariable(name = "accountId") String id, @RequestBody PersonDTO person) {
-        LegalAccountEntity account = accountService.getAccountEntityById(id);
-        accessService.revokeAccess(account, person.getLogin());
-        return ResponseEntity.ok("У пользователя " + person.getLogin() + " отозван доступ к аккаунту " + id);
+    @DeleteMapping("/{accountId}/partners/{partner}")
+    @PreAuthorize("@securityService.isActiveOwner(#accountId, authentication)")
+    public ResponseEntity<String> revokeAccessFromAccount(@PathVariable(name = "accountId") String accountId,
+                                                          @PathVariable(name = "partner") String partnerLogin) {
+        accessService.revokeAccess(accountId, partnerLogin);
+        return ResponseEntity.ok("У пользователя " + personService.getUser(partnerLogin).getLogin()
+                + " отозван доступ к аккаунту " + accountId);
     }
 }

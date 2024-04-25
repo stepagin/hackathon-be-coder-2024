@@ -1,5 +1,6 @@
 package ru.stepagin.becoder.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.stepagin.becoder.DTO.PersonDTO;
@@ -10,12 +11,9 @@ import java.util.List;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class PersonService {
     private final PersonRepository personRepository;
-
-    public PersonService(PersonRepository personRepository) {
-        this.personRepository = personRepository;
-    }
 
     public PersonDTO registerPerson(String login, String password) {
         if (personRepository.existsByLoginAllIgnoreCase(login)) {
@@ -28,5 +26,13 @@ public class PersonService {
 
     public List<PersonDTO> getAllUsers() {
         return personRepository.findAll().stream().map(PersonDTO::new).toList();
+    }
+
+    public PersonDTO getUser(String login) {
+        return new PersonDTO(personRepository.findByLogin(login));
+    }
+
+    public PersonEntity getPersonEntity(String login) {
+        return personRepository.findByLogin(login);
     }
 }
