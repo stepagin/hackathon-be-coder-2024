@@ -7,6 +7,9 @@
 
 </head>
 <body>
+<header>
+    <h1>Управление банковскими аккаунтами</h1>
+</header>
 <h2>Произошла ошибка!</h2>
 <p th:text="${errorText}"></p>
 <button th:href="@{/accounts}" onclick="window.location.href='/accounts';">На главную</button>
@@ -17,5 +20,8 @@
         window.location.href = this.getAttribute('href');
     });
 </script>
+<footer>
+    <p>&copy; 2024 Команда "Байтсы"<br/>Микросервис по управлению юридическим счетом</p>
+</footer>
 </body>
 </html>

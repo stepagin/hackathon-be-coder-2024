@@ -37,6 +37,8 @@ public class UIController {
     @GetMapping
     public String getAll(Authentication auth, Model model) {
         ResponseEntity<List<LegalAccountDTO>> accounts = balanceController.getAllAccounts(auth);
+        PersonEntity person = securityService.getPerson(auth);
+        model.addAttribute("user", person);
         model.addAttribute("accounts", accounts.getBody());
         return "accounts";
     }
