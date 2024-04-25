@@ -6,6 +6,10 @@
     <link th:href="@{/styles/main.css}" rel="stylesheet" />
 </head>
 <body>
+<header>
+    <h1>Мои аккаунты</h1>
+</header>
+<h2> Здравствуйте, ${user} !</h2>
 Доступные вам аккаунты
 <table>
     <thead>
@@ -29,5 +33,8 @@
 <form th:action="@{'/accounts'}" th:method="post">
     <button type="submit" class="btn">Создать новый аккаунт</button>
 </form>
+<footer>
+    <p>&copy; 2024 Команда "Байтсы"<br/>Микросервис по управлению юридическим счетом</p>
+</footer>
 </body>
 </html>
