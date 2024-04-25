@@ -25,34 +25,31 @@ public class AccessService {
         accessRepository.save(access);
     }
 
-
     public boolean checkHasAccess(Long personId, UUID accountId) {
         AccessEntity access = accessRepository.findByAccount_IdAndPersonId(accountId, personId);
         return access != null;
     }
-
 
     public List<LegalAccountDTO> getAllByPerson(PersonEntity person) {
         return accessRepository.findByPerson(person).stream().map(LegalAccountDTO::new).toList();
     }
 
     @Transactional
-    public boolean grantAccess(LegalAccountEntity account, String login) {
+    public void grantAccess(LegalAccountEntity account, String login) {
+        // TODO
         PersonEntity person = personRepository.findByLogin(login);
-        if (person == null || account == null) return false;
-        AccessEntity access = accessRepository.findByAccount_IdAndPersonId(account.getId(), person.getId());
-        if (access != null) return false; //у пользователя уже есть доступ к аккаунту
+        if (person == null || account == null)
+            throw new IllegalArgumentException("Некорректный запрос на выдачу прав: отсутствуют необходимые данные.");
         accessRepository.save(new AccessEntity(person, account));
-        return true;
     }
 
     @Transactional
-    public boolean revokeAccess(LegalAccountEntity account, String login) {
+    public void revokeAccess(LegalAccountEntity account, String login) {
+        // TODO
         PersonEntity person = personRepository.findByLogin(login);
-        if (person == null || account == null) return false;
+        if (person == null || account == null)
+            throw new IllegalArgumentException("Некорректный запрос на отзыв прав: отсутствуют необходимые данные.");
         AccessEntity access = accessRepository.findByAccount_IdAndPersonId(account.getId(), person.getId());
-        if(access == null) return false;
         accessRepository.delete(access);
-        return true;
     }
 }

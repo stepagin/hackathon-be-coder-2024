@@ -1,6 +1,5 @@
 package ru.stepagin.becoder.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -11,11 +10,16 @@ import ru.stepagin.becoder.repository.PersonRepository;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class SecurityService {
     private final PersonRepository personRepository;
     private final AccessService accessService;
     private final LegalAccountService legalAccountService;
+
+    public SecurityService(PersonRepository personRepository, AccessService accessService, LegalAccountService legalAccountService) {
+        this.personRepository = personRepository;
+        this.accessService = accessService;
+        this.legalAccountService = legalAccountService;
+    }
 
     public PersonEntity getPerson(Authentication authentication) {
         UserDetails user = (UserDetails) authentication.getPrincipal();
@@ -36,7 +40,6 @@ public class SecurityService {
 
     public boolean hasAccessToAccount(BalanceChangeDTO balanceChangeDTO, Authentication authentication) {
         if (balanceChangeDTO.getAccount() == null || balanceChangeDTO.getAccount().getId() == null) {
-
             throw new IllegalArgumentException("Не переданы данные счёта");
         }
         return hasAccessToAccount(balanceChangeDTO.getAccount().getId(), authentication);

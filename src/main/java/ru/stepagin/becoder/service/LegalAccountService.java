@@ -67,11 +67,7 @@ public class LegalAccountService {
 
     @Transactional
     public LegalAccountDTO increaseBalance(BalanceChangeDTO balanceChange) {
-
         if (!balanceChange.checkDontHaveNulls())
-
-
-
             throw new IllegalArgumentException("Не представлены необходимые данные счёта.");
         // getting account from DB and its balance
         LegalAccountEntity account = this.getAccountEntityById((balanceChange.getAccount().getId()));

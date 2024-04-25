@@ -1,12 +1,14 @@
 package ru.stepagin.becoder.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.stepagin.becoder.DTO.BalanceChangeDTO;
 import ru.stepagin.becoder.DTO.LegalAccountDTO;
@@ -16,98 +18,79 @@ import ru.stepagin.becoder.entity.PersonEntity;
 import ru.stepagin.becoder.exception.InvalidIdSuppliedException;
 import ru.stepagin.becoder.service.AccessService;
 import ru.stepagin.becoder.service.LegalAccountService;
-import ru.stepagin.becoder.service.PersonService;
 import ru.stepagin.becoder.service.SecurityService;
 
 import java.util.List;
-import java.util.UUID;
 
-@Controller
+@RestController
 @CrossOrigin
-@RequestMapping("${api.endpoints.base-url}/account")
+@RequestMapping("${api.endpoints.base-url}/accounts")
 @RequiredArgsConstructor
+@Tag(name = "API управления балансом")
+@ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Успешно"),
+        @ApiResponse(responseCode = "401", description = "Пользователь не авторизован",
+                content = @Content(schema = @Schema(implementation = String.class))),
+        @ApiResponse(responseCode = "403", description = "Ошибка не стороне пользователя",
+                content = @Content(schema = @Schema(implementation = String.class))),
+        @ApiResponse(responseCode = "500", description = "Ошибка не стороне сервера",
+                content = @Content(schema = @Schema(implementation = String.class)))
+})
 public class BalanceController {
     private final LegalAccountService accountService;
     private final AccessService accessService;
     private final SecurityService securityService;
-    private final PersonService personService;
-    private final LegalAccountService legalAccountService;
+
+    @GetMapping()
+    public ResponseEntity<List<LegalAccountDTO>> getAllAccounts(Authentication auth) {
+        PersonEntity person = securityService.getPerson(auth);
+        return ResponseEntity.ok(accessService.getAllByPerson(person));
+    }
 
     @GetMapping("/{id}")
     @PreAuthorize("@securityService.hasAccessToAccount(#id, authentication)")
-    public String getAccountDetails(@PathVariable String id, Model model, Authentication auth) {
-        LegalAccountDTO legalAccountDTO = accountService.getAccountById(id);
-        List<PersonDTO> personList = personService.getAllUsers();
-        List<PersonDTO> usersWithAccess = personList.stream().filter(user->accessService.checkHasAccess(user.getId(),  UUID.fromString(legalAccountDTO.getId()))).toList();
-        PersonEntity person = securityService.getPerson(auth);
-        model.addAttribute("account", legalAccountDTO);
-        model.addAttribute("balanceChangeDTO", new BalanceChangeDTO(legalAccountDTO));
-        model.addAttribute("users", personList);
-        model.addAttribute("usersWithAccess", usersWithAccess);
-        model.addAttribute("accessUser", new PersonDTO());
-        model.addAttribute("isOwner", legalAccountService.isActiveOwner(person, UUID.fromString(legalAccountDTO.getId())));
-        return "account_page";
+    public ResponseEntity<LegalAccountDTO> getAccountDetails(@PathVariable String id) {
+        LegalAccountDTO account = accountService.getAccountById(id);
+        return ResponseEntity.ok(account);
     }
 
     @PostMapping
-    public String createAccount(Authentication authentication, HttpServletRequest request) {
+    public ResponseEntity<LegalAccountDTO> createAccount(Authentication authentication) {
         PersonEntity person = securityService.getPerson(authentication);
         if (person == null) {
             throw new InvalidIdSuppliedException("Не найден пользователь, создающий счёт");
         }
-        accountService.createAccount(person);
-        String referer = request.getHeader("Referer");
-        return "redirect:"+ referer;
+        LegalAccountDTO account = accountService.createAccount(person);
+        return ResponseEntity.ok(account);
     }
 
-
-    @PreAuthorize("@securityService.hasAccessToAccount(#balanceChange, authentication)")
-    @PostMapping("/increase")
-    public String increaseAccountBalance(@ModelAttribute BalanceChangeDTO balanceChange,HttpServletRequest request) {
-        accountService.increaseBalance(balanceChange);
-        String referer = request.getHeader("Referer");
-        return "redirect:"+ referer;
-
+    // TODO: remove verbs
+    @PreAuthorize("@securityService.hasAccessToAccount(#id, authentication)")
+    @PostMapping("/{accountId}/deposit")
+    public ResponseEntity<LegalAccountDTO> increaseAccountBalance(@PathVariable(name = "accountId") String id, @RequestBody BalanceChangeDTO balanceChange) {
+        return ResponseEntity.ok(accountService.increaseBalance(balanceChange));
     }
 
     @PreAuthorize("@securityService.hasAccessToAccount(#balanceChange, authentication)")
-    @PostMapping("/decrease")
-    public String decreaseAccountBalance(@ModelAttribute BalanceChangeDTO balanceChange, HttpServletRequest request) {
-        accountService.decreaseBalance(balanceChange);
-        String referer = request.getHeader("Referer");
-        return "redirect:"+ referer;
-
+    @PostMapping("/{accountId}/withdrawal")
+    public ResponseEntity<LegalAccountDTO> decreaseAccountBalance(@PathVariable(name = "accountId") String id, @RequestBody BalanceChangeDTO balanceChange) {
+        return ResponseEntity.ok(accountService.decreaseBalance(balanceChange));
     }
 
-
-    @GetMapping("/all")
-    public String getAllAccounts(Authentication auth, Model model) {
-        PersonEntity person = securityService.getPerson(auth);
-        model.addAttribute("accounts", accessService.getAllByPerson(person));
-        return "accounts";
-    }
-
-    @PostMapping("grant/{id}")
+    // TODO put
+    @PutMapping("/{accountId}/permissions")
     @PreAuthorize("@securityService.isActiveOwner(#id, authentication)")
-    public ResponseEntity<String> grantAccessToAccount(@PathVariable String id, @ModelAttribute PersonDTO person) {
+    public ResponseEntity<String> grantAccessToAccount(@PathVariable(name = "accountId") String id, @RequestBody PersonDTO person) {
         LegalAccountEntity account = accountService.getAccountEntityById(id);
-
-        person = personService.findById(person.getId()); //TODO это костыль, потому что в PersonDTO приходит login=null
-
-        if (accessService.grantAccess(account, person.getLogin()))
-            return ResponseEntity.ok("Пользователю " + person.getLogin() + " выдан доступ к аккаунту " + id);
-        else return ResponseEntity.badRequest().body("некорректный запрос на выдачу прав");
+        accessService.grantAccess(account, person.getLogin());
+        return ResponseEntity.ok("Пользователю " + person.getLogin() + " выдан доступ к аккаунту " + id);
     }
 
-    @PostMapping("revoke/{id}")
+    @PutMapping("/{accountId}/permissions/{permission_id}")
     @PreAuthorize("@securityService.isActiveOwner(#id, authentication)")
-    public ResponseEntity<String> revokeAccessFromAccount(@PathVariable String id, @ModelAttribute PersonDTO person) {
-
-        person = personService.findById(person.getId()); //TODO это костыль, потому что в PersonDTO приходит login=null
-
+    public ResponseEntity<String> revokeAccessFromAccount(@PathVariable(name = "accountId") String id, @RequestBody PersonDTO person) {
         LegalAccountEntity account = accountService.getAccountEntityById(id);
-        if (accessService.revokeAccess(account, person.getLogin()))
-            return ResponseEntity.ok("У пользователя " + person.getLogin() + " отозван доступ к аккаунту " + id);
-        else return ResponseEntity.badRequest().body("некорректный запрос на отзыв прав");
+        accessService.revokeAccess(account, person.getLogin());
+        return ResponseEntity.ok("У пользователя " + person.getLogin() + " отозван доступ к аккаунту " + id);
     }
 }

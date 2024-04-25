@@ -26,15 +26,12 @@ public class BalanceChangeDTO {
     }
 
     private void checkAmount(long kopecks) throws IllegalArgumentException {
+        // check increasing amount > 0
         if (kopecks <= 0L)
             throw new IllegalArgumentException("amount должно быть больше нуля");
     }
 
     public boolean checkDontHaveNulls() {
         return (getAccount() != null && getAmount() != null && getAccount().getId() != null);
-    }
-
-    public BalanceChangeDTO(LegalAccountDTO legalAccountDTO){
-        this.account = legalAccountDTO;
     }
 }

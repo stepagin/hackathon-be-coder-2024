@@ -15,13 +15,13 @@ public class LegalAccountDTO {
 
     public LegalAccountDTO(String id, double kopecks) {
         this.id = id;
-        this.balance = kopecks / 100;
+        this.balance = kopecks;
     }
 
     public LegalAccountDTO(LegalAccountEntity entity) {
         this (
                 String.valueOf(entity.getId()),
-                (double) entity.getBalance()
+                (double) entity.getBalance() / 100
         );
     }
 

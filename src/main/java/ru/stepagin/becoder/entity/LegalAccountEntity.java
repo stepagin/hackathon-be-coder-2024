@@ -25,5 +25,4 @@ public class LegalAccountEntity {
     public LegalAccountEntity(PersonEntity creator) {
         this.creator = creator;
     }
-
 }
