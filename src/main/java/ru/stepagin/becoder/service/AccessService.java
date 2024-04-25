@@ -1,6 +1,7 @@
 package ru.stepagin.becoder.service;
 
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.stepagin.becoder.DTO.LegalAccountDTO;
@@ -15,14 +16,10 @@ import java.util.UUID;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class AccessService {
     private final AccessRepository accessRepository;
     private final PersonRepository personRepository;
-
-    public AccessService(AccessRepository accessRepository, PersonRepository personRepository) {
-        this.accessRepository = accessRepository;
-        this.personRepository = personRepository;
-    }
 
     public void save(AccessEntity access) {
         accessRepository.save(access);

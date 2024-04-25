@@ -1,5 +1,6 @@
 package ru.stepagin.becoder.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -19,16 +20,11 @@ import java.util.List;
 @RestController
 @CrossOrigin
 @RequestMapping("/account")
+@RequiredArgsConstructor
 public class BalanceController {
     private final LegalAccountService accountService;
     private final AccessService accessService;
     private final SecurityService securityService;
-
-    public BalanceController(LegalAccountService accountService, AccessService accessService, SecurityService securityService) {
-        this.accountService = accountService;
-        this.accessService = accessService;
-        this.securityService = securityService;
-    }
 
     @GetMapping("/{id}")
     @PreAuthorize("@securityService.hasAccessToAccount(#id, authentication)")

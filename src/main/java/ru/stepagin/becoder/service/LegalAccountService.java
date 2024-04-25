@@ -1,6 +1,7 @@
 package ru.stepagin.becoder.service;
 
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.stepagin.becoder.DTO.BalanceChangeDTO;
@@ -16,17 +17,11 @@ import java.util.UUID;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class LegalAccountService {
     private final LegalAccountRepository legalAccountRepository;
     private final HistoryService historyService;
     private final AccessService accessService;
-
-
-    public LegalAccountService(LegalAccountRepository legalAccountRepository, HistoryService historyService, AccessService accessService) {
-        this.legalAccountRepository = legalAccountRepository;
-        this.historyService = historyService;
-        this.accessService = accessService;
-    }
 
     @Transactional
     public boolean isActiveOwner(PersonEntity person, UUID accountId) {

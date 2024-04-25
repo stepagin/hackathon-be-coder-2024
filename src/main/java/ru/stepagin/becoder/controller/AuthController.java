@@ -1,5 +1,6 @@
 package ru.stepagin.becoder.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.stepagin.becoder.DTO.PersonDTO;
@@ -11,12 +12,9 @@ import java.util.List;
 @RestController
 @CrossOrigin
 @RequestMapping("/auth")
+@RequiredArgsConstructor
 public class AuthController {
     private final PersonService personService;
-
-    public AuthController(PersonService personService) {
-        this.personService = personService;
-    }
 
     @PostMapping("/register")
     public ResponseEntity<PersonDTO> register(@RequestBody PersonEntity person) {
