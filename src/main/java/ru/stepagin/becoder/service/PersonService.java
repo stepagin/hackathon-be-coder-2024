@@ -18,17 +18,8 @@ public class PersonService {
     }
 
     public PersonDTO registerPerson(String login, String password) {
-        if (login == null || password == null) {
-            throw new IllegalArgumentException("Login and password cannot be null");
-        }
-        if (login.isEmpty() || password.isEmpty()) {
-            throw new IllegalArgumentException("Login and password cannot be empty");
-        }
-        if (login.length() < 6 || password.length() < 6) {
-            throw new IllegalArgumentException("Login and password must contain at least 6 characters");
-        }
-        if (personRepository.findByLogin(login) != null) {
-            throw new IllegalArgumentException("Login already exists");
+        if (personRepository.existsByLoginAllIgnoreCase(login)) {
+            throw new IllegalArgumentException("Пользователь с таким логином уже зарегистрирован");
         }
         PersonEntity personEntity = new PersonEntity(login, password);
         personRepository.save(personEntity);
