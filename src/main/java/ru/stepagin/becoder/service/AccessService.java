@@ -40,7 +40,9 @@ public class AccessService {
         PersonEntity person = personRepository.findByLogin(login);
         if (person == null || account == null)
             throw new IllegalArgumentException("Некорректный запрос на выдачу прав: отсутствуют необходимые данные.");
-        accessRepository.save(new AccessEntity(person, account));
+        AccessEntity access = accessRepository.findByAccount_IdAndPersonId(account.getId(), person.getId());
+        if(access == null) accessRepository.save(new AccessEntity(person, account));
+        else throw new IllegalArgumentException("Некорректный запрос на выдачу прав: у пользователя уже есть доступ к аккаунту.");
     }
 
     @Transactional
@@ -50,6 +52,7 @@ public class AccessService {
         if (person == null || account == null)
             throw new IllegalArgumentException("Некорректный запрос на отзыв прав: отсутствуют необходимые данные.");
         AccessEntity access = accessRepository.findByAccount_IdAndPersonId(account.getId(), person.getId());
-        accessRepository.delete(access);
+        if(access != null) accessRepository.delete(access);
+        else throw new IllegalArgumentException("Некорректный запрос на отзыв прав: у пользователя отсутствуют права на данный аккаунт.");
     }
 }
