@@ -47,8 +47,8 @@
     </table>
     <form th:action="@{'/accounts/' + ${account.getId()} + '/grantment'}" th:object="${accessUser}" th:method="post" >
         <label for="person">Изменить права доступа пользователей</label><br/>
-        <select id="person" name="person" th:field="*{id}">
-            <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.login}" ></option>
+        <select id="person" name="person" th:field="*{login}">
+            <option th:each="user : ${users}" th:value="${user.login}" th:text="${user.login}" ></option>
         </select><br/>
         <button type="submit">Дать доступ</button><br/>
         <button type="submit" th:formaction="@{'/accounts/' + ${account.getId()} + '/revocation'}">Отозвать доступ</button>
