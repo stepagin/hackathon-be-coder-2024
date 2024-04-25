@@ -34,6 +34,9 @@ public class LegalAccountService {
 
     @Transactional
     public LegalAccountDTO createAccount(PersonEntity person) {
+        if (person == null) {
+            throw new IllegalArgumentException("Не найден пользователь, создающий счёт");
+        }
         LegalAccountEntity legalAccountEntity = new LegalAccountEntity(person);
         legalAccountEntity = legalAccountRepository.save(legalAccountEntity);
         accessRepository.save(new AccessEntity(person, legalAccountEntity));

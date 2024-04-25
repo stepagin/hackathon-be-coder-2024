@@ -13,7 +13,6 @@ import ru.stepagin.becoder.DTO.BalanceChangeDTO;
 import ru.stepagin.becoder.DTO.LegalAccountDTO;
 import ru.stepagin.becoder.DTO.PersonDTO;
 import ru.stepagin.becoder.entity.PersonEntity;
-import ru.stepagin.becoder.exception.InvalidIdSuppliedException;
 import ru.stepagin.becoder.service.AccessService;
 import ru.stepagin.becoder.service.LegalAccountService;
 import ru.stepagin.becoder.service.PersonService;
@@ -41,11 +40,7 @@ public class BalanceController {
     @Operation(summary = "Создать юридический счёт")
     @PostMapping
     public ResponseEntity<LegalAccountDTO> createAccount(Authentication authentication) {
-        // TODO перенести выброс ошибки в сервис
         PersonEntity person = securityService.getPerson(authentication);
-        if (person == null) {
-            throw new InvalidIdSuppliedException("Не найден пользователь, создающий счёт");
-        }
         LegalAccountDTO account = accountService.createAccount(person);
         return ResponseEntity.ok(account);
     }
