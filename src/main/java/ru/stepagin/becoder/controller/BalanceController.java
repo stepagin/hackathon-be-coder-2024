@@ -63,7 +63,7 @@ public class BalanceController {
 
     @PreAuthorize("@securityService.hasAccessToAccount(#balanceChange, authentication)")
     @PostMapping("/decrease")
-    public String decreaseAccountBalance(@RequestBody BalanceChangeDTO balanceChange, HttpServletRequest request) {
+    public String decreaseAccountBalance(@ModelAttribute BalanceChangeDTO balanceChange, HttpServletRequest request) {
         accountService.decreaseBalance(balanceChange);
         String referer = request.getHeader("Referer");
         return "redirect:"+ referer;
