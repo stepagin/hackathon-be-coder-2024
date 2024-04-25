@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
@@ -58,6 +59,12 @@ public class ServiceErrorHandler {
     public ResponseEntity<String> handleException(final HttpMessageNotReadableException e) {
         log.error("HttpMessageNotReadableException: {}", e.getMessage());
         return ResponseEntity.internalServerError().body("Переданы некорректные данные: " + e.getMessage());
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<String> handleException(final HttpRequestMethodNotSupportedException e) {
+        log.error("HttpRequestMethodNotSupportedException: {}", e.getMessage());
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("Данный тип запроса не поддерживается: " + e.getMessage());
     }
 
     @ExceptionHandler(RuntimeException.class)
