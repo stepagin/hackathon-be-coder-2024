@@ -23,14 +23,14 @@
     </tbody>
 </table>
 
-<form th:action="@{'/v1/account/increase'}" th:object="${balanceChangeDTO}" th:method="post" >
+<form th:action="@{'/accounts/' + ${account.getId()} + '/deposit'}" th:object="${balanceChangeDTO}" th:method="post" >
     <label for="amount">Введите сумму:</label><br/>
     <input type="number" id="amount" name="amount" step="0.01" min="0" required th:value="0.00" th:field="*{amount}"><br/>
-    <input type="text" id="id" name="id" th:field="*{account.id}" th:value="${account.getId()}" hidden="hidden">
-    <input type="number" id="balance" name="balance" th:field="*{account.balance}" th:value="${account.getBalance()}" hidden="hidden">
-    <button type="submit" th:formaction="@{/v1/account/increase}">Увеличить</button><br/>
-    <button type="submit" th:formaction="@{/v1/account/decrease}">Уменьшить</button>
+    <button type="submit" >Увеличить</button><br/>
+    <button type="submit" th:formaction="@{'/accounts/' + ${account.getId()} + '/withdrawal'}">Уменьшить</button>
 </form>
+
+
 <div th:if="${isOwner}">
     <p>Список пользователей, имеющих доступ к аккаунту:</p>
     <table>
@@ -45,17 +45,17 @@
         </tr>
         </tbody>
     </table>
-    <form th:action="@{'/v1/account/grant/' + ${account.getId()}}" th:object="${accessUser}" th:method="post" >
-        <label for="amount">Изменить права доступа пользователей</label><br/>
+    <form th:action="@{'/accounts/' + ${account.getId()} + '/grantment'}" th:object="${accessUser}" th:method="post" >
+        <label for="person">Изменить права доступа пользователей</label><br/>
         <select id="person" name="person" th:field="*{id}">
             <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.login}" ></option>
         </select><br/>
         <button type="submit">Дать доступ</button><br/>
-        <button type="submit" th:formaction="@{'/v1/account/revoke/' + ${account.getId()}}">Отозвать доступ</button>
+        <button type="submit" th:formaction="@{'/accounts/' + ${account.getId()} + '/revocation'}">Отозвать доступ</button>
     </form>
 
 </div>
 
-<button th:href="@{/v1/account/all}" onclick="window.location.href='/v1/account/all';">Назад</button>
+<button th:href="@{/account/all}" onclick="window.location.href='/v1/account/all';">Назад</button>
 </body>
 </html>

@@ -19,14 +19,14 @@
         <td th:text="${account.getId()}"></td>
         <td th:text="${account.getBalance()}"></td>
         <td>
-            <form th:action="@{'/v1/account/{id}'(id=${account.getId()})}" th:method="get">
+            <form th:action="@{'/accounts/{id}'(id=${account.getId()})}" th:method="get">
                 <button type="submit" class="btn">Подробнее</button>
             </form>
         </td>
     </tr>
     </tbody>
 </table>
-<form th:action="@{'/v1/account'}" th:method="post">
+<form th:action="@{'/accounts'}" th:method="post">
     <button type="submit" class="btn">Создать новый аккаунт</button>
 </form>
 </body>
