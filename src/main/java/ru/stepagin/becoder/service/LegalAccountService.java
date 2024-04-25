@@ -9,6 +9,7 @@ import ru.stepagin.becoder.entity.AccessEntity;
 import ru.stepagin.becoder.entity.LegalAccountEntity;
 import ru.stepagin.becoder.entity.PersonEntity;
 import ru.stepagin.becoder.exception.InvalidIdSuppliedException;
+import ru.stepagin.becoder.repository.AccessRepository;
 import ru.stepagin.becoder.repository.LegalAccountRepository;
 
 import java.util.Objects;
@@ -20,23 +21,24 @@ import java.util.UUID;
 public class LegalAccountService {
     private final LegalAccountRepository legalAccountRepository;
     private final HistoryService historyService;
-    private final AccessService accessService;
+    private final AccessRepository accessRepository;
 
     @Transactional
     public boolean isActiveOwner(PersonEntity person, UUID accountId) {
         LegalAccountEntity account = getAccountEntityById(accountId.toString());
-        return accessService.checkHasAccess(person.getId(), accountId) && (Objects.equals(account.getCreator(), person));
+        if (account == null)
+            throw new InvalidIdSuppliedException("Указан неверный id счёта");
+        return (accessRepository.findByAccount_IdAndPersonId(accountId, person.getId()) != null)
+                && (Objects.equals(account.getCreator(), person));
     }
 
     @Transactional
     public LegalAccountDTO createAccount(PersonEntity person) {
         LegalAccountEntity legalAccountEntity = new LegalAccountEntity(person);
         legalAccountEntity = legalAccountRepository.save(legalAccountEntity);
-        accessService.save(new AccessEntity(person, legalAccountEntity));
+        accessRepository.save(new AccessEntity(person, legalAccountEntity));
         return new LegalAccountDTO(legalAccountEntity);
     }
-
-
 
     @Transactional
     public void decrease(String accountId, long amount){

@@ -12,6 +12,10 @@ import java.util.UUID;
 public interface AccessRepository extends JpaRepository<AccessEntity, Long> {
     AccessEntity findByAccount_IdAndPersonId(UUID accountId, Long personId);
 
+    AccessEntity findByAccount_IdAndPerson_LoginIgnoreCase(UUID id, String login);
+
+
     List<AccessEntity> findByPerson(PersonEntity person);
 
+    List<AccessEntity> findByAccount_Id(UUID id);
 }
