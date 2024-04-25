@@ -37,51 +37,38 @@ public class LegalAccountService {
     }
 
 
+
+    @Transactional
+    public void decrease(String accountId, long amount){
+        legalAccountRepository.decreaseBalanceById(UUID.fromString(accountId), amount);
+    }
     @Transactional
     public LegalAccountDTO decreaseBalance(String accountId, long amount) {
         // getting account from DB and its balance
+        this.decrease(accountId, amount);
         LegalAccountEntity account = this.getAccountEntityById(accountId);
-        Long balance = account.getBalance();
-
-        // check balance will not become negative
-        if (balance - amount < 0) {
-            historyService.addRecord(amount, account, false);
-            // save in history with success=false
-            throw new IllegalArgumentException("На счету недостаточно средств");
-        }
-
-        // update balance
-        this.updateBalance(
-                account.getId(),
-                account.getBalance() - amount // decreasing
-        );
-
-        // save in history with success=true
+//        // save in history with success=true
         historyService.addRecord(amount, account, true);
-        account.setBalance(account.getBalance() - amount);
-        return new LegalAccountDTO(account);
+        return new LegalAccountDTO();
+    }
+
+
+
+    @Transactional
+    public void increase(String accountId, long amount){
+        legalAccountRepository.increaseBalanceById(UUID.fromString(accountId), amount);
     }
 
     @Transactional
     public LegalAccountDTO increaseBalance(String accountId, long amount) {
         // getting account from DB and its balance
+        this.increase(accountId, amount);
         LegalAccountEntity account = this.getAccountEntityById(accountId);
-
-        // update balance
-        this.updateBalance(
-                account.getId(),
-                account.getBalance() + amount // increasing
-        );
-        // save in history with success=true
+//        // save in history with success=true
         historyService.addRecord(amount, account, true);
-        account.setBalance(account.getBalance() + amount);
-        return new LegalAccountDTO(account);
+        return new LegalAccountDTO();
     }
 
-    @Transactional
-    public void updateBalance(UUID accountId, Long balance) {
-        legalAccountRepository.updateBalanceByAccountId(accountId, balance);
-    }
 
     @Transactional
     public LegalAccountEntity getAccountEntityById(String id) {
