@@ -29,7 +29,7 @@ public class AccessService {
     }
 
     public boolean checkHasAccess(Long personId, UUID accountId) {
-        AccessEntity access = accessRepository.findByAccount_IdAndPersonId(accountId, personId);
+        AccessEntity access = accessRepository.findByAccountIdAndPersonId(accountId, personId);
         return access != null;
     }
 
@@ -66,7 +66,7 @@ public class AccessService {
     }
 
     public List<PersonDTO> getPartnersByAccountId(String accountId) {
-        return accessRepository.findByAccount_Id(UUID.fromString(accountId)).stream()
+        return accessRepository.findByAccountId(UUID.fromString(accountId)).stream()
                 .map((accessEntity) -> new PersonDTO(accessEntity.getPerson())).toList();
     }
 }
