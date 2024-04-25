@@ -1,5 +1,6 @@
 package ru.stepagin.becoder.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -21,6 +22,8 @@ import ru.stepagin.becoder.service.MyUserDetailsService;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration {
     private final MyUserDetailsService userDetailService;
+    @Value(value = "${api.endpoints.base-url}")
+    private String BASE_URL;
 
     public SecurityConfiguration(MyUserDetailsService userDetailService) {
         this.userDetailService = userDetailService;
@@ -44,11 +47,11 @@ public class SecurityConfiguration {
         return httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .authorizeHttpRequests(registry -> {
-                    registry.requestMatchers("/api-docs").permitAll();
-                    registry.requestMatchers("/swagger-ui.html").permitAll();
-                    registry.requestMatchers("/swagger-ui/index.html").permitAll();
-                    registry.requestMatchers("/h2-console/**").permitAll();
-                    registry.requestMatchers("/auth/register").permitAll();
+                    registry.requestMatchers(BASE_URL + "/api-docs").permitAll();
+                    registry.requestMatchers(BASE_URL + "/swagger-ui.html").permitAll();
+                    registry.requestMatchers(BASE_URL + "/swagger-ui/index.html").permitAll();
+                    registry.requestMatchers(BASE_URL + "/h2-console/**").permitAll();
+                    registry.requestMatchers(BASE_URL + "/auth/register").permitAll();
                     registry.anyRequest().authenticated();
                 })
                 .httpBasic(Customizer.withDefaults())
