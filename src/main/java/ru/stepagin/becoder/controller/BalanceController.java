@@ -1,13 +1,10 @@
 package ru.stepagin.becoder.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -31,15 +28,25 @@ import java.util.List;
 @Tag(name = "API управления балансом")
 @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Успешно выполнено"),
-        @ApiResponse(responseCode = "401", description = "Пользователь не авторизован",
-                content = @Content(schema = @Schema(implementation = String.class))),
-        @ApiResponse(responseCode = "403", description = "Ошибка не стороне клиента",
-                content = @Content(schema = @Schema(implementation = String.class))),
+        @ApiResponse(responseCode = "400", description = "Ошибка на стороне клиента"),
+        @ApiResponse(responseCode = "401", description = "Пользователь не авторизован"),
+        @ApiResponse(responseCode = "403", description = "Ошибка на стороне клиента"),
 })
 public class BalanceController {
     private final LegalAccountService accountService;
     private final AccessService accessService;
     private final SecurityService securityService;
+
+    @Operation(summary = "Создать юридический счёт")
+    @PostMapping
+    public ResponseEntity<LegalAccountDTO> createAccount(Authentication authentication) {
+        PersonEntity person = securityService.getPerson(authentication);
+        if (person == null) {
+            throw new InvalidIdSuppliedException("Не найден пользователь, создающий счёт");
+        }
+        LegalAccountDTO account = accountService.createAccount(person);
+        return ResponseEntity.ok(account);
+    }
 
     @Operation(summary = "Показать список доступных счетов")
     @GetMapping
@@ -53,17 +60,6 @@ public class BalanceController {
     @PreAuthorize("@securityService.hasAccessToAccount(#id, authentication)")
     public ResponseEntity<LegalAccountDTO> getAccountDetails(@PathVariable String id) {
         LegalAccountDTO account = accountService.getAccountById(id);
-        return ResponseEntity.ok(account);
-    }
-
-    @Operation(summary = "Создать юридический счёт")
-    @PostMapping
-    public ResponseEntity<LegalAccountDTO> createAccount(Authentication authentication) {
-        PersonEntity person = securityService.getPerson(authentication);
-        if (person == null) {
-            throw new InvalidIdSuppliedException("Не найден пользователь, создающий счёт");
-        }
-        LegalAccountDTO account = accountService.createAccount(person);
         return ResponseEntity.ok(account);
     }
 
