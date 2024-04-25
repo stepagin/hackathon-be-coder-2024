@@ -1,8 +1,11 @@
 package ru.stepagin.becoder.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.stepagin.becoder.DTO.BalanceChangeDTO;
 import ru.stepagin.becoder.DTO.LegalAccountDTO;
@@ -14,9 +17,7 @@ import ru.stepagin.becoder.service.AccessService;
 import ru.stepagin.becoder.service.LegalAccountService;
 import ru.stepagin.becoder.service.SecurityService;
 
-import java.util.List;
-
-@RestController
+@Controller
 @CrossOrigin
 @RequestMapping("/account")
 public class BalanceController {
@@ -32,19 +33,20 @@ public class BalanceController {
 
     @GetMapping("/{id}")
     @PreAuthorize("@securityService.hasAccessToAccount(#id, authentication)")
-    public ResponseEntity<LegalAccountDTO> getAccountDetails(@PathVariable String id) {
-        LegalAccountDTO account = accountService.getAccountById(id);
-        return ResponseEntity.ok(account);
+    public String getAccountDetails(@PathVariable String id, Model model) {
+        model.addAttribute("account", accountService.getAccountById(id));
+        return "account_page";
     }
 
     @PostMapping
-    public ResponseEntity<LegalAccountDTO> createAccount(Authentication authentication) {
+    public String createAccount(Authentication authentication, HttpServletRequest request) {
         PersonEntity person = securityService.getPerson(authentication);
         if (person == null) {
             throw new InvalidIdSuppliedException("Не найден пользователь, создающий счёт");
         }
-        LegalAccountDTO account = accountService.createAccount(person);
-        return ResponseEntity.ok(account);
+        accountService.createAccount(person);
+        String referer = request.getHeader("Referer");
+        return "redirect:"+ referer;
     }
 
     @PreAuthorize("@securityService.hasAccessToAccount(#balanceChange, authentication)")
@@ -61,9 +63,10 @@ public class BalanceController {
 
 
     @GetMapping("/all")
-    public ResponseEntity<List<LegalAccountDTO>> getAllAccounts(Authentication auth) {
+    public String getAllAccounts(Authentication auth, Model model) {
         PersonEntity person = securityService.getPerson(auth);
-        return ResponseEntity.ok(accessService.getAllByPerson(person));
+        model.addAttribute("accounts", accessService.getAllByPerson(person));
+        return "accounts";
     }
 
     @PostMapping("grant/{id}")

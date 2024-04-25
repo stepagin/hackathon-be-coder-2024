@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Информация об аккаунте</title>
+</head>
+<body>
+Информация о вашем аккаунте
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Баланс</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td th:text="${account.getId()}"></td>
+        <td th:text="${account.getBalance()}"></td>
+    </tr>
+    </tbody>
+</table>
+Изменить б
+<form>
+
+</form>
+<button>Изменить баланс</button>
+<button>Добавить пользователя</button>
+</body>
+</html>
