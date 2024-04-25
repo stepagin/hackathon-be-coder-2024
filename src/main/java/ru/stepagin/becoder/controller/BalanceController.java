@@ -15,7 +15,11 @@ import ru.stepagin.becoder.entity.PersonEntity;
 import ru.stepagin.becoder.exception.InvalidIdSuppliedException;
 import ru.stepagin.becoder.service.AccessService;
 import ru.stepagin.becoder.service.LegalAccountService;
+import ru.stepagin.becoder.service.PersonService;
 import ru.stepagin.becoder.service.SecurityService;
+
+import java.util.List;
+import java.util.UUID;
 
 @Controller
 @CrossOrigin
@@ -24,19 +28,30 @@ public class BalanceController {
     private final LegalAccountService accountService;
     private final AccessService accessService;
     private final SecurityService securityService;
+    private final PersonService personService;
+    private final LegalAccountService legalAccountService;
 
-    public BalanceController(LegalAccountService accountService, AccessService accessService, SecurityService securityService) {
+    public BalanceController(LegalAccountService accountService, AccessService accessService, SecurityService securityService, PersonService personService, LegalAccountService legalAccountService) {
         this.accountService = accountService;
         this.accessService = accessService;
         this.securityService = securityService;
+        this.personService = personService;
+        this.legalAccountService = legalAccountService;
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("@securityService.hasAccessToAccount(#id, authentication)")
-    public String getAccountDetails(@PathVariable String id, Model model) {
+    public String getAccountDetails(@PathVariable String id, Model model, Authentication auth) {
         LegalAccountDTO legalAccountDTO = accountService.getAccountById(id);
+        List<PersonDTO> personList = personService.getAllUsers();
+        List<PersonDTO> usersWithAccess = personList.stream().filter(user->accessService.checkHasAccess(user.getId(),  UUID.fromString(legalAccountDTO.getId()))).toList();
+        PersonEntity person = securityService.getPerson(auth);
         model.addAttribute("account", legalAccountDTO);
         model.addAttribute("balanceChangeDTO", new BalanceChangeDTO(legalAccountDTO));
+        model.addAttribute("users", personList);
+        model.addAttribute("usersWithAccess", usersWithAccess);
+        model.addAttribute("accessUser", new PersonDTO());
+        model.addAttribute("isOwner", legalAccountService.isActiveOwner(person, UUID.fromString(legalAccountDTO.getId())));
         return "account_page";
     }
 
@@ -80,8 +95,11 @@ public class BalanceController {
 
     @PostMapping("grant/{id}")
     @PreAuthorize("@securityService.isActiveOwner(#id, authentication)")
-    public ResponseEntity<String> grantAccessToAccount(@PathVariable String id, @RequestBody PersonDTO person) {
+    public ResponseEntity<String> grantAccessToAccount(@PathVariable String id, @ModelAttribute PersonDTO person) {
         LegalAccountEntity account = accountService.getAccountEntityById(id);
+
+        person = personService.findById(person.getId()); //TODO это костыль, потому что в PersonDTO приходит login=null
+
         if (accessService.grantAccess(account, person.getLogin()))
             return ResponseEntity.ok("Пользователю " + person.getLogin() + " выдан доступ к аккаунту " + id);
         else return ResponseEntity.badRequest().body("некорректный запрос на выдачу прав");
@@ -89,7 +107,10 @@ public class BalanceController {
 
     @PostMapping("revoke/{id}")
     @PreAuthorize("@securityService.isActiveOwner(#id, authentication)")
-    public ResponseEntity<String> revokeAccessFromAccount(@PathVariable String id, @RequestBody PersonDTO person) {
+    public ResponseEntity<String> revokeAccessFromAccount(@PathVariable String id, @ModelAttribute PersonDTO person) {
+
+        person = personService.findById(person.getId()); //TODO это костыль, потому что в PersonDTO приходит login=null
+
         LegalAccountEntity account = accountService.getAccountEntityById(id);
         if (accessService.revokeAccess(account, person.getLogin()))
             return ResponseEntity.ok("У пользователя " + person.getLogin() + " отозван доступ к аккаунту " + id);
