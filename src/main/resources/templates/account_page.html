@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Информация об аккаунте</title>
+    <link th:href="@{/styles/main.css}" rel="stylesheet" />
+
+</head>
+<body>
+Информация о вашем аккаунте
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Баланс</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td th:text="${account.getId()}"></td>
+        <td th:text="${account.getBalance()}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<form th:action="@{'/account/increase'}" th:object="${balanceChangeDTO}" th:method="post" >
+    <label for="amount">Введите сумму:</label><br/>
+    <input type="number" id="amount" name="amount" step="0.01" min="0" required th:value="0.00" th:field="*{amount}"><br/>
+    <input type="text" id="id" name="id" th:field="*{account.id}" th:value="${account.getId()}" hidden="hidden">
+    <input type="number" id="balance" name="balance" th:field="*{account.balance}" th:value="${account.getBalance()}" hidden="hidden">
+    <button type="submit" th:formaction="@{/account/increase}">Увеличить</button><br/>
+    <button type="submit" th:formaction="@{/account/decrease}">Уменьшить</button>
+</form>
+<div th:if="${isOwner}">
+    <p>Список пользователей, имеющих доступ к аккаунту:</p>
+    <table>
+        <thead>
+        <tr>
+            <th>Логин</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${usersWithAccess}">
+            <td th:text="${user.getLogin()}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <form th:action="@{'/account/grant/' + ${account.getId()}}" th:object="${accessUser}" th:method="post" >
+        <label for="amount">Изменить права доступа пользователей</label><br/>
+        <select id="person" name="person" th:field="*{id}">
+            <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.login}" ></option>
+        </select><br/>
+        <button type="submit">Дать доступ</button><br/>
+        <button type="submit" th:formaction="@{'/account/revoke/' + ${account.getId()}}">Отозвать доступ</button>
+    </form>
+
+</div>
+
+<button th:href="@{/account/all}" onclick="window.location.href='/account/all';">Назад</button>
+</body>
+</html>

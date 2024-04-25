@@ -1,0 +1,68 @@
+/* Устанавливаем глобальный шрифт для всего сайта */
+* {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    font-size: 16px;
+}
+
+/* Устанавливаем закругленные углы для полей ввода и кнопок */
+input, button {
+    border-radius: 5px;
+}
+
+/* Устанавливаем нормальный шрифт для полей ввода и кнопок */
+input {
+    font-family: inherit;
+    font-size: inherit;
+}
+
+button {
+    font-family: inherit;
+    font-size: inherit;
+    cursor: pointer;
+}
+/* Увеличиваем глобальный размер шрифта */
+* {
+    font-size: 18px;
+}
+
+/* Делаем кнопки зелеными и добавляем отступ между текстом и обводкой */
+button {
+    background-color: #008000;
+    color: white;
+    padding: 10px 15px;
+    border: 1px solid #006600;
+}
+
+/* Добавляем тонкие контуры и закругленные углы таблицам */
+table {
+    border-collapse: collapse;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 5px;
+}
+
+/* Создаем наш собственный стиль выпадающих списков */
+select {
+    width: 150px;
+    height: 30px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+/* Добавляем стрелку вниз в выпадающих списках */
+select::-ms-expand {
+    display: block;
+    width: 20px;
+    height: 20px;
+    margin-left: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    transform: rotate(90deg);
+}

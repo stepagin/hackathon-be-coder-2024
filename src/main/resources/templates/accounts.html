@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Мои аккаунты</title>
+    <link th:href="@{/styles/main.css}" rel="stylesheet" />
+</head>
+<body>
+Доступные вам аккаунты
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Баланс</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="account : ${accounts}">
+        <td th:text="${account.getId()}"></td>
+        <td th:text="${account.getBalance()}"></td>
+        <td>
+            <form th:action="@{'/account/{id}'(id=${account.getId()})}" th:method="get">
+                <button type="submit" class="btn">Подробнее</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<form th:action="@{'/account'}" th:method="post">
+    <button type="submit" class="btn">Создать новый аккаунт</button>
+</form>
+</body>
+</html>

@@ -31,6 +31,7 @@ public class AccessService {
         return access != null;
     }
 
+
     public List<LegalAccountDTO> getAllByPerson(PersonEntity person) {
         return accessRepository.findByPerson(person).stream().map(LegalAccountDTO::new).toList();
     }
@@ -39,6 +40,8 @@ public class AccessService {
     public boolean grantAccess(LegalAccountEntity account, String login) {
         PersonEntity person = personRepository.findByLogin(login);
         if (person == null || account == null) return false;
+        AccessEntity access = accessRepository.findByAccount_IdAndPersonId(account.getId(), person.getId());
+        if (access != null) return false; //у пользователя уже есть доступ к аккаунту
         accessRepository.save(new AccessEntity(person, account));
         return true;
     }
@@ -48,6 +51,7 @@ public class AccessService {
         PersonEntity person = personRepository.findByLogin(login);
         if (person == null || account == null) return false;
         AccessEntity access = accessRepository.findByAccount_IdAndPersonId(account.getId(), person.getId());
+        if(access == null) return false;
         accessRepository.delete(access);
         return true;
     }
