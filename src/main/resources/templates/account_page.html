@@ -20,11 +20,14 @@
     </tr>
     </tbody>
 </table>
-Изменить б
-<form>
 
+<form th:action="@{'/account/increase'}" th:object="${balanceChangeDTO}" th:method="post" >
+    <label for="amount">Введите сумму:</label>
+    <input type="number" id="amount" name="amount" step="0.01" min="0" required th:value="0.00" th:field="*{amount}">
+    <input type="text" id="id" name="id" th:field="*{account.id}" th:value="${account.getId()}" hidden="hidden">
+    <input type="number" id="balance" name="balance" th:field="*{account.balance}" th:value="${account.getBalance()}" hidden="hidden">
+
+    <button type="submit" class="btn">Пополнить баланс</button>
 </form>
-<button>Изменить баланс</button>
-<button>Добавить пользователя</button>
 </body>
 </html>

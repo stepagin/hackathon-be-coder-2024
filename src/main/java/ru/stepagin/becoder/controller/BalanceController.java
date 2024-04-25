@@ -34,7 +34,9 @@ public class BalanceController {
     @GetMapping("/{id}")
     @PreAuthorize("@securityService.hasAccessToAccount(#id, authentication)")
     public String getAccountDetails(@PathVariable String id, Model model) {
-        model.addAttribute("account", accountService.getAccountById(id));
+        LegalAccountDTO legalAccountDTO = accountService.getAccountById(id);
+        model.addAttribute("account", legalAccountDTO);
+        model.addAttribute("balanceChangeDTO", new BalanceChangeDTO(legalAccountDTO));
         return "account_page";
     }
 
@@ -49,16 +51,23 @@ public class BalanceController {
         return "redirect:"+ referer;
     }
 
+
     @PreAuthorize("@securityService.hasAccessToAccount(#balanceChange, authentication)")
     @PostMapping("/increase")
-    public ResponseEntity<LegalAccountDTO> increaseAccountBalance(@RequestBody BalanceChangeDTO balanceChange) {
-        return ResponseEntity.ok(accountService.increaseBalance(balanceChange));
+    public String increaseAccountBalance(@ModelAttribute BalanceChangeDTO balanceChange,HttpServletRequest request) {
+        accountService.increaseBalance(balanceChange);
+        String referer = request.getHeader("Referer");
+        return "redirect:"+ referer;
+
     }
 
     @PreAuthorize("@securityService.hasAccessToAccount(#balanceChange, authentication)")
     @PostMapping("/decrease")
-    public ResponseEntity<LegalAccountDTO> decreaseAccountBalance(@RequestBody BalanceChangeDTO balanceChange) {
-        return ResponseEntity.ok(accountService.decreaseBalance(balanceChange));
+    public String decreaseAccountBalance(@RequestBody BalanceChangeDTO balanceChange, HttpServletRequest request) {
+        accountService.decreaseBalance(balanceChange);
+        String referer = request.getHeader("Referer");
+        return "redirect:"+ referer;
+
     }
 
 

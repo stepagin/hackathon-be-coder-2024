@@ -39,6 +39,7 @@ public class ServiceErrorHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleException(final IllegalArgumentException e) {
         log.error("IllegalArgumentException: {}", e.getMessage());
+        e.printStackTrace();
         return ResponseEntity.badRequest().body(e.getMessage());
     }
 

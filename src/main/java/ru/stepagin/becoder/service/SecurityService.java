@@ -40,6 +40,7 @@ public class SecurityService {
 
     public boolean hasAccessToAccount(BalanceChangeDTO balanceChangeDTO, Authentication authentication) {
         if (balanceChangeDTO.getAccount() == null || balanceChangeDTO.getAccount().getId() == null) {
+
             throw new IllegalArgumentException("Не переданы данные счёта");
         }
         return hasAccessToAccount(balanceChangeDTO.getAccount().getId(), authentication);
