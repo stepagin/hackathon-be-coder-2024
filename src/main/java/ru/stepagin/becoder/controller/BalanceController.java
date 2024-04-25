@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/account")
+@RequestMapping("${api.endpoints.base-url}/account")
 @RequiredArgsConstructor
 public class BalanceController {
     private final LegalAccountService accountService;

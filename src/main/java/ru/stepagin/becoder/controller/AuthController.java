@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/auth")
+@RequestMapping("${api.endpoints.base-url}/auth")
 @RequiredArgsConstructor
 public class AuthController {
     private final PersonService personService;
