@@ -8,8 +8,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class BalanceChangeDTO {
-    private Long amount;
-    private LegalAccountDTO account;
+    private long amount;
 
     /**
      * Сеттер для автоматического создания BalanceChangeDTO в контроллерах.
@@ -18,8 +17,10 @@ public class BalanceChangeDTO {
      * @param amount сумма изменения дробным числом в рублях.
      *               Цифры после второго знака после запятой будут отброшены.
      */
-    public void setAmount(double amount) {
-        long rubles = (long) amount;
+    public void setAmount(Double amount) {
+        if (amount == null)
+            throw new IllegalArgumentException("Amount cannot be null");
+        long rubles = (long) (double) amount;
         long kopecks = Math.round((amount - rubles) * 1000) / 10 ;
         checkAmount(rubles * 100 + kopecks);
         this.amount = rubles * 100 + kopecks;
@@ -29,9 +30,5 @@ public class BalanceChangeDTO {
         // check increasing amount > 0
         if (kopecks <= 0L)
             throw new IllegalArgumentException("amount должно быть больше нуля");
-    }
-
-    public boolean checkDontHaveNulls() {
-        return (getAccount() != null && getAmount() != null && getAccount().getId() != null);
     }
 }

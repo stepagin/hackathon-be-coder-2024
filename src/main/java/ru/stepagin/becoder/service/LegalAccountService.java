@@ -4,7 +4,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.stepagin.becoder.DTO.BalanceChangeDTO;
 import ru.stepagin.becoder.DTO.LegalAccountDTO;
 import ru.stepagin.becoder.entity.AccessEntity;
 import ru.stepagin.becoder.entity.LegalAccountEntity;
@@ -39,16 +38,14 @@ public class LegalAccountService {
 
 
     @Transactional
-    public LegalAccountDTO decreaseBalance(BalanceChangeDTO balanceChange) {
-        if (!balanceChange.checkDontHaveNulls())
-            throw new IllegalArgumentException("Не представлены необходимые данные счёта.");
+    public LegalAccountDTO decreaseBalance(String accountId, long amount) {
         // getting account from DB and its balance
-        LegalAccountEntity account = this.getAccountEntityById((balanceChange.getAccount().getId()));
+        LegalAccountEntity account = this.getAccountEntityById(accountId);
         Long balance = account.getBalance();
 
         // check balance will not become negative
-        if (balance - balanceChange.getAmount() < 0) {
-            historyService.addRecord(balanceChange.getAmount(), account, false);
+        if (balance - amount < 0) {
+            historyService.addRecord(amount, account, false);
             // save in history with success=false
             throw new IllegalArgumentException("На счету недостаточно средств");
         }
@@ -56,30 +53,28 @@ public class LegalAccountService {
         // update balance
         this.updateBalance(
                 account.getId(),
-                account.getBalance() - balanceChange.getAmount() // decreasing
+                account.getBalance() - amount // decreasing
         );
 
         // save in history with success=true
-        historyService.addRecord(balanceChange.getAmount(), account, true);
-        account.setBalance(account.getBalance() - balanceChange.getAmount());
+        historyService.addRecord(amount, account, true);
+        account.setBalance(account.getBalance() - amount);
         return new LegalAccountDTO(account);
     }
 
     @Transactional
-    public LegalAccountDTO increaseBalance(BalanceChangeDTO balanceChange) {
-        if (!balanceChange.checkDontHaveNulls())
-            throw new IllegalArgumentException("Не представлены необходимые данные счёта.");
+    public LegalAccountDTO increaseBalance(String accountId, long amount) {
         // getting account from DB and its balance
-        LegalAccountEntity account = this.getAccountEntityById((balanceChange.getAccount().getId()));
+        LegalAccountEntity account = this.getAccountEntityById(accountId);
 
         // update balance
         this.updateBalance(
                 account.getId(),
-                account.getBalance() + balanceChange.getAmount() // increasing
+                account.getBalance() + amount // increasing
         );
         // save in history with success=true
-        historyService.addRecord(balanceChange.getAmount(), account, true);
-        account.setBalance(account.getBalance() + balanceChange.getAmount());
+        historyService.addRecord(amount, account, true);
+        account.setBalance(account.getBalance() + amount);
         return new LegalAccountDTO(account);
     }
 
@@ -90,11 +85,8 @@ public class LegalAccountService {
 
     @Transactional
     public LegalAccountEntity getAccountEntityById(String id) {
-        LegalAccountEntity legalAccountEntity = legalAccountRepository.findById(UUID.fromString(id)).orElse(null);
-        if (legalAccountEntity == null) {
-            throw new InvalidIdSuppliedException("Не найден счёт с данным id");
-        }
-        return legalAccountEntity;
+        return legalAccountRepository.findById(UUID.fromString(id))
+                .orElseThrow(() -> new InvalidIdSuppliedException("Не найден счёт с данным id"));
     }
 
     @Transactional

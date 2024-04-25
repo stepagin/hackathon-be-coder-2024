@@ -64,21 +64,19 @@ public class BalanceController {
         return ResponseEntity.ok(account);
     }
 
-    // TODO: remove verbs
-    @PreAuthorize("@securityService.hasAccessToAccount(#id, authentication)")
     @PostMapping("/{accountId}/deposit")
+    @PreAuthorize("@securityService.hasAccessToAccount(#id, authentication)")
     public ResponseEntity<LegalAccountDTO> increaseAccountBalance(@PathVariable(name = "accountId") String id, @RequestBody BalanceChangeDTO balanceChange) {
-        return ResponseEntity.ok(accountService.increaseBalance(balanceChange));
+        return ResponseEntity.ok(accountService.increaseBalance(id, balanceChange.getAmount()));
     }
 
-    @PreAuthorize("@securityService.hasAccessToAccount(#balanceChange, authentication)")
     @PostMapping("/{accountId}/withdrawal")
+    @PreAuthorize("@securityService.hasAccessToAccount(#id, authentication)")
     public ResponseEntity<LegalAccountDTO> decreaseAccountBalance(@PathVariable(name = "accountId") String id, @RequestBody BalanceChangeDTO balanceChange) {
-        return ResponseEntity.ok(accountService.decreaseBalance(balanceChange));
+        return ResponseEntity.ok(accountService.decreaseBalance(id, balanceChange.getAmount()));
     }
 
-    // TODO put
-    @PutMapping("/{accountId}/permissions")
+    @PutMapping("/{accountId}/grantment")
     @PreAuthorize("@securityService.isActiveOwner(#id, authentication)")
     public ResponseEntity<String> grantAccessToAccount(@PathVariable(name = "accountId") String id, @RequestBody PersonDTO person) {
         LegalAccountEntity account = accountService.getAccountEntityById(id);
@@ -86,7 +84,7 @@ public class BalanceController {
         return ResponseEntity.ok("Пользователю " + person.getLogin() + " выдан доступ к аккаунту " + id);
     }
 
-    @PutMapping("/{accountId}/permissions/{permission_id}")
+    @PutMapping("/{accountId}/revocation")
     @PreAuthorize("@securityService.isActiveOwner(#id, authentication)")
     public ResponseEntity<String> revokeAccessFromAccount(@PathVariable(name = "accountId") String id, @RequestBody PersonDTO person) {
         LegalAccountEntity account = accountService.getAccountEntityById(id);
