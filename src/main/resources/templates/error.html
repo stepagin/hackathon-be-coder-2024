@@ -3,9 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title>Ошибка</title>
+    <link th:href="@{/styles/main.css}" rel="stylesheet"/>
+
 </head>
 <body>
 <h2>Произошла ошибка!</h2>
 <p th:text="${errorText}"></p>
+<button th:href="@{/accounts}" onclick="window.location.href='/accounts';">На главную</button>
+
+<button id="backButton" th:href="@{${revertAddress}}">Назад</button>
+<script>
+    document.querySelector('#backButton').addEventListener('click', function () {
+        window.location.href = this.getAttribute('href');
+    });
+</script>
 </body>
 </html>
