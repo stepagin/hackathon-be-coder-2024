@@ -1,82 +1,129 @@
 package ru.stepagin.becoder.exception;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.ui.Model;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @Slf4j
-@RestControllerAdvice
+@ControllerAdvice
 public class ServiceErrorHandler {
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(InvalidIdSuppliedException.class)
-    public ResponseEntity<String> handleException(final InvalidIdSuppliedException e) {
+    public String handleException(final InvalidIdSuppliedException e, Model model, HttpServletRequest request) {
         log.error("InvalidIdSuppliedException: {}", e.getMessage());
-        return ResponseEntity.badRequest().body(e.getMessage());
+        String referer = request.getHeader("Referer");
+        model.addAttribute("errorText", e.getMessage());
+        model.addAttribute("revertAddress", referer);
+        return "error";
     }
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(LegalAccountNotFoundException.class)
-    public ResponseEntity<String> handleException(final LegalAccountNotFoundException e) {
+    public String handleException(final LegalAccountNotFoundException e, Model model, HttpServletRequest request) {
         log.error("TopicNotFoundException: {}", e.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        String referer = request.getHeader("Referer");
+        model.addAttribute("errorText", e.getMessage());
+        model.addAttribute("revertAddress", referer);
+        return "error";
     }
 
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<String> handleException(final ValidationException e) {
+    public String handleException(final ValidationException e, Model model, HttpServletRequest request) {
         log.error("ValidationException: {}", e.getMessage());
-        return ResponseEntity.unprocessableEntity().body(e.getMessage());
+        String referer = request.getHeader("Referer");
+        model.addAttribute("errorText", e.getMessage());
+        model.addAttribute("revertAddress", referer);
+        return "error";
     }
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoResourceFoundException.class)
-    public ResponseEntity<String> handleException(final NoResourceFoundException e) {
+    public String handleException(final NoResourceFoundException e, Model model, HttpServletRequest request) {
         log.error("NoResourceFoundException: {}", e.getMessage());
-        return ResponseEntity.notFound().build();
+        String referer = request.getHeader("Referer");
+        model.addAttribute("errorText", e.getMessage());
+        model.addAttribute("revertAddress", referer);
+        return "error";
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<String> handleException(final IllegalArgumentException e) {
+    public String handleException(final IllegalArgumentException e, Model model, HttpServletRequest request) {
         log.error("IllegalArgumentException: {}", e.getMessage());
-        return ResponseEntity.badRequest().body(e.getMessage());
+        String referer = request.getHeader("Referer");
+        model.addAttribute("errorText", e.getMessage());
+        model.addAttribute("revertAddress", referer);
+        return "error";
     }
 
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(UnsupportedOperationException.class)
-    public ResponseEntity<String> handleException(final UnsupportedOperationException e) {
+    public String handleException(final UnsupportedOperationException e, Model model, HttpServletRequest request) {
         log.error("UnsupportedOperationException: {}", e.getMessage());
-        return ResponseEntity.internalServerError().body(e.getMessage());
+        String referer = request.getHeader("Referer");
+        model.addAttribute("errorText", e.getMessage());
+        model.addAttribute("revertAddress", referer);
+
+        return "error";
     }
 
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<String> handleException(final AccessDeniedException e) {
+    public String handleException(final AccessDeniedException e, Model model, HttpServletRequest request) {
         log.error("AccessDeniedException: {}", e.getMessage());
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Доступ запрещен");
+        String referer = request.getHeader("Referer");
+        model.addAttribute("errorText", "Доступ запрещен");
+        model.addAttribute("revertAddress", referer);
+        return "error";
     }
 
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<String> handleException(final HttpMessageNotReadableException e) {
+    public String handleException(final HttpMessageNotReadableException e, Model model, HttpServletRequest request) {
         log.error("HttpMessageNotReadableException: {}", e.getMessage());
-        return ResponseEntity.internalServerError().body("Переданы некорректные данные: " + e.getMessage());
+        String referer = request.getHeader("Referer");
+        model.addAttribute("errorText", "Переданы некорректные данные: " + e.getMessage());
+        model.addAttribute("revertAddress", referer);
+        return "error";
     }
 
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<String> handleException(final HttpRequestMethodNotSupportedException e) {
+    public String handleException(final HttpRequestMethodNotSupportedException e, Model model, HttpServletRequest request) {
         log.error("HttpRequestMethodNotSupportedException: {}", e.getMessage());
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("Данный тип запроса не поддерживается.");
+        String referer = request.getHeader("Referer");
+        model.addAttribute("errorText", "Данный тип запроса не поддерживается.");
+        model.addAttribute("revertAddress", referer);
+        return "error";
     }
 
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<String> handleException(final RuntimeException e) {
+    public String handleException(final RuntimeException e, Model model, HttpServletRequest request) {
         log.error("Runtime Exception ({}): {}", e.getClass(), e.getMessage());
-        return ResponseEntity.internalServerError().body("Произошла ошибка на стороне сервера");
+        String referer = request.getHeader("Referer");
+        model.addAttribute("errorText", "Произошла ошибка на стороне сервера");
+        model.addAttribute("revertAddress", referer);
+        return "error";
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleException(final Exception e) {
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public String handleException(final Exception e, Model model, HttpServletRequest request) {
         log.error("Common Exception ({}): {}", e.getClass(), e.getMessage());
-        return ResponseEntity.internalServerError().body("Идеального сервера не существует. Где-то вкралась ошибка.");
+        String referer = request.getHeader("Referer");
+        model.addAttribute("errorText", "Данный тип запроса не поддерживается.");
+        model.addAttribute("revertAddress", referer);
+        return "error";
     }
 
 }

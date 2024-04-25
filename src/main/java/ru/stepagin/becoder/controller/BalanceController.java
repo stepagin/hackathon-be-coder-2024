@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -76,6 +77,7 @@ public class BalanceController {
         return ResponseEntity.ok(accountService.decreaseBalance(id, balanceChange.getAmount()));
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @PutMapping("/{accountId}/grantment")
     @PreAuthorize("@securityService.isActiveOwner(#id, authentication)")
     public ResponseEntity<String> grantAccessToAccount(@PathVariable(name = "accountId") String id, @RequestBody PersonDTO person) {

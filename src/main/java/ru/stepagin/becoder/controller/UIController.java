@@ -35,20 +35,22 @@ public class UIController {
     private final LegalAccountService legalAccountService;
 
     @GetMapping
-    public String getAll(Authentication auth, Model model){
+    public String getAll(Authentication auth, Model model) {
         ResponseEntity<List<LegalAccountDTO>> accounts = balanceController.getAllAccounts(auth);
         model.addAttribute("accounts", accounts.getBody());
         return "accounts";
     }
 
     @GetMapping("/{id}")
-    public String getAccountDetails(@PathVariable String id, Model model, Authentication auth) {
+    public String getAccountDetails(@PathVariable String id, Model model, Authentication auth, HttpServletRequest request) {
 
         ResponseEntity<?> responseEntity = balanceController.getAccountDetails(id);
-        if(responseEntity.getStatusCode().equals(OK)){
+        String referer = request.getHeader("Referer");
+
+        if (responseEntity.getStatusCode().equals(OK)) {
             LegalAccountDTO legalAccountDTO = (LegalAccountDTO) responseEntity.getBody();
             List<PersonDTO> personList = personService.getAllUsers();
-            List<PersonDTO> usersWithAccess = personList.stream().filter(user->accessService.checkHasAccess(user.getId(),  UUID.fromString(legalAccountDTO.getId()))).toList();
+            List<PersonDTO> usersWithAccess = personList.stream().filter(user -> accessService.checkHasAccess(user.getId(), UUID.fromString(legalAccountDTO.getId()))).toList();
             PersonEntity person = securityService.getPerson(auth);
 
             model.addAttribute("account", legalAccountDTO);
@@ -58,9 +60,9 @@ public class UIController {
             model.addAttribute("accessUser", new PersonDTO());
             model.addAttribute("isOwner", legalAccountService.isActiveOwner(person, UUID.fromString(legalAccountDTO.getId())));
             return "account_page";
-        }
-        else {
+        } else {
             model.addAttribute("errorText", responseEntity.getBody());
+            model.addAttribute("revertAddress", referer);
             return "error";
         }
     }
@@ -69,12 +71,13 @@ public class UIController {
     @PostMapping
     public String createAccount(Authentication authentication, HttpServletRequest request, Model model) {
         ResponseEntity<?> responseEntity = balanceController.createAccount(authentication);
-        if(responseEntity.getStatusCode().equals(OK)){
-            String referer = request.getHeader("Referer");
-            return "redirect:"+ referer;
-        }
-        else{
+        String referer = request.getHeader("Referer");
+
+        if (responseEntity.getStatusCode().equals(OK)) {
+            return "redirect:" + referer;
+        } else {
             model.addAttribute("errorText", responseEntity.getBody());
+            model.addAttribute("revertAddress", referer);
             return "error";
         }
     }
@@ -84,12 +87,12 @@ public class UIController {
         BalanceChangeDTO dto = new BalanceChangeDTO();
         dto.setAmount(balanceChange.getAmount());
         ResponseEntity<?> responseEntity = balanceController.increaseAccountBalance(id, dto);
-        if(responseEntity.getStatusCode().equals(OK)) {
-            String referer = request.getHeader("Referer");
+        String referer = request.getHeader("Referer");
+        if (responseEntity.getStatusCode().equals(OK)) {
             return "redirect:" + referer;
-        }
-        else{
+        } else {
             model.addAttribute("errorText", responseEntity.getBody());
+            model.addAttribute("revertAddress", referer);
             return "error";
         }
 
@@ -101,12 +104,12 @@ public class UIController {
         BalanceChangeDTO dto = new BalanceChangeDTO();
         dto.setAmount(balanceChange.getAmount());
         ResponseEntity<?> responseEntity = balanceController.decreaseAccountBalance(id, dto);
-        if(responseEntity.getStatusCode().equals(OK)){
-            String referer = request.getHeader("Referer");
-            return "redirect:"+ referer;
-        }
-        else{
+        String referer = request.getHeader("Referer");
+        if (responseEntity.getStatusCode().equals(OK)) {
+            return "redirect:" + referer;
+        } else {
             model.addAttribute("errorText", responseEntity.getBody());
+            model.addAttribute("revertAddress", referer);
             return "error";
         }
 
@@ -115,12 +118,12 @@ public class UIController {
     @PostMapping("/{accountId}/grantment")
     public String grantAccessToAccount(@PathVariable(name = "accountId") String id, @ModelAttribute PersonDTO person, HttpServletRequest request, Model model) {
         ResponseEntity<?> responseEntity = balanceController.grantAccessToAccount(id, person);
-        if(responseEntity.getStatusCode().equals(OK)){
-            String referer = request.getHeader("Referer");
-            return "redirect:"+ referer;
-        }
-        else{
+        String referer = request.getHeader("Referer");
+        if (responseEntity.getStatusCode().equals(OK)) {
+            return "redirect:" + referer;
+        } else {
             model.addAttribute("errorText", responseEntity.getBody());
+            model.addAttribute("revertAdress", referer);
             return "error";
         }
     }
@@ -128,11 +131,10 @@ public class UIController {
     @PostMapping("/{accountId}/revocation")
     public String revokeAccessFromAccount(@PathVariable(name = "accountId") String id, @ModelAttribute PersonDTO person, HttpServletRequest request, Model model) {
         ResponseEntity<?> responseEntity = balanceController.revokeAccessFromAccount(id, person);
-        if(responseEntity.getStatusCode().equals(OK)){
+        if (responseEntity.getStatusCode().equals(OK)) {
             String referer = request.getHeader("Referer");
-            return "redirect:"+ referer;
-        }
-        else{
+            return "redirect:" + referer;
+        } else {
             model.addAttribute("errorText", responseEntity.getBody());
             return "error";
         }
