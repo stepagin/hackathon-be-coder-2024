@@ -64,7 +64,7 @@ public class ServiceErrorHandler {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<String> handleException(final HttpRequestMethodNotSupportedException e) {
         log.error("HttpRequestMethodNotSupportedException: {}", e.getMessage());
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("Данный тип запроса не поддерживается: " + e.getMessage());
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("Данный тип запроса не поддерживается.");
     }
 
     @ExceptionHandler(RuntimeException.class)
