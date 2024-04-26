@@ -107,7 +107,7 @@ java -jar be-coder-1.0.jar
 * просмотра состояния базы данных H2
 
 
-Посмотреть документацию в **Swagger UI** можно по ссылке (необходимо, чтобы приложение было запущено):
+### <a id="swagger">Посмотреть документацию в **Swagger UI** можно по ссылке (необходимо, чтобы приложение было запущено):</a>
 ```http request
 http://localhost:18002/swagger-ui.html
 ```
@@ -381,7 +381,7 @@ curl --location 'http://localhost:18002/account/grant/26aed3f8-d182-4885-a07d-83
 * [x] Реализована авторизация через Spring Security
 * [x] Представлено описание проекта в README.md
 * [x] Код проекта соответствует Java-конвенции
-* [x] Имеется описание API в Swagger
+* [x] Имеется описание [API в Swagger](#swagger)
 * [x] Имеется Docker для удобного развёртывания приложения (см. пункт Docker)
 
 ## <a id="ui">User Interface</a>
