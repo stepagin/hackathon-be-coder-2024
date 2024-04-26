@@ -53,10 +53,21 @@ public class SecurityConfiguration {
                     registry.requestMatchers(baseUrl + "/h2-console/**").permitAll();
                     registry.requestMatchers(baseUrl + "/auth/register").permitAll();
                     registry.requestMatchers("/auth/register").permitAll();
+                    registry.requestMatchers("/auth/start").permitAll();
+                    registry.requestMatchers("/auth/login").permitAll();
+                    registry.requestMatchers("/favicon.ico").permitAll();
 
                     registry.anyRequest().authenticated();
                 })
                 .httpBasic(Customizer.withDefaults())
+                .formLogin(formLogin ->
+                        formLogin.loginPage("/auth/login").
+                                loginProcessingUrl("/perform-login")
+                                .usernameParameter("user")
+                                .passwordParameter("pass")
+                                .defaultSuccessUrl("/accounts").permitAll()
+
+                )
                 .build();
     }
 
