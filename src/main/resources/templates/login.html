@@ -10,25 +10,31 @@
           rel="stylesheet">
 </head>
 <body>
-<div>
+<header>
+    <h1>Управление юридическими счетами</h1>
+</header>
+<h2>Войдите в аккаунт</h2>
+<div id="loginForm">
     <form name="f" th:action="@{/perform-login}" method="post">
         <fieldset>
-            <legend>Войдите</legend>
             <div th:if="${param.error}" class="alert alert-error">
-                Неправильные имя и пароль.
+                Неправильные логин и пароль.
             </div>
             <div th:if="${param.logout}" class="alert alert-success">
                 You have been logged out.
             </div>
-            <label for="user">Имя</label>
-            <input type="text" id="user" name="user"/>
-            <label for="pass">Пароль</label>
-            <input type="password" id="pass" name="pass"/>
+            <label for="user">Логин</label><br/>
+            <input type="text" id="user" name="user" required/><br/>
+            <label for="pass">Пароль</label><br/>
+            <input type="password" id="pass" name="pass" required/><br/>
             <div class="form-actions">
                 <button type="submit" class="btn">Войти</button>
             </div>
         </fieldset>
     </form>
 </div>
+<footer>
+    <p>&copy; 2024 Команда "Байтсы"<br/>Микросервис по управлению юридическими счетами</p>
+</footer>
 </body>
 </html>
