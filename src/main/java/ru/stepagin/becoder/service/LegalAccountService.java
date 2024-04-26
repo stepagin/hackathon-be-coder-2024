@@ -9,6 +9,7 @@ import ru.stepagin.becoder.entity.AccessEntity;
 import ru.stepagin.becoder.entity.LegalAccountEntity;
 import ru.stepagin.becoder.entity.PersonEntity;
 import ru.stepagin.becoder.exception.InvalidIdSuppliedException;
+import ru.stepagin.becoder.mappers.LegalAccountMapper;
 import ru.stepagin.becoder.repository.AccessRepository;
 import ru.stepagin.becoder.repository.LegalAccountRepository;
 
@@ -40,7 +41,7 @@ public class LegalAccountService {
         LegalAccountEntity legalAccountEntity = new LegalAccountEntity(person);
         legalAccountEntity = legalAccountRepository.save(legalAccountEntity);
         accessRepository.save(new AccessEntity(person, legalAccountEntity));
-        return new LegalAccountDto(legalAccountEntity);
+        return LegalAccountMapper.toDto(legalAccountEntity);
     }
 
 
@@ -78,6 +79,6 @@ public class LegalAccountService {
 
     @Transactional
     public LegalAccountDto getAccountById(String id) {
-        return new LegalAccountDto(this.getAccountEntityById(id));
+        return LegalAccountMapper.toDto(this.getAccountEntityById(id));
     }
 }

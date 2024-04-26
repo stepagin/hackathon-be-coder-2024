@@ -10,6 +10,8 @@ import ru.stepagin.becoder.entity.AccessEntity;
 import ru.stepagin.becoder.entity.LegalAccountEntity;
 import ru.stepagin.becoder.entity.PersonEntity;
 import ru.stepagin.becoder.exception.InvalidIdSuppliedException;
+import ru.stepagin.becoder.mappers.LegalAccountMapper;
+import ru.stepagin.becoder.mappers.PersonMapper;
 import ru.stepagin.becoder.repository.AccessRepository;
 
 import java.util.List;
@@ -34,7 +36,8 @@ public class AccessService {
     }
 
     public List<LegalAccountDto> getAllByPerson(PersonEntity person) {
-        return accessRepository.findByPerson(person).stream().map(LegalAccountDto::new).toList();
+        return accessRepository.findByPerson(person).stream()
+                .map(LegalAccountMapper::toDto).toList();
     }
 
     @Transactional
@@ -67,6 +70,6 @@ public class AccessService {
 
     public List<PersonDto> getPartnersByAccountId(String accountId) {
         return accessRepository.findByAccountId(UUID.fromString(accountId)).stream()
-                .map((accessEntity) -> new PersonDto(accessEntity.getPerson())).toList();
+                .map(PersonMapper::toDto).toList();
     }
 }

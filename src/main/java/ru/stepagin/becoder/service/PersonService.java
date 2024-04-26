@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.stepagin.becoder.dto.PersonDto;
 import ru.stepagin.becoder.entity.PersonEntity;
+import ru.stepagin.becoder.mappers.PersonMapper;
 import ru.stepagin.becoder.repository.PersonRepository;
 
 import java.util.List;
@@ -21,15 +22,15 @@ public class PersonService {
         }
         PersonEntity personEntity = new PersonEntity(login, password);
         personRepository.save(personEntity);
-        return new PersonDto(personEntity);
+        return PersonMapper.toDto(personEntity);
     }
 
     public List<PersonDto> getAllUsers() {
-        return personRepository.findAll().stream().map(PersonDto::new).toList();
+        return PersonMapper.toDtos(personRepository.findAll());
     }
 
     public PersonDto getUser(String login) {
-        return new PersonDto(personRepository.findByLogin(login));
+        return PersonMapper.toDto(personRepository.findByLogin(login));
     }
 
     public PersonEntity getPersonEntity(String login) {
