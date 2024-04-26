@@ -91,8 +91,6 @@ class AccessServiceTest {
         verify(legalAccountService, times(1)).getAccountEntityById(uuid.toString());
         verify(personService, times(1)).getPersonEntity(personLogin);
         verify(accessRepository, times(1)).save(any(AccessEntity.class));
-
-
     }
 
     @Test
