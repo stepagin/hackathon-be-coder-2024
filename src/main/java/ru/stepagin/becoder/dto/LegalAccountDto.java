@@ -12,4 +12,8 @@ public class LegalAccountDto {
     @NotNull(message = "не может быть null")
     private String id;
     private double balance;
+
+    public long getBalanceInRubles(double amount) {
+        return (long) (amount / 100);
+    }
 }

@@ -228,7 +228,8 @@ class UiAccountsControllerTest {
 
     @Test
     void revokeAccessFromAccount() {
-        PersonDto personDto = new PersonDto(new PersonEntity("user", "user"));
+        PersonDto personDto = new PersonDto();
+        personDto.setLogin("user");
         String uuid = UUID.randomUUID().toString();
 
         ResponseEntity<?> response = ResponseEntity.ok("ok");
@@ -244,7 +245,8 @@ class UiAccountsControllerTest {
 
     @Test
     void revokeAccessFromAccountError() {
-        PersonDto personDto = new PersonDto(new PersonEntity("user", "user"));
+        PersonDto personDto = new PersonDto();
+        personDto.setLogin("user");
         String uuid = UUID.randomUUID().toString();
 
         ResponseEntity<?> response = ResponseEntity.internalServerError().body("error");

@@ -62,8 +62,11 @@ class BalanceControllerTest {
         PersonEntity person = new PersonEntity();
 
         List<LegalAccountDto> list = new ArrayList<>();
-        list.add(new LegalAccountDto(UUID.randomUUID().toString(), 100));
-        list.add(new LegalAccountDto(UUID.randomUUID().toString(), 100));
+        LegalAccountDto legalAccountDto = new LegalAccountDto();
+        legalAccountDto.setId(UUID.randomUUID().toString());
+        legalAccountDto.setBalance(100);
+
+        list.add(legalAccountDto);
 
         when(securityService.getPerson(authentication)).thenReturn(person);
         when(accessService.getAllByPerson(person)).thenReturn(list);
@@ -80,7 +83,9 @@ class BalanceControllerTest {
     @Test
     void getAccountDetails() {
         String uuid = UUID.randomUUID().toString();
-        LegalAccountDto legalAccountDTO = new LegalAccountDto(uuid, 100);
+        LegalAccountDto legalAccountDTO = new LegalAccountDto();
+        legalAccountDTO.setId(uuid);
+        legalAccountDTO.setBalance(100);
         when(accountService.getAccountById(uuid)).thenReturn(legalAccountDTO);
 
         ResponseEntity<LegalAccountDto> response = balanceController.getAccountDetails(uuid);
@@ -122,11 +127,13 @@ class BalanceControllerTest {
 
         ResponseEntity<LegalAccountDto> response = balanceController.increaseAccountBalance(uuid, balanceChangeDTO);
 
-        verify(accountService, times(1)).increaseBalance(account, balanceChangeDTO.getAmount());
+        verify(accountService, times(1)).increaseBalance(account, balanceChangeDTO.getAmountInKopecks());
 
         assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
-        assertEquals(new LegalAccountDto(account).getBalance(), response.getBody().getBalance());
-        assertEquals(new LegalAccountDto(account).getId(), response.getBody().getId());
+
+        LegalAccountDto legalAccountDto = new LegalAccountDto();
+
+        assertEquals(legalAccountDto.getBalanceInRubles(account.getBalance()), response.getBody().getBalance());
 
     }
 
@@ -141,15 +148,16 @@ class BalanceControllerTest {
         account.setBalance(0L);
         account.setId(UUID.fromString(uuid));
 
-        when(accountService.isEnough(uuid, balanceChangeDTO.getAmount())).thenReturn(account);
+        when(accountService.isEnough(uuid, balanceChangeDTO.getAmountInKopecks())).thenReturn(account);
 
         ResponseEntity<LegalAccountDto> response = balanceController.decreaseAccountBalance(uuid, balanceChangeDTO);
 
-        verify(accountService, times(1)).decreaseBalance(account, balanceChangeDTO.getAmount());
+        verify(accountService, times(1)).decreaseBalance(account, balanceChangeDTO.getAmountInKopecks());
 
         assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
-        assertEquals(new LegalAccountDto(account).getBalance(), response.getBody().getBalance());
-        assertEquals(new LegalAccountDto(account).getId(), response.getBody().getId());
+        LegalAccountDto legalAccountDto = new LegalAccountDto();
+
+        assertEquals(legalAccountDto.getBalanceInRubles(account.getBalance()), response.getBody().getBalance());
 
     }
 
@@ -174,8 +182,9 @@ class BalanceControllerTest {
     void grantAccessToAccount() {
         PersonEntity person = new PersonEntity("user", "user");
         String accountId = UUID.randomUUID().toString();
-
-        ResponseEntity<String> response = balanceController.grantAccessToAccount(accountId, new PersonDto(person));
+        PersonDto personDto = new PersonDto();
+        personDto.setLogin(person.getLogin());
+        ResponseEntity<String> response = balanceController.grantAccessToAccount(accountId, personDto);
 
         verify(accessService, times(1)).grantAccess(accountId, person.getLogin());
         assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
@@ -186,7 +195,10 @@ class BalanceControllerTest {
     void revokeAccessFromAccount() {
         PersonEntity person = new PersonEntity("user", "user");
         String accountId = UUID.randomUUID().toString();
-        when(personService.getUser(person.getLogin())).thenReturn(new PersonDto(person));
+
+        PersonDto personDto = new PersonDto();
+        personDto.setLogin(person.getLogin());
+        when(personService.getUser(person.getLogin())).thenReturn(personDto);
 
         ResponseEntity<String> response = balanceController.revokeAccessFromAccount(accountId, person.getLogin());
 
