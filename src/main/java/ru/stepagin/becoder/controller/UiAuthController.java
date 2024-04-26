@@ -25,6 +25,12 @@ public class UiAuthController {
         return "register";
     }
 
+    @GetMapping("/login")
+    public String get(Model model) {
+        model.addAttribute("title", "Форма входа");
+        return "login";
+    }
+
     @PostMapping("/register")
     public String register(@Validated @ModelAttribute RegistrationDto data, HttpServletRequest request, Model model) {
         ResponseEntity<?> responseEntity = authController.register(data);
