@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Мои аккаунты</title>
+    <title>Доступные аккаунты</title>
     <link th:href="@{/styles/main.css}" rel="stylesheet" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,9 +35,25 @@
     </tr>
     </tbody>
 </table>
-<form th:action="@{'/accounts'}" th:method="post">
-    <button type="submit" class="btn">Создать новый аккаунт</button>
-</form>
+<table class="buttonTable">
+    <tbody>
+    <tr class="buttonRow">
+        <td class="buttonCell">
+            <form th:action="@{'/auth/start'}" th:method="get">
+                <button type="submit" class="btn">Создать<br/> нового пользователя</button>
+            </form>
+        </td>
+        <td class="buttonCell">
+            <form th:action="@{'/accounts'}" th:method="post">
+                <button type="submit" class="btn">Создать<br/> новый аккаунт</button>
+            </form>
+        </td>
+
+    </tr>
+    </tbody>
+</table>
+
+
 <footer>
     <p>&copy; 2024 Команда "Байтсы"<br/>Микросервис по управлению юридическим счетом</p>
 </footer>

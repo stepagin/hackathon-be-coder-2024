@@ -52,6 +52,7 @@ public class SecurityConfiguration {
                     registry.requestMatchers(BASE_URL + "/swagger-ui/index.html").permitAll();
                     registry.requestMatchers(BASE_URL + "/h2-console/**").permitAll();
                     registry.requestMatchers(BASE_URL + "/auth/register").permitAll();
+                    registry.requestMatchers("/auth/register").permitAll();
                     registry.anyRequest().authenticated();
                 })
                 .httpBasic(Customizer.withDefaults())
