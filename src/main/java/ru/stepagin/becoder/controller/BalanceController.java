@@ -67,7 +67,7 @@ public class BalanceController {
     @PreAuthorize("@securityService.hasAccessToAccount(#id, authentication)")
     public ResponseEntity<LegalAccountDTO> increaseAccountBalance(@PathVariable(name = "accountId") String id, @RequestBody BalanceChangeDTO balanceChange) {
         LegalAccountEntity account = accountService.getAccountEntityById(id);
-        accountService.increaseBalance(id, balanceChange.getAmount());
+        accountService.increaseBalance(account, balanceChange.getAmount());
         account.setBalance(account.getBalance() + balanceChange.getAmount());
         return ResponseEntity.ok(new LegalAccountDTO(account));
     }
@@ -79,7 +79,7 @@ public class BalanceController {
             @PathVariable(name = "accountId") String id,
             @RequestBody BalanceChangeDTO balanceChange) {
         LegalAccountEntity account = accountService.isEnough(id, balanceChange.getAmount());
-        accountService.decreaseBalance(id, balanceChange.getAmount());
+        accountService.decreaseBalance(account, balanceChange.getAmount());
         account.setBalance(account.getBalance() - balanceChange.getAmount());
         return ResponseEntity.ok(new LegalAccountDTO(account));
 

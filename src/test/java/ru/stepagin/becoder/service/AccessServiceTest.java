@@ -5,7 +5,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -13,7 +12,6 @@ import ru.stepagin.becoder.entity.AccessEntity;
 import ru.stepagin.becoder.entity.LegalAccountEntity;
 import ru.stepagin.becoder.entity.PersonEntity;
 import ru.stepagin.becoder.repository.AccessRepository;
-import ru.stepagin.becoder.repository.PersonRepository;
 
 import java.util.UUID;
 
@@ -26,14 +24,17 @@ class AccessServiceTest {
     @Mock
     private AccessRepository accessRepository;
     @Mock
-    private PersonRepository personRepository;
+    private LegalAccountService legalAccountService;
+    @Mock
+    private PersonService personService;
+
     private AccessService accessService;
     private AutoCloseable autoCloseable;
 
     @BeforeEach
     void setUp() {
         autoCloseable = MockitoAnnotations.openMocks(this);
-        accessService = new AccessService(accessRepository, personRepository);
+        accessService = new AccessService(accessRepository, legalAccountService, personService);
     }
 
     @AfterEach
@@ -73,36 +74,45 @@ class AccessServiceTest {
 
     @Test
     void grantAccess() {
-        PersonEntity personEntity = new PersonEntity("user", "user");
-        LegalAccountEntity account = new LegalAccountEntity(personEntity);
+        UUID uuid = UUID.randomUUID();
+        String personLogin = "user";
 
-        when(personRepository.findByLogin(personEntity.getLogin())).thenReturn(personEntity);
-        accessService.grantAccess(account, personEntity.getLogin());
+        LegalAccountEntity account = new LegalAccountEntity();
+        PersonEntity person = new PersonEntity();
 
-        verify(personRepository, times(1)).findByLogin(personEntity.getLogin());
+        when(accessRepository.findByAccount_IdAndPerson_LoginIgnoreCase(uuid, personLogin)).thenReturn(null);
+        when(legalAccountService.getAccountEntityById(uuid.toString())).thenReturn(account);
+        when(personService.getPersonEntity(personLogin)).thenReturn(person);
+
+        accessService.grantAccess(uuid.toString(), personLogin);
+
+
+        verify(accessRepository, times(1)).findByAccount_IdAndPerson_LoginIgnoreCase(uuid, personLogin);
+        verify(legalAccountService, times(1)).getAccountEntityById(uuid.toString());
+        verify(personService, times(1)).getPersonEntity(personLogin);
         verify(accessRepository, times(1)).save(any(AccessEntity.class));
+
 
     }
 
     @Test
     void revokeAccess() {
-        PersonEntity person = new PersonEntity("user", "user");
-        Long personId = 1L;
-        person.setId(personId);
-
-        LegalAccountEntity account = new LegalAccountEntity(person);
         UUID uuid = UUID.randomUUID();
+
+        PersonEntity person = new PersonEntity("user", "user");
+        LegalAccountEntity account = new LegalAccountEntity(person);
         account.setId(uuid);
 
-        AccessEntity access = new AccessEntity(person, account);
+        PersonEntity not_owner = new PersonEntity("not_owner", "user");
 
-        when(personRepository.findByLogin(person.getLogin())).thenReturn(person);
-        when(accessRepository.findByAccountIdAndPersonId(uuid, personId)).thenReturn(access);
+        AccessEntity access = new AccessEntity(not_owner, account);
 
-        accessService.revokeAccess(account, person.getLogin());
+        when(accessRepository.findByAccount_IdAndPerson_LoginIgnoreCase(uuid, "not_owner")).thenReturn(access);
 
-        verify(personRepository, times(1)).findByLogin(any(String.class));
-        verify(accessRepository, times(1)).findByAccountIdAndPersonId(any(UUID.class), any(Long.class));
+        accessService.revokeAccess(uuid.toString(), "not_owner");
+
+
+        verify(accessRepository, times(1)).findByAccount_IdAndPerson_LoginIgnoreCase(uuid, "not_owner");
         verify(accessRepository, times(1)).delete(any(AccessEntity.class));
 
     }

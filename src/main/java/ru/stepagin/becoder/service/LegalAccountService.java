@@ -13,7 +13,6 @@ import ru.stepagin.becoder.repository.AccessRepository;
 import ru.stepagin.becoder.repository.LegalAccountRepository;
 
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -46,21 +45,28 @@ public class LegalAccountService {
 
 
     @Transactional
-    public void decreaseBalance(String accountId, long amount) {
-        legalAccountRepository.decreaseBalanceById(UUID.fromString(accountId), amount);
+    public void decreaseBalance(LegalAccountEntity account, long amount) {
+        legalAccountRepository.decreaseBalanceById(account.getId(), amount);
+        historyService.addRecord(amount, account, true);
     }
+
+//    @Transactional
+//    piub
 
     @Transactional
     public LegalAccountEntity isEnough(String accountId, long amount) {
         LegalAccountEntity account = legalAccountRepository.findById(UUID.fromString(accountId)).orElseThrow(() -> new InvalidIdSuppliedException("Не найден счёт с данным id"));
-        if (account.getBalance() - amount < 0)
+        if (account.getBalance() - amount < 0) {
+            historyService.addRecord(amount, account, false);
             throw new IllegalArgumentException();
+        }
         return account;
     }
 
     @Transactional
-    public void increaseBalance(String accountId, long amount) {
-        legalAccountRepository.increaseBalanceById(UUID.fromString(accountId), amount);
+    public void increaseBalance(LegalAccountEntity account, long amount) {
+        legalAccountRepository.increaseBalanceById(account.getId(), amount);
+        historyService.addRecord(amount, account, true);
     }
 
 
