@@ -1,9 +1,10 @@
 package ru.stepagin.becoder.service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.stepagin.becoder.DTO.LegalAccountDTO;
 import ru.stepagin.becoder.entity.AccessEntity;
 import ru.stepagin.becoder.entity.LegalAccountEntity;
@@ -51,9 +52,10 @@ public class LegalAccountService {
     public LegalAccountDTO decreaseBalance(String accountId, long amount) {
         // getting account from DB and its balance
         this.decrease(accountId, amount);
-        LegalAccountEntity account = this.getAccountEntityById(accountId);
+//        LegalAccountEntity account = this.getAccountEntityById(accountId);
 //        // save in history with success=true
-        historyService.addRecord(amount, account, true);
+//        account.setBalance(account.getBalance() - amount);
+//        historyService.addRecord(amount, account, true);
         return new LegalAccountDTO();
     }
 
@@ -68,9 +70,10 @@ public class LegalAccountService {
     public LegalAccountDTO increaseBalance(String accountId, long amount) {
         // getting account from DB and its balance
         this.increase(accountId, amount);
-        LegalAccountEntity account = this.getAccountEntityById(accountId);
-//        // save in history with success=true
-        historyService.addRecord(amount, account, true);
+//        LegalAccountEntity account = this.getAccountEntityById(accountId);
+////        // save in history with success=true
+//        account.setBalance(account.getBalance() + amount);
+//        historyService.addRecord(amount, account, true);
         return new LegalAccountDTO();
     }
 

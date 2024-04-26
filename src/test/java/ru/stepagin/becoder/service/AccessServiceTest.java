@@ -27,7 +27,6 @@ class AccessServiceTest {
     private AccessRepository accessRepository;
     @Mock
     private PersonRepository personRepository;
-    @InjectMocks
     private AccessService accessService;
     private AutoCloseable autoCloseable;
 

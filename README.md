@@ -28,6 +28,36 @@ Spring Security вводит ограничения безопасности HTT
 
 ## Сборка проекта
 
+### Через Docker
+Для начала вам надо будет загрузить образ из DockerHub:
+```shell
+docker pull torichan373/hackathon-be-coder-2024:latest
+```
+
+После можно запускать проект:
+```shell
+docker run -p 18002:18002 torichan373/hackathon-be-coder-2024:latest
+```
+Будет создан докер контейнер, который запуститься на порту 18002.
+
+Чтобы остановить контейнер введите для эту команду, чтобы узнать id контейнера:
+```shell
+docker ps
+```
+
+Вы увидите примерно что-то такое:
+```
+CONTAINER ID   IMAGE                                        COMMAND                CREATED         STATUS         PORTS                      NAMES
+3ee259d886dc   torichan373/hackathon-be-coder-2024:latest   "java -jar /app.jar"   3 minutes ago   Up 5 seconds   0.0.0.0:18002->18002/tcp   stoic_pan
+```
+
+Чтобы остановить контейнер, введите эту команду:
+```shell
+docker stop 3ee259d886dc
+```
+Здесь id контейнера взят из промера выше, у вас будет другой id.
+
+### Вручную
 
 **Клонируйте к себе репозиторий с исходным кодом проекта**
 
