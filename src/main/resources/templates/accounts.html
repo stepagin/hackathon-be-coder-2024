@@ -16,7 +16,7 @@
 <h2><span th:text="'Здравствуйте, ' + ${user.getLogin()} + '!'"></span></h2>
 <p>Доступные вам счета</p>
 <div id="userAccountsList">
-    <table>
+    <table style="margin: auto">
         <thead>
         <tr>
             <th>ID</th>
@@ -36,8 +36,7 @@
         </tr>
         </tbody>
     </table>
-    <div id="buttonTableDiv">
-        <table class="buttonTable">
+    <table class="buttonTable" style="margin: auto">
             <tbody>
             <tr class="buttonRow">
                 <td class="buttonCell">
@@ -55,7 +54,6 @@
             </tr>
             </tbody>
         </table>
-    </div>
 
 </div>
 

@@ -194,9 +194,7 @@ h2 {
 }
 
 #userAccountsList {
-    align-items: center;
     text-align: center;
-    justify-content: center;
 }
 
 
@@ -207,10 +205,6 @@ div#registration, div#loginForm {
 .buttonTable {
     border: white;
     border-radius: 0;
-}
-
-#buttonTableDiv {
-    text-align: center;
 }
 
 .buttonCell {
