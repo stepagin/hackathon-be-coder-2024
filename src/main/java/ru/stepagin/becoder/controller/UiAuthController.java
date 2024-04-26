@@ -15,7 +15,7 @@ import static org.springframework.http.HttpStatus.OK;
 @CrossOrigin
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-public class UIAuthController {
+public class UiAuthController {
 
     private final AuthController authController;
 
