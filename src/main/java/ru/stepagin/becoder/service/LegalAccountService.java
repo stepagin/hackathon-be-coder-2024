@@ -3,7 +3,6 @@ package ru.stepagin.becoder.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.stepagin.becoder.DTO.LegalAccountDTO;
 import ru.stepagin.becoder.entity.AccessEntity;
@@ -45,9 +44,10 @@ public class LegalAccountService {
     }
 
     @Transactional
-    public void decrease(String accountId, long amount){
+    public void decrease(String accountId, long amount) {
         legalAccountRepository.decreaseBalanceById(UUID.fromString(accountId), amount);
     }
+
     @Transactional
     public LegalAccountDTO decreaseBalance(String accountId, long amount) {
         // getting account from DB and its balance
@@ -60,9 +60,8 @@ public class LegalAccountService {
     }
 
 
-
     @Transactional
-    public void increase(String accountId, long amount){
+    public void increase(String accountId, long amount) {
         legalAccountRepository.increaseBalanceById(UUID.fromString(accountId), amount);
     }
 

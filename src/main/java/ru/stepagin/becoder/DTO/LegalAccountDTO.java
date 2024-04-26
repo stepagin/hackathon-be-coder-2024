@@ -21,14 +21,14 @@ public class LegalAccountDTO {
     }
 
     public LegalAccountDTO(LegalAccountEntity entity) {
-        this (
+        this(
                 String.valueOf(entity.getId()),
                 (double) entity.getBalance() / 100
         );
     }
 
     public LegalAccountDTO(AccessEntity accessEntity) {
-        this (
+        this(
                 String.valueOf(accessEntity.getAccount().getId()),
                 accessEntity.getAccount().getBalance()
         );
