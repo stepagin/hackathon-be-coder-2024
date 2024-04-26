@@ -29,6 +29,9 @@
         <button type="submit" class="btn">Вход</button>
     </form>
 </div>
+<form th:action="@{'/auth/start'}" th:method="get">
+    <button type="submit" class="btn" id="additionalButton">Нет аккаунта? Регистрация</button>
+</form>
 <footer>
     <p>&copy; 2024 Команда "Байтсы"<br/>Микросервис по управлению юридическими счетами</p>
 </footer>

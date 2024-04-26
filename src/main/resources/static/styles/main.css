@@ -217,11 +217,15 @@ div#registration, div#loginForm {
     align-items: center;
     text-align: center;
     justify-content: center;
-    width: 90%;
 }
 
 #buttonTableDiv {
     align-items: center;
     text-align: center;
     justify-content: center;
+}
+
+#additionalButton {
+    background: lightgray;
+    color: #754668;
 }
