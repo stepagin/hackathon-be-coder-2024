@@ -7,8 +7,8 @@
 //import org.junit.jupiter.api.extension.ExtendWith;
 //import org.mockito.*;
 //import org.mockito.junit.jupiter.MockitoExtension;
-//import ru.stepagin.becoder.DTO.BalanceChangeDTO;
-//import ru.stepagin.becoder.DTO.LegalAccountDTO;
+//import ru.stepagin.becoder.DTO.BalanceChangeDto;
+//import ru.stepagin.becoder.DTO.LegalAccountDto;
 //import ru.stepagin.becoder.entity.AccessEntity;
 //import ru.stepagin.becoder.entity.LegalAccountEntity;
 //import ru.stepagin.becoder.entity.PersonEntity;
@@ -107,12 +107,12 @@
 //        UUID uuid = UUID.randomUUID();
 //        legalAccount.setId(uuid);
 //
-//        BalanceChangeDTO balanceChange = new BalanceChangeDTO();
+//        BalanceChangeDto balanceChange = new BalanceChangeDto();
 //        balanceChange.setAmount(123D);
 //
 //        when(legalAccountRepository.findById(any(UUID.class))).thenReturn(Optional.of(legalAccount));
 //
-//        LegalAccountDTO accountDTO = legalAccountService.decreaseBalance(uuid.toString(), balanceChange.getAmount());
+//        LegalAccountDto accountDTO = legalAccountService.decreaseBalance(uuid.toString(), balanceChange.getAmount());
 //
 //        verify(legalAccountRepository, times(1)).decreaseBalanceById(any(UUID.class), any(Long.class));
 //        verify(historyService, times(1)).addRecord(any(Long.class), any(LegalAccountEntity.class), any());
@@ -128,7 +128,7 @@
 //        UUID uuid = UUID.randomUUID();
 //        legalAccount.setId(uuid);
 //
-//        BalanceChangeDTO balanceChange = new BalanceChangeDTO();
+//        BalanceChangeDto balanceChange = new BalanceChangeDto();
 //
 //        assertThrows(InvalidIdSuppliedException.class, () -> legalAccountService.decreaseBalance(uuid.toString(), balanceChange.getAmount()));
 //
@@ -142,7 +142,7 @@
 ////        legalAccount.setId(uuid);
 ////
 ////
-////        BalanceChangeDTO balanceChange = new BalanceChangeDTO();
+////        BalanceChangeDto balanceChange = new BalanceChangeDto();
 ////        balanceChange.setAmount(200D);
 ////
 ////        when(legalAccountRepository.findById(any(UUID.class))).thenReturn(Optional.of(legalAccount));
@@ -162,12 +162,12 @@
 //        UUID uuid = UUID.randomUUID();
 //        legalAccount.setId(uuid);
 //
-//        BalanceChangeDTO balanceChange = new BalanceChangeDTO();
+//        BalanceChangeDto balanceChange = new BalanceChangeDto();
 //        balanceChange.setAmount(123D);
 //
 //        when(legalAccountRepository.findById(any(UUID.class))).thenReturn(Optional.of(legalAccount));
 //
-//        LegalAccountDTO accountDTO = legalAccountService.increaseBalance(uuid.toString(), balanceChange.getAmount());
+//        LegalAccountDto accountDTO = legalAccountService.increaseBalance(uuid.toString(), balanceChange.getAmount());
 //
 //        verify(legalAccountRepository, times(1)).increaseBalanceById(any(UUID.class), any(Long.class));
 //        verify(historyService, times(1)).addRecord(any(Long.class), any(LegalAccountEntity.class), any());
@@ -184,7 +184,7 @@
 //        UUID uuid = UUID.randomUUID();
 //        legalAccount.setId(uuid);
 //
-//        BalanceChangeDTO balanceChange = new BalanceChangeDTO();
+//        BalanceChangeDto balanceChange = new BalanceChangeDto();
 //
 //
 //        assertThrows(InvalidIdSuppliedException.class, () -> legalAccountService.increaseBalance(uuid.toString(), balanceChange.getAmount()));
@@ -198,12 +198,12 @@
 //        UUID uuid = UUID.randomUUID();
 //        legalAccount.setId(uuid);
 //
-//        BalanceChangeDTO balanceChange = new BalanceChangeDTO();
+//        BalanceChangeDto balanceChange = new BalanceChangeDto();
 //        balanceChange.setAmount(0.3);
 //
 //        when(legalAccountRepository.findById(any(UUID.class))).thenReturn(Optional.of(legalAccount));
 //
-//        LegalAccountDTO accountDTO = legalAccountService.increaseBalance(uuid.toString(), balanceChange.getAmount());
+//        LegalAccountDto accountDTO = legalAccountService.increaseBalance(uuid.toString(), balanceChange.getAmount());
 //
 //        verify(legalAccountRepository, times(1)).increaseBalanceById(any(UUID.class), any(Long.class));
 //        verify(historyService, times(1)).addRecord(any(Long.class), any(LegalAccountEntity.class), any());
@@ -219,12 +219,12 @@
 //        UUID uuid = UUID.randomUUID();
 //        legalAccount.setId(uuid);
 //
-//        BalanceChangeDTO balanceChange = new BalanceChangeDTO();
+//        BalanceChangeDto balanceChange = new BalanceChangeDto();
 //        balanceChange.setAmount(0.5);
 //
 //        when(legalAccountRepository.findById(uuid)).thenReturn(Optional.of(legalAccount));
 //
-//        LegalAccountDTO accountDTO = legalAccountService.decreaseBalance(uuid.toString(), balanceChange.getAmount());
+//        LegalAccountDto accountDTO = legalAccountService.decreaseBalance(uuid.toString(), balanceChange.getAmount());
 //
 //        verify(legalAccountRepository, times(1)).decreaseBalanceById(any(UUID.class), any(Long.class));
 //        verify(historyService, times(1)).addRecord(any(Long.class), any(LegalAccountEntity.class), any());

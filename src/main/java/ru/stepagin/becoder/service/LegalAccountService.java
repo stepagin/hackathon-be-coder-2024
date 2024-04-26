@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.stepagin.becoder.DTO.LegalAccountDTO;
+import ru.stepagin.becoder.dto.LegalAccountDto;
 import ru.stepagin.becoder.entity.AccessEntity;
 import ru.stepagin.becoder.entity.LegalAccountEntity;
 import ru.stepagin.becoder.entity.PersonEntity;
@@ -33,14 +33,14 @@ public class LegalAccountService {
     }
 
     @Transactional
-    public LegalAccountDTO createAccount(PersonEntity person) {
+    public LegalAccountDto createAccount(PersonEntity person) {
         if (person == null) {
             throw new IllegalArgumentException("Не найден пользователь, создающий счёт");
         }
         LegalAccountEntity legalAccountEntity = new LegalAccountEntity(person);
         legalAccountEntity = legalAccountRepository.save(legalAccountEntity);
         accessRepository.save(new AccessEntity(person, legalAccountEntity));
-        return new LegalAccountDTO(legalAccountEntity);
+        return new LegalAccountDto(legalAccountEntity);
     }
 
 
@@ -77,7 +77,7 @@ public class LegalAccountService {
     }
 
     @Transactional
-    public LegalAccountDTO getAccountById(String id) {
-        return new LegalAccountDTO(this.getAccountEntityById(id));
+    public LegalAccountDto getAccountById(String id) {
+        return new LegalAccountDto(this.getAccountEntityById(id));
     }
 }

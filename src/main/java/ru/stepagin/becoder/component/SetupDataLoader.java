@@ -4,7 +4,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
-import ru.stepagin.becoder.DTO.LegalAccountDTO;
+import ru.stepagin.becoder.dto.LegalAccountDto;
 import ru.stepagin.becoder.entity.LegalAccountEntity;
 import ru.stepagin.becoder.entity.PersonEntity;
 import ru.stepagin.becoder.repository.PersonRepository;
@@ -36,7 +36,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         admin = personRepository.save(admin);
         alreadySetup = true;
 
-        LegalAccountDTO dto = accountService.createAccount(admin);
+        LegalAccountDto dto = accountService.createAccount(admin);
         LegalAccountEntity account = new LegalAccountEntity();
         account.setId(UUID.fromString(dto.getId()));
         account.setBalance((long) dto.getBalance());

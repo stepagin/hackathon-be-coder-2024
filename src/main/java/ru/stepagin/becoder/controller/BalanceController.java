@@ -12,9 +12,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.stepagin.becoder.DTO.BalanceChangeDTO;
-import ru.stepagin.becoder.DTO.LegalAccountDTO;
-import ru.stepagin.becoder.DTO.PersonDTO;
+import ru.stepagin.becoder.dto.BalanceChangeDto;
+import ru.stepagin.becoder.dto.LegalAccountDto;
+import ru.stepagin.becoder.dto.PersonDto;
 import ru.stepagin.becoder.entity.LegalAccountEntity;
 import ru.stepagin.becoder.entity.PersonEntity;
 import ru.stepagin.becoder.service.AccessService;
@@ -46,15 +46,15 @@ public class BalanceController {
 
     @Operation(summary = "Создать юридический счёт")
     @PostMapping
-    public ResponseEntity<LegalAccountDTO> createAccount(Authentication authentication) {
+    public ResponseEntity<LegalAccountDto> createAccount(Authentication authentication) {
         PersonEntity person = securityService.getPerson(authentication);
-        LegalAccountDTO account = accountService.createAccount(person);
+        LegalAccountDto account = accountService.createAccount(person);
         return ResponseEntity.ok(account);
     }
 
     @Operation(summary = "Показать список доступных счетов")
     @GetMapping
-    public ResponseEntity<List<LegalAccountDTO>> getAllAccounts(Authentication auth) {
+    public ResponseEntity<List<LegalAccountDto>> getAllAccounts(Authentication auth) {
         PersonEntity person = securityService.getPerson(auth);
         return ResponseEntity.ok(accessService.getAllByPerson(person));
     }
@@ -62,38 +62,38 @@ public class BalanceController {
     @Operation(summary = "Показать данные счёта")
     @GetMapping("/{id}")
     @PreAuthorize("@securityService.hasAccessToAccount(#id, authentication)")
-    public ResponseEntity<LegalAccountDTO> getAccountDetails(@PathVariable String id) {
-        LegalAccountDTO account = accountService.getAccountById(id);
+    public ResponseEntity<LegalAccountDto> getAccountDetails(@PathVariable String id) {
+        LegalAccountDto account = accountService.getAccountById(id);
         return ResponseEntity.ok(account);
     }
 
     @Operation(summary = "Пополнить счёт")
     @PostMapping("/{accountId}/deposit")
     @PreAuthorize("@securityService.hasAccessToAccount(#id, authentication)")
-    public ResponseEntity<LegalAccountDTO> increaseAccountBalance(@PathVariable(name = "accountId") String id, @RequestBody BalanceChangeDTO balanceChange) {
+    public ResponseEntity<LegalAccountDto> increaseAccountBalance(@PathVariable(name = "accountId") String id, @RequestBody BalanceChangeDto balanceChange) {
         LegalAccountEntity account = accountService.getAccountEntityById(id);
         accountService.increaseBalance(account, balanceChange.getAmount());
         account.setBalance(account.getBalance() + balanceChange.getAmount());
-        return ResponseEntity.ok(new LegalAccountDTO(account));
+        return ResponseEntity.ok(new LegalAccountDto(account));
     }
 
     @Operation(summary = "Вывести со счёта")
     @PostMapping("/{accountId}/withdrawal")
     @PreAuthorize("@securityService.hasAccessToAccount(#id, authentication)")
-    public ResponseEntity<LegalAccountDTO> decreaseAccountBalance(
+    public ResponseEntity<LegalAccountDto> decreaseAccountBalance(
             @PathVariable(name = "accountId") String id,
-            @RequestBody BalanceChangeDTO balanceChange) {
+            @RequestBody BalanceChangeDto balanceChange) {
         LegalAccountEntity account = accountService.isEnough(id, balanceChange.getAmount());
         accountService.decreaseBalance(account, balanceChange.getAmount());
         account.setBalance(account.getBalance() - balanceChange.getAmount());
-        return ResponseEntity.ok(new LegalAccountDTO(account));
+        return ResponseEntity.ok(new LegalAccountDto(account));
 
     }
 
     @Operation(summary = "Получить список пользователей, имеющих доступ к счёту")
     @GetMapping("/{accountId}/partners")
     @PreAuthorize("@securityService.isActiveOwner(#accountId, authentication)")
-    public ResponseEntity<List<PersonDTO>> getAllPartners(@PathVariable String accountId) {
+    public ResponseEntity<List<PersonDto>> getAllPartners(@PathVariable String accountId) {
         return ResponseEntity.ok(accessService.getPartnersByAccountId(accountId));
     }
 
@@ -101,7 +101,7 @@ public class BalanceController {
     @PutMapping("/{accountId}/partners")
     @PreAuthorize("@securityService.isActiveOwner(#accountId, authentication)")
     public ResponseEntity<String> grantAccessToAccount(@PathVariable(name = "accountId") String accountId,
-                                                       @RequestBody @Validated PersonDTO partner) {
+                                                       @RequestBody @Validated PersonDto partner) {
         accessService.grantAccess(accountId, partner.getLogin());
         return ResponseEntity.ok("Пользователю " + partner.getLogin()
                 + " выдан доступ к аккаунту " + accountId);

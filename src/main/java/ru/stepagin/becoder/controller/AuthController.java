@@ -10,8 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.stepagin.becoder.DTO.PersonDTO;
-import ru.stepagin.becoder.DTO.RegistrationDTO;
+import ru.stepagin.becoder.dto.PersonDto;
+import ru.stepagin.becoder.dto.RegistrationDto;
 import ru.stepagin.becoder.service.PersonService;
 
 import java.util.List;
@@ -31,13 +31,13 @@ public class AuthController {
 
     @Operation(summary = "Зарегистрироваться в системе")
     @PostMapping("/register")
-    public ResponseEntity<PersonDTO> register(@RequestBody @Validated RegistrationDTO data) {
+    public ResponseEntity<PersonDto> register(@RequestBody @Validated RegistrationDto data) {
         return ResponseEntity.ok(personService.registerPerson(data.getLogin(), data.getPassword()));
     }
 
     @Operation(summary = "Получить список пользователей, зарегистрированных в системе")
     @GetMapping("/all")
-    public ResponseEntity<List<PersonDTO>> getAll() {
+    public ResponseEntity<List<PersonDto>> getAll() {
         return ResponseEntity.ok(personService.getAllUsers());
     }
 }

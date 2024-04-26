@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.stepagin.becoder.DTO.RegistrationDTO;
+import ru.stepagin.becoder.dto.RegistrationDto;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -21,12 +21,12 @@ public class UIAuthController {
 
     @GetMapping("/start")
     public String start(Model model) {
-        model.addAttribute("registerDTO", new RegistrationDTO());
+        model.addAttribute("registerDTO", new RegistrationDto());
         return "register";
     }
 
     @PostMapping("/register")
-    public String register(@Validated @ModelAttribute RegistrationDTO data, HttpServletRequest request, Model model) {
+    public String register(@Validated @ModelAttribute RegistrationDto data, HttpServletRequest request, Model model) {
         ResponseEntity<?> responseEntity = authController.register(data);
         if (responseEntity.getStatusCode().equals(OK)) {
             return "success_registration";
