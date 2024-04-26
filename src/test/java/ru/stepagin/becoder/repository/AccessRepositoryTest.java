@@ -10,7 +10,7 @@ import ru.stepagin.becoder.entity.PersonEntity;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
 class AccessRepositoryTest {
@@ -25,7 +25,7 @@ class AccessRepositoryTest {
     private LegalAccountRepository legalAccountRepository;
 
     @Test
-    void findByAccount_IdAndPersonId() {
+    void findByAccountIdAndPersonId() {
         PersonEntity person = new PersonEntity("user", "user");
         person = personRepository.save(person);
 
@@ -35,7 +35,7 @@ class AccessRepositoryTest {
         AccessEntity test = new AccessEntity(person, legalAccount);
         accessRepository.save(test);
 
-        AccessEntity result = accessRepository.findByAccount_IdAndPersonId(legalAccount.getId(), person.getId());
+        AccessEntity result = accessRepository.findByAccountIdAndPersonId(legalAccount.getId(), person.getId());
 
         assertEquals(test, result);
     }

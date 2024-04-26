@@ -23,7 +23,7 @@ import ru.stepagin.becoder.service.MyUserDetailsService;
 public class SecurityConfiguration {
     private final MyUserDetailsService userDetailService;
     @Value(value = "${api.endpoints.base-url}")
-    private String BASE_URL;
+    private String baseUrl;
 
     public SecurityConfiguration(MyUserDetailsService userDetailService) {
         this.userDetailService = userDetailService;
@@ -47,12 +47,13 @@ public class SecurityConfiguration {
         return httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .authorizeHttpRequests(registry -> {
-                    registry.requestMatchers(BASE_URL + "/api-docs").permitAll();
-                    registry.requestMatchers(BASE_URL + "/swagger-ui.html").permitAll();
-                    registry.requestMatchers(BASE_URL + "/swagger-ui/index.html").permitAll();
-                    registry.requestMatchers(BASE_URL + "/h2-console/**").permitAll();
-                    registry.requestMatchers(BASE_URL + "/auth/register").permitAll();
+                    registry.requestMatchers(baseUrl + "/api-docs").permitAll();
+                    registry.requestMatchers(baseUrl + "/swagger-ui.html").permitAll();
+                    registry.requestMatchers(baseUrl + "/swagger-ui/index.html").permitAll();
+                    registry.requestMatchers(baseUrl + "/h2-console/**").permitAll();
+                    registry.requestMatchers(baseUrl + "/auth/register").permitAll();
                     registry.requestMatchers("/auth/register").permitAll();
+
                     registry.anyRequest().authenticated();
                 })
                 .httpBasic(Customizer.withDefaults())

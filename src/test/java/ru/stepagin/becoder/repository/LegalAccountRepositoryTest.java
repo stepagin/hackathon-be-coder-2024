@@ -18,7 +18,7 @@ class LegalAccountRepositoryTest {
     private PersonRepository personRepository;
 
     @Test
-    void updateBalanceByAccountId() {
+    void increaseBalanceByAccountId() {
         PersonEntity person = new PersonEntity("user", "user");
         person = personRepository.save(person);
 
@@ -28,7 +28,26 @@ class LegalAccountRepositoryTest {
         legalAccount.setBalance(100L);
 
         UUID uuid = legalAccount.getId();
-        legalAccountRepository.updateBalanceByAccountId(legalAccount.getId(), 100L);
+        legalAccountRepository.increaseBalanceById(legalAccount.getId(), 100L);
+
+        LegalAccountEntity result = legalAccountRepository.findAll().stream().filter(t -> t.getId().equals(uuid)).findFirst().get();
+
+        assertEquals(legalAccount, result);
+    }
+
+
+    @Test
+    void decreaseBalanceByAccountId() {
+        PersonEntity person = new PersonEntity("user", "user");
+        person = personRepository.save(person);
+
+        LegalAccountEntity legalAccount = new LegalAccountEntity(person);
+        legalAccount = legalAccountRepository.save(legalAccount);
+
+        legalAccount.setBalance(-100L);
+
+        UUID uuid = legalAccount.getId();
+        legalAccountRepository.decreaseBalanceById(legalAccount.getId(), 100L);
 
         LegalAccountEntity result = legalAccountRepository.findAll().stream().filter(t -> t.getId().equals(uuid)).findFirst().get();
 

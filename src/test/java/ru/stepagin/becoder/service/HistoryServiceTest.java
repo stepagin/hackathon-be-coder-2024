@@ -21,7 +21,6 @@ class HistoryServiceTest {
     @Mock
     private HistoryRepository historyRepository;
 
-    @InjectMocks
     private HistoryService historyService;
     private AutoCloseable autoCloseable;
 
