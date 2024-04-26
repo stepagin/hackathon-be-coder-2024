@@ -1,5 +1,6 @@
 package ru.stepagin.becoder.DTO;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,6 +11,7 @@ import ru.stepagin.becoder.entity.LegalAccountEntity;
 @Setter
 @NoArgsConstructor
 public class LegalAccountDTO {
+    @NotNull(message = "не может быть null")
     private String id;
     private double balance;
 
@@ -19,14 +21,14 @@ public class LegalAccountDTO {
     }
 
     public LegalAccountDTO(LegalAccountEntity entity) {
-        this (
+        this(
                 String.valueOf(entity.getId()),
                 (double) entity.getBalance() / 100
         );
     }
 
     public LegalAccountDTO(AccessEntity accessEntity) {
-        this (
+        this(
                 String.valueOf(accessEntity.getAccount().getId()),
                 accessEntity.getAccount().getBalance()
         );

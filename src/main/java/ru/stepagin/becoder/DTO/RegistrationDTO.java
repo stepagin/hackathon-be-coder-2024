@@ -10,10 +10,10 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class RegistrationDTO {
-    @NotNull
-    @Size(min = 6, max = 255)
+    @NotNull(message = "не может быть null")
+    @Size(min = 6, max = 255, message = "должен быть от 6 до 255 символов")
     private String login;
-    @NotNull
-    @Size(min = 6, max = 255)
+    @NotNull(message = "не может быть null")
+    @Size(min = 6, max = 255, message = "должен быть от 6 до 255 символов")
     private String password;
 }

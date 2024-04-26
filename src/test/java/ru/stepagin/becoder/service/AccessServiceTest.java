@@ -17,7 +17,7 @@ import ru.stepagin.becoder.repository.PersonRepository;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -61,7 +61,7 @@ class AccessServiceTest {
     @Test
     void checkHasAccess() {
         accessService.checkHasAccess(1L, UUID.randomUUID());
-        verify(accessRepository, times(1)).findByAccount_IdAndPersonId(any(UUID.class), any(Long.class));
+        verify(accessRepository, times(1)).findByAccountIdAndPersonId(any(UUID.class), any(Long.class));
     }
 
     @Test
@@ -97,12 +97,12 @@ class AccessServiceTest {
         AccessEntity access = new AccessEntity(person, account);
 
         when(personRepository.findByLogin(person.getLogin())).thenReturn(person);
-        when(accessRepository.findByAccount_IdAndPersonId(uuid, personId)).thenReturn(access);
+        when(accessRepository.findByAccountIdAndPersonId(uuid, personId)).thenReturn(access);
 
         accessService.revokeAccess(account, person.getLogin());
 
         verify(personRepository, times(1)).findByLogin(any(String.class));
-        verify(accessRepository, times(1)).findByAccount_IdAndPersonId(any(UUID.class), any(Long.class));
+        verify(accessRepository, times(1)).findByAccountIdAndPersonId(any(UUID.class), any(Long.class));
         verify(accessRepository, times(1)).delete(any(AccessEntity.class));
 
     }

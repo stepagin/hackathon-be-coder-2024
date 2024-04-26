@@ -11,7 +11,7 @@ import ru.stepagin.becoder.entity.PersonEntity;
 @NoArgsConstructor
 public class PersonDTO {
     private Long id;
-    @NotNull
+    @NotNull(message = "не может быть null")
     private String login;
 
     public PersonDTO(PersonEntity entity) {

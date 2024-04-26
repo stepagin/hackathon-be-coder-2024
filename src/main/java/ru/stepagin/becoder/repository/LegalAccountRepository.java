@@ -15,13 +15,13 @@ import java.util.UUID;
 public interface LegalAccountRepository extends JpaRepository<LegalAccountEntity, UUID> {
 
     @Modifying
-    @Transactional(isolation= Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Query("update LegalAccountEntity l set l.balance = l.balance+:p where l.id = :id")
-    void increaseBalanceById( @Param("id") UUID id, @Param("p") Long amount);
+    void increaseBalanceById(@Param("id") UUID id, @Param("p") Long amount);
 
 
     @Modifying
-    @Transactional(isolation= Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Query("update LegalAccountEntity l set l.balance = l.balance-:p where l.id = :id")
     void decreaseBalanceById(@Param("id") UUID id, @Param("p") Long amount);
 

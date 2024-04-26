@@ -4,9 +4,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.stepagin.becoder.DTO.PersonDTO;
 import ru.stepagin.becoder.DTO.RegistrationDTO;
@@ -28,7 +28,7 @@ public class AuthController {
 
     @Operation(summary = "Зарегистрироваться в системе")
     @PostMapping("/register")
-    public ResponseEntity<PersonDTO> register(@Valid @RequestBody RegistrationDTO data) {
+    public ResponseEntity<PersonDTO> register(@RequestBody @Validated RegistrationDTO data) {
         return ResponseEntity.ok(personService.registerPerson(data.getLogin(), data.getPassword()));
     }
 

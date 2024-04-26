@@ -29,7 +29,7 @@ public class LegalAccountService {
         LegalAccountEntity account = getAccountEntityById(accountId.toString());
         if (account == null)
             throw new InvalidIdSuppliedException("Указан неверный id счёта");
-        return (accessRepository.findByAccount_IdAndPersonId(accountId, person.getId()) != null)
+        return (accessRepository.findByAccountIdAndPersonId(accountId, person.getId()) != null)
                 && (Objects.equals(account.getCreator(), person));
     }
 
@@ -57,7 +57,6 @@ public class LegalAccountService {
             throw new IllegalArgumentException();
         return account;
     }
-
 
     @Transactional
     public void increaseBalance(String accountId, long amount) {
