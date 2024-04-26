@@ -20,7 +20,6 @@ class PersonServiceTest {
     @Mock
     private PersonRepository personRepository;
 
-    @InjectMocks
     private PersonService personService;
     private AutoCloseable autoCloseable;
 
