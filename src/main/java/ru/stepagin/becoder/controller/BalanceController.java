@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.stepagin.becoder.DTO.BalanceChangeDTO;
 import ru.stepagin.becoder.DTO.LegalAccountDTO;
 import ru.stepagin.becoder.DTO.PersonDTO;
+import ru.stepagin.becoder.entity.LegalAccountEntity;
 import ru.stepagin.becoder.entity.PersonEntity;
 import ru.stepagin.becoder.service.AccessService;
 import ru.stepagin.becoder.service.LegalAccountService;
@@ -64,7 +65,10 @@ public class BalanceController {
     @PostMapping("/{accountId}/deposit")
     @PreAuthorize("@securityService.hasAccessToAccount(#id, authentication)")
     public ResponseEntity<LegalAccountDTO> increaseAccountBalance(@PathVariable(name = "accountId") String id, @RequestBody BalanceChangeDTO balanceChange) {
-        return ResponseEntity.ok(accountService.increaseBalance(id, balanceChange.getAmount()));
+        LegalAccountEntity account = accountService.getAccountEntityById(id);
+        accountService.increaseBalance(id, balanceChange.getAmount());
+        account.setBalance(account.getBalance() + balanceChange.getAmount());
+        return ResponseEntity.ok(new LegalAccountDTO(account));
     }
 
     @Operation(summary = "Вывести со счёта")
@@ -73,7 +77,11 @@ public class BalanceController {
     public ResponseEntity<LegalAccountDTO> decreaseAccountBalance(
             @PathVariable(name = "accountId") String id,
             @RequestBody BalanceChangeDTO balanceChange) {
-        return ResponseEntity.ok(accountService.decreaseBalance(id, balanceChange.getAmount()));
+        LegalAccountEntity account = accountService.isEnough(id, balanceChange.getAmount());
+        accountService.decreaseBalance(id, balanceChange.getAmount());
+        account.setBalance(account.getBalance() - balanceChange.getAmount());
+        return ResponseEntity.ok(new LegalAccountDTO(account));
+
     }
 
     @Operation(summary = "Получить список пользователей, имеющих доступ к счёту")

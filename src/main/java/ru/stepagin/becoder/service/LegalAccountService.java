@@ -3,7 +3,6 @@ package ru.stepagin.becoder.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.stepagin.becoder.DTO.LegalAccountDTO;
 import ru.stepagin.becoder.entity.AccessEntity;
@@ -14,6 +13,7 @@ import ru.stepagin.becoder.repository.AccessRepository;
 import ru.stepagin.becoder.repository.LegalAccountRepository;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -44,37 +44,24 @@ public class LegalAccountService {
         return new LegalAccountDTO(legalAccountEntity);
     }
 
+
     @Transactional
-    public void decrease(String accountId, long amount){
+    public void decreaseBalance(String accountId, long amount) {
         legalAccountRepository.decreaseBalanceById(UUID.fromString(accountId), amount);
     }
+
     @Transactional
-    public LegalAccountDTO decreaseBalance(String accountId, long amount) {
-        // getting account from DB and its balance
-        this.decrease(accountId, amount);
-//        LegalAccountEntity account = this.getAccountEntityById(accountId);
-//        // save in history with success=true
-//        account.setBalance(account.getBalance() - amount);
-//        historyService.addRecord(amount, account, true);
-        return new LegalAccountDTO();
+    public LegalAccountEntity isEnough(String accountId, long amount) {
+        LegalAccountEntity account = legalAccountRepository.findById(UUID.fromString(accountId)).orElseThrow(() -> new InvalidIdSuppliedException("Не найден счёт с данным id"));
+        if (account.getBalance() - amount < 0)
+            throw new IllegalArgumentException();
+        return account;
     }
 
 
-
     @Transactional
-    public void increase(String accountId, long amount){
+    public void increaseBalance(String accountId, long amount) {
         legalAccountRepository.increaseBalanceById(UUID.fromString(accountId), amount);
-    }
-
-    @Transactional
-    public LegalAccountDTO increaseBalance(String accountId, long amount) {
-        // getting account from DB and its balance
-        this.increase(accountId, amount);
-//        LegalAccountEntity account = this.getAccountEntityById(accountId);
-////        // save in history with success=true
-//        account.setBalance(account.getBalance() + amount);
-//        historyService.addRecord(amount, account, true);
-        return new LegalAccountDTO();
     }
 
 
