@@ -17,6 +17,7 @@ import ru.stepagin.becoder.dto.LegalAccountDto;
 import ru.stepagin.becoder.dto.PersonDto;
 import ru.stepagin.becoder.entity.LegalAccountEntity;
 import ru.stepagin.becoder.entity.PersonEntity;
+import ru.stepagin.becoder.mappers.LegalAccountMapper;
 import ru.stepagin.becoder.service.AccessService;
 import ru.stepagin.becoder.service.LegalAccountService;
 import ru.stepagin.becoder.service.PersonService;
@@ -70,23 +71,23 @@ public class BalanceController {
     @Operation(summary = "Пополнить счёт")
     @PostMapping("/{accountId}/deposit")
     @PreAuthorize("@securityService.hasAccessToAccount(#id, authentication)")
-    public ResponseEntity<LegalAccountDto> increaseAccountBalance(@PathVariable(name = "accountId") String id, @RequestBody BalanceChangeDto balanceChange) {
+    public ResponseEntity<LegalAccountDto> increaseAccountBalance(@PathVariable(name = "accountId") String id,
+                                                                  @RequestBody @Validated BalanceChangeDto balanceChange) {
         LegalAccountEntity account = accountService.getAccountEntityById(id);
         accountService.increaseBalance(account, balanceChange.getAmount());
         account.setBalance(account.getBalance() + balanceChange.getAmount());
-        return ResponseEntity.ok(new LegalAccountDto(account));
+        return ResponseEntity.ok(LegalAccountMapper.toDto(account));
     }
 
     @Operation(summary = "Вывести со счёта")
     @PostMapping("/{accountId}/withdrawal")
     @PreAuthorize("@securityService.hasAccessToAccount(#id, authentication)")
-    public ResponseEntity<LegalAccountDto> decreaseAccountBalance(
-            @PathVariable(name = "accountId") String id,
-            @RequestBody BalanceChangeDto balanceChange) {
+    public ResponseEntity<LegalAccountDto> decreaseAccountBalance(@PathVariable(name = "accountId") String id,
+                                                                  @RequestBody @Validated BalanceChangeDto balanceChange) {
         LegalAccountEntity account = accountService.isEnough(id, balanceChange.getAmount());
         accountService.decreaseBalance(account, balanceChange.getAmount());
         account.setBalance(account.getBalance() - balanceChange.getAmount());
-        return ResponseEntity.ok(new LegalAccountDto(account));
+        return ResponseEntity.ok(LegalAccountMapper.toDto(account));
 
     }
 

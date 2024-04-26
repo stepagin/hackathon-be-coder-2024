@@ -11,11 +11,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.stepagin.becoder.entity.AccessEntity;
 import ru.stepagin.becoder.entity.LegalAccountEntity;
 import ru.stepagin.becoder.entity.PersonEntity;
+import ru.stepagin.becoder.exception.InvalidIdSuppliedException;
 import ru.stepagin.becoder.repository.AccessRepository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -91,8 +95,58 @@ class AccessServiceTest {
         verify(legalAccountService, times(1)).getAccountEntityById(uuid.toString());
         verify(personService, times(1)).getPersonEntity(personLogin);
         verify(accessRepository, times(1)).save(any(AccessEntity.class));
+    }
+
+    @Test
+    void grantExistingAccess() {
+        UUID uuid = UUID.randomUUID();
+        String personLogin = "user";
+
+        LegalAccountEntity account = new LegalAccountEntity();
+        PersonEntity person = new PersonEntity();
+        AccessEntity access = new AccessEntity(person, account);
+        when(accessRepository.findByAccount_IdAndPerson_LoginIgnoreCase(uuid, personLogin)).thenReturn(access);
+
+        assertThrows(IllegalArgumentException.class, () -> accessService.grantAccess(uuid.toString(), personLogin));
 
 
+        verify(accessRepository, times(1)).findByAccount_IdAndPerson_LoginIgnoreCase(uuid, personLogin);
+    }
+
+
+    @Test
+    void grantAccessToNotExistingAccount() {
+        UUID uuid = UUID.randomUUID();
+        String personLogin = "user";
+
+
+        when(accessRepository.findByAccount_IdAndPerson_LoginIgnoreCase(uuid, personLogin)).thenReturn(null);
+        when(legalAccountService.getAccountEntityById(uuid.toString())).thenReturn(null);
+
+        assertThrows(InvalidIdSuppliedException.class, () -> accessService.grantAccess(uuid.toString(), personLogin));
+
+
+        verify(accessRepository, times(1)).findByAccount_IdAndPerson_LoginIgnoreCase(uuid, personLogin);
+        verify(legalAccountService, times(1)).getAccountEntityById(uuid.toString());
+    }
+
+    @Test
+    void grantAccessToNotExistingPerson() {
+        UUID uuid = UUID.randomUUID();
+        String personLogin = "user";
+
+        LegalAccountEntity account = new LegalAccountEntity();
+
+        when(accessRepository.findByAccount_IdAndPerson_LoginIgnoreCase(uuid, personLogin)).thenReturn(null);
+        when(legalAccountService.getAccountEntityById(uuid.toString())).thenReturn(account);
+        when(personService.getPersonEntity(personLogin)).thenReturn(null);
+
+        assertThrows(InvalidIdSuppliedException.class, () -> accessService.grantAccess(uuid.toString(), personLogin));
+
+
+        verify(accessRepository, times(1)).findByAccount_IdAndPerson_LoginIgnoreCase(uuid, personLogin);
+        verify(legalAccountService, times(1)).getAccountEntityById(uuid.toString());
+        verify(personService, times(1)).getPersonEntity(personLogin);
     }
 
     @Test
@@ -116,4 +170,38 @@ class AccessServiceTest {
         verify(accessRepository, times(1)).delete(any(AccessEntity.class));
 
     }
+
+
+    @Test
+    void revokeAccessFromOwner() {
+        UUID uuid = UUID.randomUUID();
+
+        PersonEntity person = new PersonEntity("user", "user");
+        LegalAccountEntity account = new LegalAccountEntity(person);
+        account.setId(uuid);
+
+
+        AccessEntity access = new AccessEntity(person, account);
+
+        when(accessRepository.findByAccount_IdAndPerson_LoginIgnoreCase(uuid, "user")).thenReturn(access);
+
+        assertThrows(InvalidIdSuppliedException.class, () -> accessService.revokeAccess(uuid.toString(), "user"));
+
+        verify(accessRepository, times(1)).findByAccount_IdAndPerson_LoginIgnoreCase(uuid, "user");
+
+    }
+
+    @Test
+    void getPartnersByAccountId() {
+        String uuid = UUID.randomUUID().toString();
+        List<AccessEntity> list = new ArrayList<>();
+
+        when(accessRepository.findByAccountId(UUID.fromString(uuid))).thenReturn(list);
+
+        accessService.getPartnersByAccountId(uuid);
+
+        verify(accessRepository, times(1)).findByAccountId(UUID.fromString(uuid));
+
+    }
+
 }

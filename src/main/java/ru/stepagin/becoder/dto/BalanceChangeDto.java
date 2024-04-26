@@ -16,14 +16,11 @@ public class BalanceChangeDto {
 
     /**
      * Сеттер для автоматического создания BalanceChangeDto в контроллерах.
-     * Автоматически выбрасывает ошибку, если будет передано отрицательное число.
      *
      * @param amount сумма изменения дробным числом в рублях.
-     *               Цифры после второго знака после запятой будут отброшены.
+     *               Цифры после второго знака после запятой будут проигнорированы.
      */
     public void setAmount(Double amount) {
-        if (amount == null)
-            throw new IllegalArgumentException("Amount cannot be null");
         long rubles = (long) (double) amount;
         long kopecks = Math.round((amount - rubles) * 1000) / 10;
         this.amount = rubles * 100 + kopecks;
