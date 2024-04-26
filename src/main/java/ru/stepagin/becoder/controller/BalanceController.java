@@ -74,8 +74,8 @@ public class BalanceController {
     public ResponseEntity<LegalAccountDto> increaseAccountBalance(@PathVariable(name = "accountId") String id,
                                                                   @RequestBody @Validated BalanceChangeDto balanceChange) {
         LegalAccountEntity account = accountService.getAccountEntityById(id);
-        accountService.increaseBalance(account, balanceChange.getAmount());
-        account.setBalance(account.getBalance() + balanceChange.getAmount());
+        accountService.increaseBalance(account, balanceChange.getAmountInKopecks());
+        account.setBalance(account.getBalance() + balanceChange.getAmountInKopecks());
         return ResponseEntity.ok(LegalAccountMapper.toDto(account));
     }
 
@@ -84,9 +84,9 @@ public class BalanceController {
     @PreAuthorize("@securityService.hasAccessToAccount(#id, authentication)")
     public ResponseEntity<LegalAccountDto> decreaseAccountBalance(@PathVariable(name = "accountId") String id,
                                                                   @RequestBody @Validated BalanceChangeDto balanceChange) {
-        LegalAccountEntity account = accountService.isEnough(id, balanceChange.getAmount());
-        accountService.decreaseBalance(account, balanceChange.getAmount());
-        account.setBalance(account.getBalance() - balanceChange.getAmount());
+        LegalAccountEntity account = accountService.isEnough(id, balanceChange.getAmountInKopecks());
+        accountService.decreaseBalance(account, balanceChange.getAmountInKopecks());
+        account.setBalance(account.getBalance() - balanceChange.getAmountInKopecks());
         return ResponseEntity.ok(LegalAccountMapper.toDto(account));
 
     }
