@@ -107,14 +107,7 @@ th {
     border-top: none;
 }
 
-.buttonCell {
-    border-left: 0;
-    border-top: 0;
-}
 
-.buttonRow:hover, .accountRow:hover {
-    background: none;
-}
 
 td:first-child, th:first-child {
     border-left: none;
@@ -214,15 +207,20 @@ div#registration, div#loginForm {
 .buttonTable {
     border: white;
     border-radius: 0;
-    align-items: center;
-    text-align: center;
-    justify-content: center;
 }
 
 #buttonTableDiv {
-    align-items: center;
     text-align: center;
-    justify-content: center;
+}
+
+.buttonCell {
+    border-left: 0;
+    border-top: 0;
+
+}
+
+.buttonRow:hover, .accountRow:hover {
+    background: none;
 }
 
 #additionalButton {
