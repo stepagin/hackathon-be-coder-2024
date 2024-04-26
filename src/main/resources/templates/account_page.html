@@ -58,10 +58,11 @@
         <form th:action="@{'/accounts/' + ${account.getId()} + '/deposit'}" th:object="${balanceChangeDTO}"
               th:method="post">
             <label for="amount">Введите сумму:</label><br/>
-            <input type="number" id="amount" name="amount" step="0.01" min="0" required th:value="0.00"
+            <input type="number" id="amount" name="amount" step="0.01" min="0.01" required th:value="0.00"
                    th:field="*{amount}"><br/>
-            <button type="submit">Увеличить(+)</button>
-            <button type="submit" th:formaction="@{'/accounts/' + ${account.getId()} + '/withdrawal'}">Уменьшить(-)
+            <button type="submit" style="margin: 5px">Увеличить(+)</button>
+            <button type="submit" th:formaction="@{'/accounts/' + ${account.getId()} + '/withdrawal'}"
+                    style="margin: 5px">Уменьшить(-)
             </button>
         </form>
     </div>
@@ -74,8 +75,10 @@
         <select id="person" name="person" th:field="*{login}">
             <option th:each="user : ${users}" th:value="${user.login}" th:text="${user.login}"></option>
         </select><br/>
-            <button type="submit">Дать доступ</button>
-        <button type="submit" th:formaction="@{'/accounts/' + ${account.getId()} + '/revocation'}">Отозвать доступ</button>
+            <button type="submit" style="margin: 5px">Дать доступ</button>
+            <button type="submit" th:formaction="@{'/accounts/' + ${account.getId()} + '/revocation'}"
+                    style="margin: 5px">Отозвать доступ
+            </button>
     </form>
     </div>
 </div>

@@ -15,43 +15,48 @@
 </header>
 <h2><span th:text="'Здравствуйте, ' + ${user.getLogin()} + '!'"></span></h2>
 <p>Доступные вам счета</p>
-<table>
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Баланс</th>
-        <th>Детали</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="account : ${accounts}">
-        <td th:text="${account.getId()}"></td>
-        <td th:text="${account.getBalance()}"></td>
-        <td>
-            <form th:action="@{'/accounts/{id}'(id=${account.getId()})}" th:method="get">
-                <button type="submit" class="btn">Подробнее</button>
-            </form>
-        </td>
-    </tr>
-    </tbody>
-</table>
-<table class="buttonTable">
-    <tbody>
-    <tr class="buttonRow">
-        <td class="buttonCell">
-            <form th:action="@{'/auth/start'}" th:method="get">
-                <button type="submit" class="btn">Создать<br/> нового пользователя</button>
-            </form>
-        </td>
-        <td class="buttonCell">
-            <form th:action="@{'/accounts'}" th:method="post">
-                <button type="submit" class="btn">Создать<br/> новый счет</button>
-            </form>
-        </td>
+<div id="userAccountsList">
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Баланс</th>
+            <th>Детали</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="account : ${accounts}">
+            <td th:text="${account.getId()}"></td>
+            <td th:text="${account.getBalance()}"></td>
+            <td>
+                <form th:action="@{'/accounts/{id}'(id=${account.getId()})}" th:method="get">
+                    <button type="submit" class="btn">Подробнее</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div id="buttonTableDiv">
+        <table class="buttonTable">
+            <tbody>
+            <tr class="buttonRow">
+                <td class="buttonCell">
+                    <form th:action="@{'/auth/start'}" th:method="get">
+                        <button type="submit" class="btn">Создать<br/> нового пользователя</button>
+                    </form>
+                </td>
+                <td class="buttonCell">
+                    <form th:action="@{'/accounts'}" th:method="post">
+                        <button type="submit" class="btn">Создать<br/> новый счет</button>
+                    </form>
+                </td>
 
-    </tr>
-    </tbody>
-</table>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
 
 
 <footer>
