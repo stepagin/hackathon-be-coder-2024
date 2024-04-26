@@ -53,6 +53,7 @@ public class SecurityConfiguration {
                     registry.requestMatchers(baseUrl + "/h2-console/**").permitAll();
                     registry.requestMatchers(baseUrl + "/auth/register").permitAll();
                     registry.requestMatchers("/auth/register").permitAll();
+                    registry.requestMatchers("/favicon.ico").permitAll();
 
                     registry.anyRequest().authenticated();
                 })
