@@ -7,7 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.stepagin.becoder.DTO.BalanceChangeDTO;
+import ru.stepagin.becoder.dto.BalanceChangeDto;
 import ru.stepagin.becoder.entity.AccessEntity;
 import ru.stepagin.becoder.entity.LegalAccountEntity;
 import ru.stepagin.becoder.entity.PersonEntity;
@@ -105,7 +105,7 @@ class LegalAccountServiceTest {
         UUID uuid = UUID.randomUUID();
         legalAccount.setId(uuid);
 
-        BalanceChangeDTO balanceChange = new BalanceChangeDTO();
+        BalanceChangeDto balanceChange = new BalanceChangeDto();
         balanceChange.setAmount(123D);
 
         legalAccountService.decreaseBalance(legalAccount, balanceChange.getAmount());
@@ -123,7 +123,7 @@ class LegalAccountServiceTest {
         UUID uuid = UUID.randomUUID();
         legalAccount.setId(uuid);
 
-        BalanceChangeDTO balanceChange = new BalanceChangeDTO();
+        BalanceChangeDto balanceChange = new BalanceChangeDto();
         balanceChange.setAmount(123D);
 
         legalAccountService.increaseBalance(legalAccount, balanceChange.getAmount());
