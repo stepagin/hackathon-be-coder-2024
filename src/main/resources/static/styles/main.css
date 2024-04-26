@@ -107,14 +107,7 @@ th {
     border-top: none;
 }
 
-.buttonCell {
-    border-left: 0;
-    border-top: 0;
-}
 
-.buttonRow:hover, .accountRow:hover {
-    background: none;
-}
 
 td:first-child, th:first-child {
     border-left: none;
@@ -201,9 +194,7 @@ h2 {
 }
 
 #userAccountsList {
-    align-items: center;
     text-align: center;
-    justify-content: center;
 }
 
 
@@ -214,14 +205,19 @@ div#registration, div#loginForm {
 .buttonTable {
     border: white;
     border-radius: 0;
-    align-items: center;
-    text-align: center;
-    justify-content: center;
-    width: 90%;
 }
 
-#buttonTableDiv {
-    align-items: center;
-    text-align: center;
-    justify-content: center;
+.buttonCell {
+    border-left: 0;
+    border-top: 0;
+
+}
+
+.buttonRow:hover, .accountRow:hover {
+    background: none;
+}
+
+#additionalButton {
+    background: lightgray;
+    color: #754668;
 }
