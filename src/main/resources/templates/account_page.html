@@ -25,7 +25,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr>
+    <tr class="accountRow">
         <td th:text="${account.getId()}"></td>
         <td th:text="${account.getBalance()}"></td>
     </tr>
@@ -40,15 +40,15 @@
         <p>Список пользователей:</p>
         <table id="partnersTable">
             <thead>
-            <tr>
+            <tr class="partnersRow">
                 <th>№</th> <!-- Добавить заголовок столбца -->
                 <th>Логин</th>
             </tr>
             </thead>
         <tbody>
-        <tr th:each="user, status : ${usersWithAccess}">
-            <td th:text="${status.count}"></td> <!-- Добавить номер строки -->
-            <td th:text="${user.getLogin()}"></td>
+        <tr th:each="user, status : ${usersWithAccess}" class="partnersRow">
+            <td class="partnersCell" th:text="${status.count}"></td> <!-- Добавить номер строки -->
+            <td class="partnersCell" th:text="${user.getLogin()}"></td>
         </tr>
         </tbody>
     </table>

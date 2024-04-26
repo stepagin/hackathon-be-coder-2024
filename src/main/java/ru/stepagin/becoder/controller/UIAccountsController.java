@@ -26,7 +26,7 @@ import static org.springframework.http.HttpStatus.OK;
 @CrossOrigin
 @RequestMapping("/accounts")
 @RequiredArgsConstructor
-public class UIController {
+public class UIAccountsController {
 
     private final BalanceController balanceController;
     private final PersonService personService;
