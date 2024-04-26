@@ -135,9 +135,14 @@ div {
     margin-bottom: 10px;
 }
 
-div#balanceChange, div#registration {
+div#balanceChange, div#registration, div#loginForm {
     background: #b5dda4;
     border-radius: 8px;
+}
+
+div#loginForm {
+    border: 0;
+    text-align: center;
 }
 
 div#partnersList {

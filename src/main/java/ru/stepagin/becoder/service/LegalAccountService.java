@@ -51,8 +51,6 @@ public class LegalAccountService {
         historyService.addRecord(amount, account, true);
     }
 
-//    @Transactional
-//    piub
 
     @Transactional
     public LegalAccountEntity isEnough(String accountId, long amount) {
