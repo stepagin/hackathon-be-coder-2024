@@ -1,4 +1,4 @@
-package ru.stepagin.becoder.DTO;
+package ru.stepagin.becoder.dto;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -9,13 +9,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class BalanceChangeDTO {
+public class BalanceChangeDto {
     @NotNull(message = "не может быть null")
     @Positive(message = "должен быть больше нуля")
     private long amount;
 
     /**
-     * Сеттер для автоматического создания BalanceChangeDTO в контроллерах.
+     * Сеттер для автоматического создания BalanceChangeDto в контроллерах.
      * Автоматически выбрасывает ошибку, если будет передано отрицательное число.
      *
      * @param amount сумма изменения дробным числом в рублях.

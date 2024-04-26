@@ -4,8 +4,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.stepagin.becoder.DTO.LegalAccountDTO;
-import ru.stepagin.becoder.DTO.PersonDTO;
+import ru.stepagin.becoder.dto.LegalAccountDto;
+import ru.stepagin.becoder.dto.PersonDto;
 import ru.stepagin.becoder.entity.AccessEntity;
 import ru.stepagin.becoder.entity.LegalAccountEntity;
 import ru.stepagin.becoder.entity.PersonEntity;
@@ -33,8 +33,8 @@ public class AccessService {
         return access != null;
     }
 
-    public List<LegalAccountDTO> getAllByPerson(PersonEntity person) {
-        return accessRepository.findByPerson(person).stream().map(LegalAccountDTO::new).toList();
+    public List<LegalAccountDto> getAllByPerson(PersonEntity person) {
+        return accessRepository.findByPerson(person).stream().map(LegalAccountDto::new).toList();
     }
 
     @Transactional
@@ -65,8 +65,8 @@ public class AccessService {
         accessRepository.delete(accessEntity);
     }
 
-    public List<PersonDTO> getPartnersByAccountId(String accountId) {
+    public List<PersonDto> getPartnersByAccountId(String accountId) {
         return accessRepository.findByAccountId(UUID.fromString(accountId)).stream()
-                .map((accessEntity) -> new PersonDTO(accessEntity.getPerson())).toList();
+                .map((accessEntity) -> new PersonDto(accessEntity.getPerson())).toList();
     }
 }

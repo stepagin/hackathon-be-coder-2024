@@ -7,10 +7,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ru.stepagin.becoder.DTO.BalanceChangeDTO;
-import ru.stepagin.becoder.DTO.BalanceChangeUIDTO;
-import ru.stepagin.becoder.DTO.LegalAccountDTO;
-import ru.stepagin.becoder.DTO.PersonDTO;
+import ru.stepagin.becoder.dto.BalanceChangeDto;
+import ru.stepagin.becoder.dto.BalanceChangeUiDto;
+import ru.stepagin.becoder.dto.LegalAccountDto;
+import ru.stepagin.becoder.dto.PersonDto;
 import ru.stepagin.becoder.entity.PersonEntity;
 import ru.stepagin.becoder.service.AccessService;
 import ru.stepagin.becoder.service.LegalAccountService;
@@ -26,7 +26,7 @@ import static org.springframework.http.HttpStatus.OK;
 @CrossOrigin
 @RequestMapping("/accounts")
 @RequiredArgsConstructor
-public class UIAccountsController {
+public class UiAccountsController {
 
     private final BalanceController balanceController;
     private final PersonService personService;
@@ -36,7 +36,7 @@ public class UIAccountsController {
 
     @GetMapping
     public String getAll(Authentication auth, Model model) {
-        ResponseEntity<List<LegalAccountDTO>> accounts = balanceController.getAllAccounts(auth);
+        ResponseEntity<List<LegalAccountDto>> accounts = balanceController.getAllAccounts(auth);
         PersonEntity person = securityService.getPerson(auth);
         model.addAttribute("user", person);
         model.addAttribute("accounts", accounts.getBody());
@@ -50,16 +50,16 @@ public class UIAccountsController {
         String referer = request.getHeader("Referer");
 
         if (responseEntity.getStatusCode().equals(OK)) {
-            LegalAccountDTO legalAccountDTO = (LegalAccountDTO) responseEntity.getBody();
-            List<PersonDTO> personList = personService.getAllUsers();
-            List<PersonDTO> usersWithAccess = personList.stream().filter(user -> accessService.checkHasAccess(user.getId(), UUID.fromString(legalAccountDTO.getId()))).toList();
+            LegalAccountDto legalAccountDTO = (LegalAccountDto) responseEntity.getBody();
+            List<PersonDto> personList = personService.getAllUsers();
+            List<PersonDto> usersWithAccess = personList.stream().filter(user -> accessService.checkHasAccess(user.getId(), UUID.fromString(legalAccountDTO.getId()))).toList();
             PersonEntity person = securityService.getPerson(auth);
 
             model.addAttribute("account", legalAccountDTO);
-            model.addAttribute("balanceChangeDTO", new BalanceChangeUIDTO());
+            model.addAttribute("balanceChangeDTO", new BalanceChangeUiDto());
             model.addAttribute("users", personList);
             model.addAttribute("usersWithAccess", usersWithAccess);
-            model.addAttribute("accessUser", new PersonDTO());
+            model.addAttribute("accessUser", new PersonDto());
             model.addAttribute("isOwner", legalAccountService.isActiveOwner(person, UUID.fromString(legalAccountDTO.getId())));
             return "account_page";
         } else {
@@ -85,8 +85,8 @@ public class UIAccountsController {
     }
 
     @PostMapping("/{accountId}/deposit")
-    public String increaseAccountBalance(@PathVariable(name = "accountId") String id, @ModelAttribute BalanceChangeUIDTO balanceChange, HttpServletRequest request, Model model) {
-        BalanceChangeDTO dto = new BalanceChangeDTO();
+    public String increaseAccountBalance(@PathVariable(name = "accountId") String id, @ModelAttribute BalanceChangeUiDto balanceChange, HttpServletRequest request, Model model) {
+        BalanceChangeDto dto = new BalanceChangeDto();
         dto.setAmount(balanceChange.getAmount());
         ResponseEntity<?> responseEntity = balanceController.increaseAccountBalance(id, dto);
         String referer = request.getHeader("Referer");
@@ -102,8 +102,8 @@ public class UIAccountsController {
     }
 
     @PostMapping("/{accountId}/withdrawal")
-    public String decreaseAccountBalance(@PathVariable(name = "accountId") String id, @ModelAttribute BalanceChangeUIDTO balanceChange, HttpServletRequest request, Model model) {
-        BalanceChangeDTO dto = new BalanceChangeDTO();
+    public String decreaseAccountBalance(@PathVariable(name = "accountId") String id, @ModelAttribute BalanceChangeUiDto balanceChange, HttpServletRequest request, Model model) {
+        BalanceChangeDto dto = new BalanceChangeDto();
         dto.setAmount(balanceChange.getAmount());
         ResponseEntity<?> responseEntity = balanceController.decreaseAccountBalance(id, dto);
         String referer = request.getHeader("Referer");
@@ -118,7 +118,7 @@ public class UIAccountsController {
     }
 
     @PostMapping("/{accountId}/grantment")
-    public String grantAccessToAccount(@PathVariable(name = "accountId") String id, @ModelAttribute PersonDTO person, HttpServletRequest request, Model model) {
+    public String grantAccessToAccount(@PathVariable(name = "accountId") String id, @ModelAttribute PersonDto person, HttpServletRequest request, Model model) {
         ResponseEntity<?> responseEntity = balanceController.grantAccessToAccount(id, person);
         String referer = request.getHeader("Referer");
         if (responseEntity.getStatusCode().equals(OK)) {
@@ -131,7 +131,7 @@ public class UIAccountsController {
     }
 
     @PostMapping("/{accountId}/revocation")
-    public String revokeAccessFromAccount(@PathVariable(name = "accountId") String id, @ModelAttribute PersonDTO person, HttpServletRequest request, Model model) {
+    public String revokeAccessFromAccount(@PathVariable(name = "accountId") String id, @ModelAttribute PersonDto person, HttpServletRequest request, Model model) {
         ResponseEntity<?> responseEntity = balanceController.revokeAccessFromAccount(id, person.getLogin());
         if (responseEntity.getStatusCode().equals(OK)) {
             String referer = request.getHeader("Referer");

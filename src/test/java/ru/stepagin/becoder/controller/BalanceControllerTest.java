@@ -8,8 +8,8 @@
 //import org.springframework.http.HttpStatusCode;
 //import org.springframework.http.ResponseEntity;
 //import org.springframework.security.core.Authentication;
-//import ru.stepagin.becoder.DTO.BalanceChangeDTO;
-//import ru.stepagin.becoder.DTO.LegalAccountDTO;
+//import ru.stepagin.becoder.DTO.BalanceChangeDto;
+//import ru.stepagin.becoder.DTO.LegalAccountDto;
 //import ru.stepagin.becoder.entity.PersonEntity;
 //import ru.stepagin.becoder.exception.InvalidIdSuppliedException;
 //import ru.stepagin.becoder.service.AccessService;
@@ -56,14 +56,14 @@
 //    void getAllAccounts() {
 //        PersonEntity person = new PersonEntity();
 //
-//        List<LegalAccountDTO> list = new ArrayList<>();
-//        list.add(new LegalAccountDTO(UUID.randomUUID().toString(), 100));
-//        list.add(new LegalAccountDTO(UUID.randomUUID().toString(), 100));
+//        List<LegalAccountDto> list = new ArrayList<>();
+//        list.add(new LegalAccountDto(UUID.randomUUID().toString(), 100));
+//        list.add(new LegalAccountDto(UUID.randomUUID().toString(), 100));
 //
 //        when(securityService.getPerson(authentication)).thenReturn(person);
 //        when(accessService.getAllByPerson(person)).thenReturn(list);
 //
-//        ResponseEntity<List<LegalAccountDTO>> response = balanceController.getAllAccounts(authentication);
+//        ResponseEntity<List<LegalAccountDto>> response = balanceController.getAllAccounts(authentication);
 //
 //        verify(securityService, times(1)).getPerson(authentication);
 //        verify(accessService, times(1)).getAllByPerson(person);
@@ -75,10 +75,10 @@
 //    @Test
 //    void getAccountDetails() {
 //        String uuid = UUID.randomUUID().toString();
-//        LegalAccountDTO legalAccountDTO = new LegalAccountDTO(uuid, 100);
+//        LegalAccountDto legalAccountDTO = new LegalAccountDto(uuid, 100);
 //        when(accountService.getAccountById(uuid)).thenReturn(legalAccountDTO);
 //
-//        ResponseEntity<LegalAccountDTO> response = balanceController.getAccountDetails(uuid);
+//        ResponseEntity<LegalAccountDto> response = balanceController.getAccountDetails(uuid);
 //
 //        verify(accountService, times(1)).getAccountById(uuid);
 //
@@ -89,11 +89,11 @@
 //    @Test
 //    void createAccount() {
 //        PersonEntity person = new PersonEntity();
-//        LegalAccountDTO legalAccountDTO = new LegalAccountDTO();
+//        LegalAccountDto legalAccountDTO = new LegalAccountDto();
 //        when(securityService.getPerson(authentication)).thenReturn(person);
 //        when(accountService.createAccount(person)).thenReturn(legalAccountDTO);
 //
-//        ResponseEntity<LegalAccountDTO> response = balanceController.createAccount(authentication);
+//        ResponseEntity<LegalAccountDto> response = balanceController.createAccount(authentication);
 //
 //        verify(securityService, times(1)).getPerson(authentication);
 //        verify(accountService, times(1)).createAccount(person);
@@ -115,14 +115,14 @@
 //    @Test
 //    void increaseAccountBalance() {
 //        String uuid = UUID.randomUUID().toString();
-//        BalanceChangeDTO balanceChangeDTO = new BalanceChangeDTO();
+//        BalanceChangeDto balanceChangeDTO = new BalanceChangeDto();
 //        balanceChangeDTO.setAmount(100D);
 //
-//        LegalAccountDTO legalAccountDTO = new LegalAccountDTO(uuid,balanceChangeDTO.getAmount());
+//        LegalAccountDto legalAccountDTO = new LegalAccountDto(uuid,balanceChangeDTO.getAmount());
 //
 //        when(accountService.increaseBalance(uuid, balanceChangeDTO.getAmount())).thenReturn(legalAccountDTO);
 //
-//        ResponseEntity<LegalAccountDTO> response = balanceController.increaseAccountBalance(uuid, balanceChangeDTO);
+//        ResponseEntity<LegalAccountDto> response = balanceController.increaseAccountBalance(uuid, balanceChangeDTO);
 //
 //        verify(accountService, times(1)).increaseBalance(uuid, balanceChangeDTO.getAmount());
 //
@@ -133,14 +133,14 @@
 //    @Test
 //    void decreaseAccountBalance() {
 //        String uuid = UUID.randomUUID().toString();
-//        BalanceChangeDTO balanceChangeDTO = new BalanceChangeDTO();
+//        BalanceChangeDto balanceChangeDTO = new BalanceChangeDto();
 //        balanceChangeDTO.setAmount(100D);
 //
-//        LegalAccountDTO legalAccountDTO = new LegalAccountDTO(uuid,balanceChangeDTO.getAmount());
+//        LegalAccountDto legalAccountDTO = new LegalAccountDto(uuid,balanceChangeDTO.getAmount());
 //
 //        when(accountService.decreaseBalance(uuid, balanceChangeDTO.getAmount())).thenReturn(legalAccountDTO);
 //
-//        ResponseEntity<LegalAccountDTO> response = balanceController.decreaseAccountBalance(uuid, balanceChangeDTO);
+//        ResponseEntity<LegalAccountDto> response = balanceController.decreaseAccountBalance(uuid, balanceChangeDTO);
 //
 //        verify(accountService, times(1)).decreaseBalance(uuid, balanceChangeDTO.getAmount());
 //
