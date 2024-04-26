@@ -43,37 +43,30 @@ public class LegalAccountService {
         return new LegalAccountDTO(legalAccountEntity);
     }
 
+
     @Transactional
-    public void decrease(String accountId, long amount) {
-        legalAccountRepository.decreaseBalanceById(UUID.fromString(accountId), amount);
+    public void decreaseBalance(LegalAccountEntity account, long amount) {
+        legalAccountRepository.decreaseBalanceById(account.getId(), amount);
+        historyService.addRecord(amount, account, true);
+    }
+
+//    @Transactional
+//    piub
+
+    @Transactional
+    public LegalAccountEntity isEnough(String accountId, long amount) {
+        LegalAccountEntity account = legalAccountRepository.findById(UUID.fromString(accountId)).orElseThrow(() -> new InvalidIdSuppliedException("Не найден счёт с данным id"));
+        if (account.getBalance() - amount < 0) {
+            historyService.addRecord(amount, account, false);
+            throw new IllegalArgumentException();
+        }
+        return account;
     }
 
     @Transactional
-    public LegalAccountDTO decreaseBalance(String accountId, long amount) {
-        // getting account from DB and its balance
-        this.decrease(accountId, amount);
-//        LegalAccountEntity account = this.getAccountEntityById(accountId);
-//        // save in history with success=true
-//        account.setBalance(account.getBalance() - amount);
-//        historyService.addRecord(amount, account, true);
-        return new LegalAccountDTO();
-    }
-
-
-    @Transactional
-    public void increase(String accountId, long amount) {
-        legalAccountRepository.increaseBalanceById(UUID.fromString(accountId), amount);
-    }
-
-    @Transactional
-    public LegalAccountDTO increaseBalance(String accountId, long amount) {
-        // getting account from DB and its balance
-        this.increase(accountId, amount);
-//        LegalAccountEntity account = this.getAccountEntityById(accountId);
-////        // save in history with success=true
-//        account.setBalance(account.getBalance() + amount);
-//        historyService.addRecord(amount, account, true);
-        return new LegalAccountDTO();
+    public void increaseBalance(LegalAccountEntity account, long amount) {
+        legalAccountRepository.increaseBalanceById(account.getId(), amount);
+        historyService.addRecord(amount, account, true);
     }
 
 

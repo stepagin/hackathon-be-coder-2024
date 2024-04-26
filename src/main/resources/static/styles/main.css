@@ -81,6 +81,9 @@ table#partnersTable {
     margin: 0 auto;
 }
 
+.partnersCell {
+    background: white;
+}
 
 tr:hover {
     background: #f9eccc;
@@ -88,13 +91,22 @@ tr:hover {
 
 td, th {
     padding: 10px;
-    border-left: 3px solid #587d71;;
-    border-top: 3px solid #587d71;;
+    border-left: 3px solid;
+    border-top: 3px solid #587d71;
 }
 
 th {
     background: #b5dda4;
     border-top: none;
+}
+
+.buttonCell {
+    border-left: 0;
+    border-top: 0;
+}
+
+.buttonRow:hover, .accountRow:hover {
+    background: none;
 }
 
 td:first-child, th:first-child {
@@ -123,7 +135,7 @@ div {
     margin-bottom: 10px;
 }
 
-div#balanceChange {
+div#balanceChange, div#registration {
     background: #b5dda4;
     border-radius: 8px;
 }
@@ -163,4 +175,9 @@ h2 {
     align-items: center;
     text-align: center;
     justify-content: center;
+}
+
+.buttonTable {
+    border: white;
+    border-radius: 0;
 }

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Регистрация</title>
+    <link th:href="@{/styles/main.css}" rel="stylesheet"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+          rel="stylesheet">
+</head>
+<body>
+<header>
+    <h1>Управление банковскими аккаунтами</h1>
+</header>
+<p th:text="${errorMessage}"></p>
+<div class="column" id="registration">
+    <form th:action="@{'/auth/register'}" th:object="${registerDTO}" th:method="post">
+        <p>Логин и пароль должны содержать минимум по 6 символов</p><br/>
+        <label for="login"><b>Введите логин</b></label><br/>
+        <input id="login" th:field="*{login}" minlength="6"><br/>
+        <label for="password"><b>Введите пароль</b></label><br/>
+        <input id="password" th:field="*{password}" minlength="6"><br/>
+        <button type="submit">Регистрация</button>
+    </form>
+</div>
+
+<footer>
+    <p>&copy; 2024 Команда "Байтсы"<br/>Микросервис по управлению юридическим счетом</p>
+</footer>
+</body>
+</html>
