@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.stepagin.becoder.DTO.BalanceChangeDTO;
 import ru.stepagin.becoder.DTO.LegalAccountDTO;
@@ -63,16 +64,16 @@ public class BalanceController {
     @Operation(summary = "Пополнить счёт")
     @PostMapping("/{accountId}/deposit")
     @PreAuthorize("@securityService.hasAccessToAccount(#id, authentication)")
-    public ResponseEntity<LegalAccountDTO> increaseAccountBalance(@PathVariable(name = "accountId") String id, @RequestBody BalanceChangeDTO balanceChange) {
+    public ResponseEntity<LegalAccountDTO> increaseAccountBalance(@PathVariable(name = "accountId") String id,
+                                                                  @RequestBody @Validated BalanceChangeDTO balanceChange) {
         return ResponseEntity.ok(accountService.increaseBalance(id, balanceChange.getAmount()));
     }
 
     @Operation(summary = "Вывести со счёта")
     @PostMapping("/{accountId}/withdrawal")
     @PreAuthorize("@securityService.hasAccessToAccount(#id, authentication)")
-    public ResponseEntity<LegalAccountDTO> decreaseAccountBalance(
-            @PathVariable(name = "accountId") String id,
-            @RequestBody BalanceChangeDTO balanceChange) {
+    public ResponseEntity<LegalAccountDTO> decreaseAccountBalance(@PathVariable(name = "accountId") String id,
+                                                                  @RequestBody @Validated BalanceChangeDTO balanceChange) {
         return ResponseEntity.ok(accountService.decreaseBalance(id, balanceChange.getAmount()));
     }
 
@@ -87,7 +88,7 @@ public class BalanceController {
     @PutMapping("/{accountId}/partners")
     @PreAuthorize("@securityService.isActiveOwner(#accountId, authentication)")
     public ResponseEntity<String> grantAccessToAccount(@PathVariable(name = "accountId") String accountId,
-                                                       @RequestBody PersonDTO partner) {
+                                                       @RequestBody @Validated PersonDTO partner) {
         accessService.grantAccess(accountId, partner.getLogin());
         return ResponseEntity.ok("Пользователю " + partner.getLogin()
                 + " выдан доступ к аккаунту " + accountId);

@@ -1,5 +1,7 @@
 package ru.stepagin.becoder.DTO;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,6 +10,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class BalanceChangeDTO {
+    @NotNull(message = "не может быть null")
+    @Positive(message = "должен быть больше нуля")
     private long amount;
 
     /**
@@ -21,14 +25,8 @@ public class BalanceChangeDTO {
         if (amount == null)
             throw new IllegalArgumentException("Amount cannot be null");
         long rubles = (long) (double) amount;
-        long kopecks = Math.round((amount - rubles) * 1000) / 10 ;
-        checkAmount(rubles * 100 + kopecks);
+        long kopecks = Math.round((amount - rubles) * 1000) / 10;
         this.amount = rubles * 100 + kopecks;
     }
 
-    private void checkAmount(long kopecks) throws IllegalArgumentException {
-        // check increasing amount > 0
-        if (kopecks <= 0L)
-            throw new IllegalArgumentException("amount должно быть больше нуля");
-    }
 }
