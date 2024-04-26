@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Hello</title>
+    <title>Вход</title>
     <link th:href="@{/styles/main.css}" rel="stylesheet"/>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,25 +14,24 @@
     <h1>Управление юридическими счетами</h1>
 </header>
 <h2>Войдите в аккаунт</h2>
-<div id="loginForm">
+<div class="middle-column" id="loginForm">
     <form name="f" th:action="@{/perform-login}" method="post">
-        <fieldset>
             <div th:if="${param.error}" class="alert alert-error">
                 Неправильные логин и пароль.
             </div>
             <div th:if="${param.logout}" class="alert alert-success">
                 You have been logged out.
             </div>
-            <label for="user">Логин</label><br/>
+        <label for="user"><b>Логин</b></label><br/>
             <input type="text" id="user" name="user" required/><br/>
-            <label for="pass">Пароль</label><br/>
+        <label for="pass"><b>Пароль</b></label><br/>
             <input type="password" id="pass" name="pass" required/><br/>
-            <div class="form-actions">
-                <button type="submit" class="btn">Войти</button>
-            </div>
-        </fieldset>
+        <button type="submit" class="btn">Вход</button>
     </form>
 </div>
+<form th:action="@{'/auth/start'}" th:method="get">
+    <button type="submit" class="btn" id="additionalButton">Нет аккаунта? Регистрация</button>
+</form>
 <footer>
     <p>&copy; 2024 Команда "Байтсы"<br/>Микросервис по управлению юридическими счетами</p>
 </footer>

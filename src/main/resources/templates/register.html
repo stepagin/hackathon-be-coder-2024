@@ -13,18 +13,21 @@
 <header>
     <h1>Управление юридическими счетами</h1>
 </header>
+<h2>Создайте аккаунт</h2>
+
 <p th:text="${errorMessage}"></p>
-<div class="column" id="registration">
+<div class="middle-column" id="registration">
     <form th:action="@{'/auth/register'}" th:object="${registerDTO}" th:method="post">
-        <p>Логин и пароль должны содержать минимум по 6 символов</p><br/>
-        <label for="login"><b>Введите логин</b></label><br/>
+        <label for="login"><b>Логин</b></label><br/>
         <input id="login" th:field="*{login}" minlength="6" required><br/>
-        <label for="password"><b>Введите пароль</b></label><br/>
+        <label for="password"><b>Пароль</b></label><br/>
         <input id="password" type="password" th:field="*{password}" minlength="6" required><br/>
         <button type="submit">Регистрация</button>
     </form>
 </div>
-
+<form th:action="@{'/auth/login'}" th:method="get">
+    <button type="submit" class="btn" id="additionalButton">Есть аккаунт? Вход</button>
+</form>
 <footer>
     <p>&copy; 2024 Команда "Байтсы"<br/>Микросервис по управлению юридическими счетами</p>
 </footer>

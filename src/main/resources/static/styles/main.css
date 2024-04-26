@@ -26,6 +26,11 @@ footer {
     text-align: center;
 }
 
+footer {
+    position: absolute;
+    bottom: 0;
+}
+
 main {
     flex: 1;
     width: 100%;
@@ -33,7 +38,9 @@ main {
     padding: 20px;
     display: flex;
     justify-content: center;
+    overflow: auto;
 }
+
 
 input,
 button,
@@ -100,14 +107,7 @@ th {
     border-top: none;
 }
 
-.buttonCell {
-    border-left: 0;
-    border-top: 0;
-}
 
-.buttonRow:hover, .accountRow:hover {
-    background: none;
-}
 
 td:first-child, th:first-child {
     border-left: none;
@@ -133,6 +133,8 @@ th#partnersTable {
 
 div {
     margin-bottom: 10px;
+    overflow: auto;
+    max-height: calc(100vh - 250px);
 }
 
 div#balanceChange, div#registration, div#loginForm {
@@ -182,7 +184,40 @@ h2 {
     justify-content: center;
 }
 
+.middle-column {
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    padding: 10px;
+    width: 30%;
+    margin-top: 10px;
+}
+
+#userAccountsList {
+    text-align: center;
+}
+
+
+div#registration, div#loginForm {
+    height: fit-content;
+}
+
 .buttonTable {
     border: white;
     border-radius: 0;
+}
+
+.buttonCell {
+    border-left: 0;
+    border-top: 0;
+
+}
+
+.buttonRow:hover, .accountRow:hover {
+    background: none;
+}
+
+#additionalButton {
+    background: lightgray;
+    color: #754668;
 }
