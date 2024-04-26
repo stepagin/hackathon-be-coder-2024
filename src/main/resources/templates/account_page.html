@@ -4,10 +4,19 @@
     <meta charset="UTF-8">
     <title>Информация об аккаунте</title>
     <link th:href="@{/styles/main.css}" rel="stylesheet" />
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+          rel="stylesheet">
 </head>
 <body>
-Информация о вашем аккаунте
+<header>
+    <h1>Управление банковскими аккаунтами</h1>
+</header>
+<div>
+    <h2>Информация об аккаунте</h2>
+</div>
+<br/>
 <table>
     <thead>
     <tr>
@@ -22,40 +31,58 @@
     </tr>
     </tbody>
 </table>
-
-<form th:action="@{'/accounts/' + ${account.getId()} + '/deposit'}" th:object="${balanceChangeDTO}" th:method="post" >
-    <label for="amount">Введите сумму:</label><br/>
-    <input type="number" id="amount" name="amount" step="0.01" min="0" required th:value="0.00" th:field="*{amount}"><br/>
-    <button type="submit" >Увеличить</button><br/>
-    <button type="submit" th:formaction="@{'/accounts/' + ${account.getId()} + '/withdrawal'}">Уменьшить</button>
-</form>
-
-
-<div th:if="${isOwner}">
-    <p>Список пользователей, имеющих доступ к аккаунту:</p>
-    <table>
-        <thead>
-        <tr>
-            <th>Логин</th>
-        </tr>
-        </thead>
+<div>
+    <h2>Панель управления аккаунтом</h2><br/>
+</div>
+<div class="column-container">
+    <div class="column" th:if="${isOwner}" id="partnersList">
+        <h3>Редакторы счета</h3>
+        <p>Список пользователей:</p>
+        <table id="partnersTable">
+            <thead>
+            <tr>
+                <th>№</th> <!-- Добавить заголовок столбца -->
+                <th>Логин</th>
+            </tr>
+            </thead>
         <tbody>
-        <tr th:each="user : ${usersWithAccess}">
+        <tr th:each="user, status : ${usersWithAccess}">
+            <td th:text="${status.count}"></td> <!-- Добавить номер строки -->
             <td th:text="${user.getLogin()}"></td>
         </tr>
         </tbody>
     </table>
-    <form th:action="@{'/accounts/' + ${account.getId()} + '/grantment'}" th:object="${accessUser}" th:method="post" >
+    </div>
+    <div class="column" id="balanceChange">
+        <h3>Изменение баланса</h3>
+        <form th:action="@{'/accounts/' + ${account.getId()} + '/deposit'}" th:object="${balanceChangeDTO}"
+              th:method="post">
+            <label for="amount">Введите сумму:</label><br/>
+            <input type="number" id="amount" name="amount" step="0.01" min="0" required th:value="0.00"
+                   th:field="*{amount}"><br/>
+            <button type="submit">Увеличить(+)</button>
+            <button type="submit" th:formaction="@{'/accounts/' + ${account.getId()} + '/withdrawal'}">Уменьшить(-)
+            </button>
+        </form>
+    </div>
+    <div class="column" th:if="${isOwner}" id="accessChange">
+        <h3>Управление доступом</h3>
+
+        <form th:action="@{'/accounts/' + ${account.getId()} + '/grantment'}" th:object="${accessUser}"
+              th:method="post">
         <label for="person">Изменить права доступа пользователей</label><br/>
         <select id="person" name="person" th:field="*{login}">
-            <option th:each="user : ${users}" th:value="${user.login}" th:text="${user.login}" ></option>
+            <option th:each="user : ${users}" th:value="${user.login}" th:text="${user.login}"></option>
         </select><br/>
-        <button type="submit">Дать доступ</button><br/>
+            <button type="submit">Дать доступ</button>
         <button type="submit" th:formaction="@{'/accounts/' + ${account.getId()} + '/revocation'}">Отозвать доступ</button>
     </form>
-
+    </div>
 </div>
 
-<button th:href="@{/accounts}" onclick="window.location.href='/v1/account/all';">Назад</button>
+<button th:href="@{/accounts}" onclick="window.location.href='/accounts';">Назад</button>
 </body>
+<footer>
+    <p>&copy; 2024 Команда "Байтсы"<br/>Микросервис по управлению юридическим счетом</p>
+</footer>
 </html>

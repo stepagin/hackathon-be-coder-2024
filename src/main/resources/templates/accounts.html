@@ -4,14 +4,23 @@
     <meta charset="UTF-8">
     <title>Мои аккаунты</title>
     <link th:href="@{/styles/main.css}" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+          rel="stylesheet">
 </head>
 <body>
-Доступные вам аккаунты
+<header>
+    <h1>Управление банковскими аккаунтами</h1>
+</header>
+<h2><span th:text="'Здравствуйте, ' + ${user.getLogin()} + '!'"></span></h2>
+<p>Доступные вам аккаунты</p>
 <table>
     <thead>
     <tr>
         <th>ID</th>
         <th>Баланс</th>
+        <th>Детали</th>
     </tr>
     </thead>
     <tbody>
@@ -29,5 +38,8 @@
 <form th:action="@{'/accounts'}" th:method="post">
     <button type="submit" class="btn">Создать новый аккаунт</button>
 </form>
+<footer>
+    <p>&copy; 2024 Команда "Байтсы"<br/>Микросервис по управлению юридическим счетом</p>
+</footer>
 </body>
 </html>

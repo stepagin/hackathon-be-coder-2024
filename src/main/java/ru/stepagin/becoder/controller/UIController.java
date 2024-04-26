@@ -37,6 +37,8 @@ public class UIController {
     @GetMapping
     public String getAll(Authentication auth, Model model) {
         ResponseEntity<List<LegalAccountDTO>> accounts = balanceController.getAllAccounts(auth);
+        PersonEntity person = securityService.getPerson(auth);
+        model.addAttribute("user", person);
         model.addAttribute("accounts", accounts.getBody());
         return "accounts";
     }
@@ -123,14 +125,14 @@ public class UIController {
             return "redirect:" + referer;
         } else {
             model.addAttribute("errorText", responseEntity.getBody());
-            model.addAttribute("revertAdress", referer);
+            model.addAttribute("revertAdress", referer); // TODO: fix typo
             return "error";
         }
     }
 
     @PostMapping("/{accountId}/revocation")
     public String revokeAccessFromAccount(@PathVariable(name = "accountId") String id, @ModelAttribute PersonDTO person, HttpServletRequest request, Model model) {
-        ResponseEntity<?> responseEntity = balanceController.revokeAccessFromAccount(id, person);
+        ResponseEntity<?> responseEntity = balanceController.revokeAccessFromAccount(id, person.getLogin());
         if (responseEntity.getStatusCode().equals(OK)) {
             String referer = request.getHeader("Referer");
             return "redirect:" + referer;
