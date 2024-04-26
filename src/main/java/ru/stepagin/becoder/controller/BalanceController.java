@@ -1,6 +1,8 @@
 package ru.stepagin.becoder.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,9 +30,12 @@ import java.util.List;
 @Tag(name = "API управления балансом")
 @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Успешно выполнено"),
-        @ApiResponse(responseCode = "400", description = "Ошибка на стороне клиента"),
-        @ApiResponse(responseCode = "401", description = "Пользователь не авторизован"),
-        @ApiResponse(responseCode = "403", description = "Ошибка на стороне клиента"),
+        @ApiResponse(responseCode = "400", description = "Ошибка на стороне клиента",
+                content = @Content(schema = @Schema(implementation = String.class))),
+        @ApiResponse(responseCode = "401", description = "Пользователь не авторизован",
+                content = @Content(schema = @Schema(implementation = String.class))),
+        @ApiResponse(responseCode = "403", description = "Доступ запрещён",
+                content = @Content(schema = @Schema(implementation = String.class)))
 })
 public class BalanceController {
     private final LegalAccountService accountService;

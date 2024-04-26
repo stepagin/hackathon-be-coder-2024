@@ -20,9 +20,9 @@ import java.util.Objects;
 
 @Slf4j
 @ControllerAdvice
+@Hidden
 public class ServiceErrorHandler {
 
-    @Hidden
     @ResponseStatus(value = HttpStatus.FORBIDDEN, reason = "Пользователь не авторизован")
     @ExceptionHandler(AccessDeniedException.class)
     public String handleException(final AccessDeniedException e, Model model, HttpServletRequest request) {
@@ -83,7 +83,6 @@ public class ServiceErrorHandler {
         return "error";
     }
 
-    @Hidden
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler(ValidationException.class)
     public String handleException(final ValidationException e, Model model, HttpServletRequest request) {
@@ -94,7 +93,6 @@ public class ServiceErrorHandler {
         return "error";
     }
 
-    @Hidden
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoResourceFoundException.class)
     public String handleException(final NoResourceFoundException e, Model model, HttpServletRequest request) {
@@ -105,7 +103,6 @@ public class ServiceErrorHandler {
         return "error";
     }
 
-    @Hidden
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public String handleException(final HttpRequestMethodNotSupportedException e, Model model, HttpServletRequest request) {
@@ -116,7 +113,6 @@ public class ServiceErrorHandler {
         return "error";
     }
 
-    @Hidden
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public String handleException(final HttpMessageNotReadableException e, Model model, HttpServletRequest request) {
@@ -127,7 +123,6 @@ public class ServiceErrorHandler {
         return "error";
     }
 
-    @Hidden
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(UnsupportedOperationException.class)
     public String handleException(final UnsupportedOperationException e, Model model, HttpServletRequest request) {
@@ -139,7 +134,6 @@ public class ServiceErrorHandler {
         return "error";
     }
 
-    @Hidden
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(RuntimeException.class)
     public String handleException(final RuntimeException e, Model model, HttpServletRequest request) {
@@ -150,7 +144,6 @@ public class ServiceErrorHandler {
         return "error";
     }
 
-    @Hidden
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public String handleException(final Exception e, Model model, HttpServletRequest request) {
         log.error("Common Exception ({}): {}", e.getClass(), e.getMessage());
