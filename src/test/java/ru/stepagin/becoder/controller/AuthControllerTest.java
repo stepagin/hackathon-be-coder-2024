@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import ru.stepagin.becoder.dto.PersonDto;
 import ru.stepagin.becoder.dto.RegistrationDto;
-import ru.stepagin.becoder.entity.PersonEntity;
 import ru.stepagin.becoder.service.PersonService;
 
 import java.util.ArrayList;
@@ -39,14 +38,16 @@ class AuthControllerTest {
     @Test
     void register() {
         RegistrationDto registrationDto = new RegistrationDto("user", "user");
-        PersonDto person = new PersonDto(new PersonEntity(registrationDto.getLogin(), registrationDto.getPassword()));
+        PersonDto person = new PersonDto();
+        person.setLogin(registrationDto.getLogin());
+
         when(personService.registerPerson(registrationDto.getLogin(), registrationDto.getPassword())).thenReturn(person);
 
         ResponseEntity<PersonDto> response = authController.register(registrationDto);
 
         verify(personService, times(1)).registerPerson(registrationDto.getLogin(), registrationDto.getPassword());
         assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
-        assertEquals(person, response.getBody());
+        assertEquals(person.getLogin(), response.getBody().getLogin());
     }
 
     @Test
