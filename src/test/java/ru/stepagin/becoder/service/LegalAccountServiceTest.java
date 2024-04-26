@@ -108,7 +108,7 @@ class LegalAccountServiceTest {
         BalanceChangeDto balanceChange = new BalanceChangeDto();
         balanceChange.setAmount(123D);
 
-        legalAccountService.decreaseBalance(legalAccount, balanceChange.getAmount());
+        legalAccountService.decreaseBalance(legalAccount, balanceChange.getAmountInKopecks());
 
         verify(legalAccountRepository, times(1)).decreaseBalanceById(any(UUID.class), any(Long.class));
         verify(historyService, times(1)).addRecord(any(Long.class), any(LegalAccountEntity.class), any());
@@ -126,7 +126,7 @@ class LegalAccountServiceTest {
         BalanceChangeDto balanceChange = new BalanceChangeDto();
         balanceChange.setAmount(123D);
 
-        legalAccountService.increaseBalance(legalAccount, balanceChange.getAmount());
+        legalAccountService.increaseBalance(legalAccount, balanceChange.getAmountInKopecks());
 
         verify(legalAccountRepository, times(1)).increaseBalanceById(any(UUID.class), any(Long.class));
         verify(historyService, times(1)).addRecord(any(Long.class), any(LegalAccountEntity.class), any());

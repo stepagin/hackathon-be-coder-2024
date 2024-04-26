@@ -127,14 +127,13 @@ class BalanceControllerTest {
 
         ResponseEntity<LegalAccountDto> response = balanceController.increaseAccountBalance(uuid, balanceChangeDTO);
 
-        verify(accountService, times(1)).increaseBalance(account, balanceChangeDTO.getAmount());
+        verify(accountService, times(1)).increaseBalance(account, balanceChangeDTO.getAmountInKopecks());
 
         assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
 
         LegalAccountDto legalAccountDto = new LegalAccountDto();
-        legalAccountDto.setBalance(account.getBalance());
 
-        assertEquals(legalAccountDto.getBalance(), response.getBody().getBalance());
+        assertEquals(legalAccountDto.getBalanceInRubles(account.getBalance()), response.getBody().getBalance());
 
     }
 
@@ -149,17 +148,16 @@ class BalanceControllerTest {
         account.setBalance(0L);
         account.setId(UUID.fromString(uuid));
 
-        when(accountService.isEnough(uuid, balanceChangeDTO.getAmount())).thenReturn(account);
+        when(accountService.isEnough(uuid, balanceChangeDTO.getAmountInKopecks())).thenReturn(account);
 
         ResponseEntity<LegalAccountDto> response = balanceController.decreaseAccountBalance(uuid, balanceChangeDTO);
 
-        verify(accountService, times(1)).decreaseBalance(account, balanceChangeDTO.getAmount());
+        verify(accountService, times(1)).decreaseBalance(account, balanceChangeDTO.getAmountInKopecks());
 
         assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
         LegalAccountDto legalAccountDto = new LegalAccountDto();
-        legalAccountDto.setBalance(account.getBalance());
 
-        assertEquals(legalAccountDto.getBalance(), response.getBody().getBalance());
+        assertEquals(legalAccountDto.getBalanceInRubles(account.getBalance()), response.getBody().getBalance());
 
     }
 
